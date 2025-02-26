@@ -12,7 +12,7 @@ return (
     <View style={styles.container}>
     <Image
         source={require('../../../assets/logoEduHub.png')}
-        style={styles.logo}
+        style={styles.logo} 
     />
     <ActivityIndicator size="large" color="#FFFFFF" />
     </View>
