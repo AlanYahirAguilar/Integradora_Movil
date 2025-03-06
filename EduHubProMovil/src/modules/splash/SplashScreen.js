@@ -2,11 +2,11 @@ import React, { useEffect } from 'react';
 import { View, ActivityIndicator, StyleSheet, Image } from 'react-native';
 
 const SplashScreen = ({ navigation }) => {
-useEffect(() => {
-    setTimeout(() => {
-    navigation.replace('Home');
-    }, 5000);
-}, [navigation]);
+    useEffect(() => {
+        setTimeout(() => {
+          navigation.replace('signIn'); 
+        }, 5000);
+      }, [navigation]);
 
 return (
     <View style={styles.container}>

@@ -2,7 +2,8 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SplashScreen from './src/modules/splash/SplashScreen';
-import HomeScreen from './src/modules/homeScreen/HomeScreen';
+import SignIn from './src/modules/signIn/signIn';
+import SignUp from './src/modules/signUp/signUp';
 
 const Stack = createNativeStackNavigator();
 
@@ -16,10 +17,15 @@ const App = () => {
           options={{ headerShown: false }} // Oculta la barra de navegación
         />
         <Stack.Screen
-          name="Home"
-          component={HomeScreen}
+          name="signIn"
+          component={SignIn}
           options={{ title: 'Inicio' }}
         />
+        <Stack.Screen
+         name="SignUp"
+         component={SignUp}
+         options={{ title: 'Registro' }}
+/>
       </Stack.Navigator>
     </NavigationContainer>
   );
