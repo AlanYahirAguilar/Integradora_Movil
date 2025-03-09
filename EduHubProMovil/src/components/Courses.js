@@ -33,7 +33,9 @@ const Courses = () => {
       <Text style={styles.cardTitle}>{course.title}</Text>
       <Text style={styles.autor}>{course.autor}</Text>
       <Text style={styles.cardDescription}>{course.description}</Text>
-      <Text style={styles.rank}>{course.numRating} {renderStars(course.rating)}</Text> 
+      <Text>
+      <Text style={styles.rank}>{course.numRating}</Text> {renderStars(course.rating)}
+    </Text>
       <Text style={styles.textPrice}>{course.precio}</Text>
     </TouchableOpacity>
   );
@@ -97,6 +99,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   starsContainer: {
+    alignContent: 'space-between',
     flexDirection: 'row',
   },
   textPrice:{
@@ -104,8 +107,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   rank:{
-    fontSize: 12,
+    fontSize: 16,
     fontWeight: 'bold',
+    alignContent: 'space-between'
   },
   autor:{
     fontSize: 10,
