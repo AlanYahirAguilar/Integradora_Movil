@@ -1,52 +1,52 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Animated, Dimensions } from 'react-native';
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const sidebarWidth = new Animated.Value(0); // Valor inicial del ancho del sidebar
+  const sidebarWidth = useRef(new Animated.Value(0)).current; // Mantiene el valor entre renders
 
   const toggleSidebar = () => {
     Animated.timing(sidebarWidth, {
-      toValue: isOpen ? 0 : 250, // Ancho del sidebar cuando está abierto
-      duration: 300, // Duración de la animación
-      useNativeDriver: false, // No usar el native driver para animar propiedades de layout
-    }).start(() => setIsOpen(!isOpen)); // Actualiza el estado después de la animación
+      toValue: isOpen ? 0 : 200, 
+      duration: 200,
+      useNativeDriver: false,
+    }).start(() => setIsOpen(!isOpen));
   };
 
   return (
     <View style={styles.container}>
-      {/* Botón para abrir/cerrar el sidebar */}
-      <TouchableOpacity onPress={toggleSidebar} style={styles.toggleButton}>
-        <Text style={styles.toggleButtonText}>☰</Text>
-      </TouchableOpacity>
+      {!isOpen && (
+        <TouchableOpacity onPress={toggleSidebar} style={styles.toggleButton}>
+          <Text style={styles.toggleButtonText}>☰</Text>
+        </TouchableOpacity>
+      )}
 
-      {/* Sidebar animado */}
       <Animated.View style={[styles.sidebar, { width: sidebarWidth }]}>
+        <TouchableOpacity onPress={toggleSidebar} style={styles.closeButton}>
+          <Text style={styles.closeButtonText}>✖</Text>
+        </TouchableOpacity>
         <Text style={styles.sidebarTitle}>Menú</Text>
-        <TouchableOpacity style={styles.sidebarItem}>
-          <Text>Inicio</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.sidebarItem}>
-          <Text>Cursos</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.sidebarItem}>
-          <Text>Perfil</Text>
-        </TouchableOpacity>
+        <TouchableOpacity style={styles.sidebarItem}><Text>Inicio</Text></TouchableOpacity>
+        <TouchableOpacity style={styles.sidebarItem}><Text>Cursos</Text></TouchableOpacity>
+        <TouchableOpacity style={styles.sidebarItem}><Text>Perfil</Text></TouchableOpacity>
       </Animated.View>
     </View>
   );
 };
 
+
+
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    position: 'relative',
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    height: Dimensions.get('window').height,
   },
   toggleButton: {
+    padding: 10,
     position: 'absolute',
-    top: 16,
-    left: 16,
-    zIndex: 2, // Asegura que el botón esté por encima del sidebar
+    zIndex: 3,
   },
   toggleButtonText: {
     fontSize: 24,
@@ -55,12 +55,19 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     left: 0,
-    height: Dimensions.get('window').height, // Altura completa de la pantalla
+    height: '100%',
     backgroundColor: '#fff',
     borderRightWidth: 1,
     borderRightColor: '#ccc',
     padding: 16,
-    zIndex: 1, // Asegura que el sidebar esté por encima del contenido principal
+    zIndex: 2,
+  },
+  closeButton: {
+    alignSelf: 'flex-end',
+    padding: 10,
+  },
+  closeButtonText: {
+    fontSize: 18,
   },
   sidebarTitle: {
     fontSize: 20,

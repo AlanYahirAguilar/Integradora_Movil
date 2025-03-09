@@ -8,22 +8,28 @@ const images = [
 ];
 
 const Carrusel = () => {
-    return (
-      <ScrollView horizontal pagingEnabled showsHorizontalScrollIndicator={false}>
-        {images.map((image) => (
-          <Image key={image.id} source={{ uri: image.url }} style={styles.carruselImage} />
-        ))}
-      </ScrollView>
-    );
-  };
-  
-  const styles = StyleSheet.create({
-    carruselImage: {
-      width: Dimensions.get('window').width, // Ancho igual al de la pantalla
-      height: 200, // Alto fijo para las imágenes del carrusel
-      resizeMode: 'cover',
-    },
-  });
-  
-  export default Carrusel;
-  
+  return (
+    <ScrollView horizontal pagingEnabled showsHorizontalScrollIndicator={false}>
+      {images.map((image) => (
+        <View key={image.id} style={styles.imageContainer}>
+          <Image source={{ uri: image.url }} style={styles.carruselImage} />
+        </View>
+      ))}
+    </ScrollView>
+  );
+};
+
+const styles = StyleSheet.create({
+  imageContainer: {
+    width: Dimensions.get('window').width, 
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  carruselImage: {
+    width: '100%',
+    height: 200, 
+    resizeMode: 'cover',
+  },
+});
+
+export default Carrusel;

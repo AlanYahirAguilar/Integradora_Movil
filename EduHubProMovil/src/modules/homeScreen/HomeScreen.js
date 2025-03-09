@@ -7,14 +7,19 @@ import Sidebar from '../../components/SideBar';
 export default function HomeScreen({ navigation }) {
   return (
     <View style={styles.container}>
+      {/* Sidebar debe estar fuera del flujo principal */}
       <Sidebar />
-      <View style={styles.carruselContainer}>
-        <Carrusel />
+      
+      {/* Sección principal */}
+      <View style={styles.mainContent}>
+        <View style={styles.carruselContainer}>
+          <Carrusel />
+        </View>
+        <ScrollView style={styles.content}>
+          <Text style={styles.title}>Cursos Disponibles</Text>
+          <Courses />
+        </ScrollView>
       </View>
-      <ScrollView style={styles.content}>
-        <Text style={styles.title}>Cursos Disponibles</Text>
-        <Courses />
-      </ScrollView>
     </View>
   );
 }
@@ -22,9 +27,13 @@ export default function HomeScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    flexDirection: 'row', // Asegura que Sidebar y el contenido estén en línea
+  },
+  mainContent: {
+    flex: 1, 
   },
   carruselContainer: {
-    height: 200, // Alto fijo para el carrusel
+    height: 200, // Espacio fijo para el carrusel
   },
   content: {
     flex: 1,

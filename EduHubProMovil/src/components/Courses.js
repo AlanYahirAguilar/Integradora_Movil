@@ -1,20 +1,27 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 const courses = [
-  { id: 1, title: 'Curso de React Native', description: 'Aprende a desarrollar aplicaciones móviles con React Native.' },
+  { id: 1, title: 'Curso de React Native', description: 'Aprende a desarrollar apps móviles con React Native.' },
   { id: 2, title: 'Curso de JavaScript', description: 'Domina JavaScript desde cero.' },
-  { id: 3, title: 'Curso de Node.js', description: 'Aprende a construir aplicaciones backend con Node.js.' },
+  { id: 3, title: 'Curso de Node.js', description: 'Construye aplicaciones backend con Node.js.' },
 ];
 
 const Courses = () => {
+  const navigation = useNavigation();
+
   return (
     <View style={styles.coursesContainer}>
       {courses.map((course) => (
-        <View key={course.id} style={styles.card}>
+        <TouchableOpacity
+          key={course.id}
+          style={styles.card}
+          onPress={() => navigation.navigate('CourseDetail', { course })}
+        >
           <Text style={styles.cardTitle}>{course.title}</Text>
           <Text style={styles.cardDescription}>{course.description}</Text>
-        </View>
+        </TouchableOpacity>
       ))}
     </View>
   );
@@ -30,6 +37,8 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 8,
     marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#ddd',
   },
   cardTitle: {
     fontSize: 18,
