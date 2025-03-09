@@ -23,7 +23,7 @@ export default function HomeScreen({ navigation, route }) {
           <Carrusel />
         </View>
         <ScrollView style={styles.content}>
-          <Text style={styles.title}>Cursos Disponibles</Text>
+          <Text style={styles.title}>Nuestros Cursos</Text>
           <Courses />
         </ScrollView>
       </View>
@@ -49,7 +49,10 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    textAlign: 'center',
+    textAlign: 'left',
     marginVertical: 16,
+    paddingHorizontal: 12, 
+    paddingTop: 5,
+    color: '#604274'
   },
 });

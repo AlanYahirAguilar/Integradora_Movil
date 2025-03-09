@@ -13,12 +13,12 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     Animated.parallel([
       Animated.timing(sidebarWidth, {
         toValue: isOpen ? 250 : 0,
-        duration: 150,
+        duration: 25,
         useNativeDriver: false,
       }),
       Animated.timing(overlayOpacity, {
         toValue: isOpen ? 0.5 : 0,
-        duration: 200,
+        duration: 25,
         useNativeDriver: false,
       }),
     ]).start();
@@ -28,10 +28,9 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     isOpen && (
       <Pressable style={styles.overlay} onPress={toggleSidebar}>
         <Animated.View style={[styles.sidebar, { width: sidebarWidth }]}>
-          <Text style={styles.sidebarTitle}>Menú</Text>
           <TouchableOpacity style={styles.sidebarItem}><Text style={styles.itemText}>Inicio</Text></TouchableOpacity>
-          <TouchableOpacity style={styles.sidebarItem}><Text style={styles.itemText}>Cursos</Text></TouchableOpacity>
-          <TouchableOpacity style={styles.sidebarItem}><Text style={styles.itemText}>Perfil</Text></TouchableOpacity>
+          <TouchableOpacity style={styles.sidebarItem}><Text style={styles.itemText}>Mis Cursos</Text></TouchableOpacity>
+          <TouchableOpacity style={styles.sidebarItem}><Text style={styles.itemText}>Categorias</Text></TouchableOpacity>
         </Animated.View>
         <Animated.View style={[styles.overlayBackground, { opacity: overlayOpacity }]} />
       </Pressable>

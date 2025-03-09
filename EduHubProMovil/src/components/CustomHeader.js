@@ -8,7 +8,7 @@ const CustomHeader = ({ toggleSidebar }) => {
         <TouchableOpacity onPress={toggleSidebar} style={styles.menuButton}>
         <Icon name="menu" size={35} color="#fff" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle} >EduHub Pro</Text>
+        <Text style={styles.headerTitle} >EduHub Pro</Text> 
       </View>
     );
   };
@@ -17,7 +17,7 @@ const CustomHeader = ({ toggleSidebar }) => {
 const styles = StyleSheet.create({
   header: {
     height: 60,
-    backgroundColor: '#333',
+    backgroundColor: '#AA39AD',
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 12,

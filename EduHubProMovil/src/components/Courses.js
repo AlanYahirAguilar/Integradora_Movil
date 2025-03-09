@@ -4,12 +4,12 @@ import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 const courses = [
-  { id: 1, title: 'React Native', description: 'Desarrolla apps móviles.', image: 'https://img.freepik.com/vector-gratis/concepto-diseno-web-dibujado-mano_23-2147839737.jpg', rating: 4 },
-  { id: 2, title: 'JavaScript', description: 'Domina JS desde cero.', image: 'https://img.freepik.com/vector-gratis/concepto-diseno-web-dibujado-mano_23-2147839737.jpg', rating: 5 },
-  { id: 3, title: 'Node.js', description: 'Backend con Node.js.', image: 'https://img.freepik.com/vector-gratis/concepto-diseno-web-dibujado-mano_23-2147839737.jpg', rating: 4 },
-  { id: 4, title: 'Python', description: 'Programación en Python.', image: 'https://img.freepik.com/vector-gratis/concepto-diseno-web-dibujado-mano_23-2147839737.jpg', rating: 5 },
-  { id: 5, title: 'UX/UI Design', description: 'Diseño de interfaces.', image: 'https://img.freepik.com/vector-gratis/concepto-diseno-web-dibujado-mano_23-2147839737.jpg', rating: 3 },
-  { id: 6, title: 'SQL & Databases', description: 'Bases de datos.', image: 'https://img.freepik.com/vector-gratis/concepto-diseno-web-dibujado-mano_23-2147839737.jpg', rating: 4 },
+  { id: 1, title: 'React Native', autor: 'Prof. Clara Bitwise', description: 'Desarrolla apps móviles.', image: 'https://img.freepik.com/vector-gratis/concepto-diseno-web-dibujado-mano_23-2147839737.jpg', numRating: 4.2, rating: 4, precio: 'MX$ 780' },
+  { id: 2, title: 'JavaScript', autor: 'Dr. Nolan Kernel', description: 'Domina JS desde cero.', image: 'https://img.freepik.com/vector-gratis/concepto-diseno-web-dibujado-mano_23-2147839737.jpg', numRating: 4.2, rating: 5, precio: 'MX$ 980' },
+  { id: 3, title: 'Node.js', autor: 'Ing. Tessa Cachewood', description: 'Backend con Node.js.', image: 'https://img.freepik.com/vector-gratis/concepto-diseno-web-dibujado-mano_23-2147839737.jpg', numRating: 4.2, rating: 4, precio: 'MX$ 567'},
+  { id: 4, title: 'Python', autor: 'Prof. Clara Bitwise',description: 'Programación en Python.', image: 'https://img.freepik.com/vector-gratis/concepto-diseno-web-dibujado-mano_23-2147839737.jpg', numRating: 4.2, rating: 5, precio: 'MX$ 936'},
+  { id: 5, title: 'UX/UI Design', autor: 'Dr. Nolan Kernel', description: 'Diseño de interfaces.', image: 'https://img.freepik.com/vector-gratis/concepto-diseno-web-dibujado-mano_23-2147839737.jpg', numRating: 4.2, rating: 3, precio: 'MX$ 167'},
+  { id: 6, title: 'SQL & Databases', autor: 'Prof. Clara Bitwise', description: 'Bases de datos.', image: 'https://img.freepik.com/vector-gratis/concepto-diseno-web-dibujado-mano_23-2147839737.jpg', numRating: 4.2, rating: 4, precio: 'MX$ 925'},
 ];
 
 const Courses = () => {
@@ -31,8 +31,10 @@ const Courses = () => {
     >
       <Image source={{ uri: course.image }} style={styles.cardImage} />
       <Text style={styles.cardTitle}>{course.title}</Text>
+      <Text style={styles.autor}>{course.autor}</Text>
       <Text style={styles.cardDescription}>{course.description}</Text>
-      {renderStars(course.rating)}
+      <Text style={styles.rank}>{course.numRating} {renderStars(course.rating)}</Text> 
+      <Text style={styles.textPrice}>{course.precio}</Text>
     </TouchableOpacity>
   );
 
@@ -41,7 +43,6 @@ const Courses = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.sectionTitle}>Nuevos Cursos</Text>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.scrollView}>
         {firstHalf.map(renderCourse)}
       </ScrollView>
@@ -76,7 +77,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ddd',
     width: 160,
-    alignItems: 'center',
+    alignItems: 'left',
   },
   cardImage: {
     width: '100%',
@@ -87,16 +88,28 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    textAlign: 'center',
+    textAlign: 'left',
   },
   cardDescription: {
-    fontSize: 12,
+    fontSize: 14,
     color: '#666',
-    textAlign: 'center',
+    textAlign: 'left',
     marginBottom: 5,
   },
   starsContainer: {
     flexDirection: 'row',
+  },
+  textPrice:{
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  rank:{
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  autor:{
+    fontSize: 10,
+    fontWeight: 'bold',
   },
 });
 
