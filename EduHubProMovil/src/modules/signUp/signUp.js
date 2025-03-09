@@ -9,6 +9,7 @@ import {
   ScrollView,
   Image
 } from 'react-native';
+import HomeScreen from '../homeScreen/HomeScreen';
 
 const SignUp = ({ navigation }) => {
   // Lógica para "INICIA SESIÓN" (arriba)
@@ -45,10 +46,10 @@ const SignUp = ({ navigation }) => {
         />
 
         {/* Botón de "INICIA SESIÓN" */}
-        <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+        <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate('Home', { HomeScreen })}>
           <Text style={styles.loginButtonText}>INICIA SESION</Text>
         </TouchableOpacity>
-
+        
         {/* Texto para iniciar sesión con Google */}
         <Text style={styles.googleText}>
           O INICIA SESION CON TU CUENTA DE GOOGLE

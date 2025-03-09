@@ -1,16 +1,23 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, ScrollView, Text, StyleSheet } from 'react-native';
 import Carrusel from '../../components/Carrusel';
 import Courses from '../../components/Courses';
 import Sidebar from '../../components/SideBar';
 
-export default function HomeScreen({ navigation }) {
+export default function HomeScreen({ navigation, route }) {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    if (route.params?.toggleSidebar) {
+      setIsSidebarOpen((prev) => !prev);
+      navigation.setParams({ toggleSidebar: false }); // Reset para evitar múltiples activaciones
+    }
+  }, [route.params?.toggleSidebar]);
+
   return (
     <View style={styles.container}>
-      {/* Sidebar debe estar fuera del flujo principal */}
-      <Sidebar />
+      <Sidebar isOpen={isSidebarOpen} toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
       
-      {/* Sección principal */}
       <View style={styles.mainContent}>
         <View style={styles.carruselContainer}>
           <Carrusel />
@@ -24,16 +31,17 @@ export default function HomeScreen({ navigation }) {
   );
 }
 
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: 'row', // Asegura que Sidebar y el contenido estén en línea
+    flexDirection: 'row',
   },
   mainContent: {
     flex: 1, 
   },
   carruselContainer: {
-    height: 200, // Espacio fijo para el carrusel
+    height: 200,
   },
   content: {
     flex: 1,

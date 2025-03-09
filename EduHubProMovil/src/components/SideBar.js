@@ -1,55 +1,58 @@
-import React, { useState, useRef } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Animated, Dimensions } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { 
+  View, Text, TouchableOpacity, StyleSheet, Animated, Dimensions, Pressable 
+} from 'react-native';
 
-const Sidebar = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const sidebarWidth = useRef(new Animated.Value(0)).current; // Mantiene el valor entre renders
+const { width, height } = Dimensions.get('window');
 
-  const toggleSidebar = () => {
-    Animated.timing(sidebarWidth, {
-      toValue: isOpen ? 0 : 200, 
-      duration: 200,
-      useNativeDriver: false,
-    }).start(() => setIsOpen(!isOpen));
-  };
+const Sidebar = ({ isOpen, toggleSidebar }) => {
+  const sidebarWidth = useRef(new Animated.Value(isOpen ? 250 : 0)).current;
+  const overlayOpacity = useRef(new Animated.Value(isOpen ? 0.5 : 0)).current;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(sidebarWidth, {
+        toValue: isOpen ? 250 : 0,
+        duration: 150,
+        useNativeDriver: false,
+      }),
+      Animated.timing(overlayOpacity, {
+        toValue: isOpen ? 0.5 : 0,
+        duration: 200,
+        useNativeDriver: false,
+      }),
+    ]).start();
+  }, [isOpen]);
 
   return (
-    <View style={styles.container}>
-      {!isOpen && (
-        <TouchableOpacity onPress={toggleSidebar} style={styles.toggleButton}>
-          <Text style={styles.toggleButtonText}>☰</Text>
-        </TouchableOpacity>
-      )}
-
-      <Animated.View style={[styles.sidebar, { width: sidebarWidth }]}>
-        <TouchableOpacity onPress={toggleSidebar} style={styles.closeButton}>
-          <Text style={styles.closeButtonText}>✖</Text>
-        </TouchableOpacity>
-        <Text style={styles.sidebarTitle}>Menú</Text>
-        <TouchableOpacity style={styles.sidebarItem}><Text>Inicio</Text></TouchableOpacity>
-        <TouchableOpacity style={styles.sidebarItem}><Text>Cursos</Text></TouchableOpacity>
-        <TouchableOpacity style={styles.sidebarItem}><Text>Perfil</Text></TouchableOpacity>
-      </Animated.View>
-    </View>
+    isOpen && (
+      <Pressable style={styles.overlay} onPress={toggleSidebar}>
+        <Animated.View style={[styles.sidebar, { width: sidebarWidth }]}>
+          <Text style={styles.sidebarTitle}>Menú</Text>
+          <TouchableOpacity style={styles.sidebarItem}><Text style={styles.itemText}>Inicio</Text></TouchableOpacity>
+          <TouchableOpacity style={styles.sidebarItem}><Text style={styles.itemText}>Cursos</Text></TouchableOpacity>
+          <TouchableOpacity style={styles.sidebarItem}><Text style={styles.itemText}>Perfil</Text></TouchableOpacity>
+        </Animated.View>
+        <Animated.View style={[styles.overlayBackground, { opacity: overlayOpacity }]} />
+      </Pressable>
+    )
   );
 };
 
-
-
 const styles = StyleSheet.create({
-  container: {
+  overlay: {
     position: 'absolute',
-    left: 0,
+    width,
+    height,
     top: 0,
-    height: Dimensions.get('window').height,
+    left: 0,
+    zIndex: 2,
   },
-  toggleButton: {
-    padding: 10,
+  overlayBackground: {
     position: 'absolute',
-    zIndex: 3,
-  },
-  toggleButtonText: {
-    fontSize: 24,
+    width,
+    height,
+    backgroundColor: 'black',
   },
   sidebar: {
     position: 'absolute',
@@ -60,7 +63,12 @@ const styles = StyleSheet.create({
     borderRightWidth: 1,
     borderRightColor: '#ccc',
     padding: 16,
-    zIndex: 2,
+    zIndex: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 10,
   },
   closeButton: {
     alignSelf: 'flex-end',
@@ -76,6 +84,20 @@ const styles = StyleSheet.create({
   },
   sidebarItem: {
     paddingVertical: 10,
+    marginVertical: 5,
+    backgroundColor: '#ddd',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 2, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  itemText: {
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 
