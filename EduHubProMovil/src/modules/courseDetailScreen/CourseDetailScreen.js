@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-const CourseDetailScreen = ({ route }) => {
+export default function CourseDetailScreen({ route }) {
   const { course } = route.params; // Recibe el curso seleccionado
 
   return (
@@ -28,5 +28,3 @@ const styles = StyleSheet.create({
     color: '#333',
   },
 });
-
-export default CourseDetailScreen;
