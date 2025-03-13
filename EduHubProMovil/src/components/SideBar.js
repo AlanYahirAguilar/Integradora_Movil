@@ -13,12 +13,12 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     Animated.parallel([
       Animated.timing(sidebarWidth, {
         toValue: isOpen ? 250 : 0,
-        duration: 25,
+        duration: 250,
         useNativeDriver: false,
       }),
       Animated.timing(overlayOpacity, {
         toValue: isOpen ? 0.5 : 0,
-        duration: 25,
+        duration: 250,
         useNativeDriver: false,
       }),
     ]).start();
@@ -28,9 +28,35 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     isOpen && (
       <Pressable style={styles.overlay} onPress={toggleSidebar}>
         <Animated.View style={[styles.sidebar, { width: sidebarWidth }]}>
+          {/* Header */}
+          <View style={styles.header}>
+            <TouchableOpacity style={styles.editButton}>
+              <Text style={styles.editButtonText}>Edit</Text>
+            </TouchableOpacity>
+            <Text style={styles.userName}>Johanna zuel</Text>
+          </View>
+
+          {/* Menu Items */}
           <TouchableOpacity style={styles.sidebarItem}><Text style={styles.itemText}>Inicio</Text></TouchableOpacity>
           <TouchableOpacity style={styles.sidebarItem}><Text style={styles.itemText}>Mis Cursos</Text></TouchableOpacity>
-          <TouchableOpacity style={styles.sidebarItem}><Text style={styles.itemText}>Categorias</Text></TouchableOpacity>
+          <TouchableOpacity style={styles.sidebarItemDropdown}>
+            <Text style={styles.itemText}>Categorias</Text>
+            <View style={styles.dropdown}>
+              <TouchableOpacity style={styles.dropdownItem}><Text style={styles.dropdownItemText}>Informatica</Text></TouchableOpacity>
+              <TouchableOpacity style={styles.dropdownItem}><Text style={styles.dropdownItemText}>Programación</Text></TouchableOpacity>
+              <TouchableOpacity style={styles.dropdownItem}><Text style={styles.dropdownItemText}>Comunicación</Text></TouchableOpacity>
+              <TouchableOpacity style={styles.dropdownItem}><Text style={styles.dropdownItemText}>Desarrollo web</Text></TouchableOpacity>
+              <TouchableOpacity style={styles.dropdownItem}><Text style={styles.dropdownItemText}>IOT</Text></TouchableOpacity>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.sidebarItem}><Text style={styles.itemText}>Inscripciones Pendientes</Text></TouchableOpacity>
+          <TouchableOpacity style={styles.sidebarItem}><Text style={styles.itemText}>Información de Pago</Text></TouchableOpacity>
+
+          {/* Footer */}
+          <View style={styles.footer}>
+            <TouchableOpacity style={styles.footerItem}><Text style={styles.footerItemText}>Cerrar Sesión</Text></TouchableOpacity>
+            <TouchableOpacity style={styles.footerItem}><Text style={styles.footerItemText}>Ayuda y Soporte</Text></TouchableOpacity>
+          </View>
         </Animated.View>
         <Animated.View style={[styles.overlayBackground, { opacity: overlayOpacity }]} />
       </Pressable>
@@ -69,17 +95,21 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 10,
   },
-  closeButton: {
-    alignSelf: 'flex-end',
-    padding: 10,
-  },
-  closeButtonText: {
-    fontSize: 18,
-  },
-  sidebarTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 16,
+  },
+  editButton: {
+    padding: 8,
+  },
+  editButtonText: {
+    fontSize: 16,
+  },
+  userName: {
+    fontSize: 18,
+    fontWeight: 'bold',
   },
   sidebarItem: {
     paddingVertical: 10,
@@ -94,8 +124,53 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
+  sidebarItemDropdown: {
+    paddingVertical: 10,
+    marginVertical: 5,
+    backgroundColor: '#ddd',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 2, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  dropdown: {
+    marginTop: 5,
+  },
+  dropdownItem: {
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+  },
+  dropdownItemText: {
+    fontSize: 16,
+  },
   itemText: {
     fontSize: 16,
+    fontWeight: 'bold',
+  },
+  footer: {
+    position: 'relative',
+    marginTop:  55,
+    width: '100%',
+  },
+  footerItem: {
+    paddingVertical: 12,
+    marginVertical: 5,
+    backgroundColor: '#ddd',
+    borderRadius: 8,
+    paddingHorizontal: 20,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 2, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  footerItemText: {
+    fontSize: 14,
     fontWeight: 'bold',
   },
 });
