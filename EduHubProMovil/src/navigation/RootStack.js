@@ -5,6 +5,9 @@ import CourseDetailScreen from '../modules/courseDetailScreen/CourseDetailScreen
 import SignIn from '../modules/signIn/signIn';
 import SignUp from '../modules/signUp/signUp';
 import CustomHeader from '../components/CustomHeader';
+import MyCoursesScreen from '../modules/myCourses/MyCoursesScreen';
+import PaymentInfoScreen from '../components/PaymentInfoScreen';
+import PendingEnrollmentsScreen from '../components/PendingEnrollmentsScreen';
 
 const Stack = createStackNavigator();
 
@@ -30,6 +33,28 @@ export const RootStack = () => {
         options={({ navigation }) => ({
           header: () => <CustomHeader toggleSidebar={() => navigation.setParams({ toggleSidebar: true })} />,
           title: 'Detalles del Curso'
+        })} 
+      />
+      <Stack.Screen name='mis cursos' component={MyCoursesScreen} options={({ navigation }) => ({
+          header: () => <CustomHeader toggleSidebar={() => navigation.setParams({ toggleSidebar: true })} />,
+          title: 'Mis Cursos'
+        })} 
+        />
+      {/* Nuevas pantallas agregadas */}
+      <Stack.Screen 
+        name="PaymentInfo" 
+        component={PaymentInfoScreen} 
+        options={({ navigation }) => ({
+          header: () => <CustomHeader toggleSidebar={() => navigation.setParams({ toggleSidebar: true })} />,
+          title: 'Información de Pago',
+        })} 
+      />
+      <Stack.Screen 
+        name="PendingEnrollments" 
+        component={PendingEnrollmentsScreen} 
+        options={({ navigation }) => ({
+          header: () => <CustomHeader toggleSidebar={() => navigation.setParams({ toggleSidebar: true })} />,
+          title: 'Inscripciones Pendientes',
         })} 
       />
     </Stack.Navigator>

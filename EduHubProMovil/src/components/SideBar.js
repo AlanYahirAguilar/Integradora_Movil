@@ -5,7 +5,7 @@ import {
 
 const { width, height } = Dimensions.get('window');
 
-const Sidebar = ({ isOpen, toggleSidebar }) => {
+const Sidebar = ({ isOpen, toggleSidebar, navigation }) => {
   const sidebarWidth = useRef(new Animated.Value(isOpen ? 250 : 0)).current;
   const overlayOpacity = useRef(new Animated.Value(isOpen ? 0.5 : 0)).current;
 
@@ -38,7 +38,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 
           {/* Menu Items */}
           <TouchableOpacity style={styles.sidebarItem}><Text style={styles.itemText}>Inicio</Text></TouchableOpacity>
-          <TouchableOpacity style={styles.sidebarItem}><Text style={styles.itemText}>Mis Cursos</Text></TouchableOpacity>
+          <TouchableOpacity style={styles.sidebarItem} onPress={() => navigation.navigate('mis cursos')}><Text style={styles.itemText}>Mis Cursos</Text></TouchableOpacity>
           <TouchableOpacity style={styles.sidebarItemDropdown}>
             <Text style={styles.itemText}>Categorias</Text>
             <View style={styles.dropdown}>

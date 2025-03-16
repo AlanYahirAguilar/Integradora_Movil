@@ -1,0 +1,106 @@
+// PaymentInfoScreen.js
+import React from 'react';
+import { View, Text, StyleSheet, Image } from 'react-native';
+
+export default function PaymentInfoScreen() {
+  const banks = [
+    {
+      name: 'BBVA',
+      accountNumber: '0123456789',
+      clabe: '123456789012345678',
+      titular: 'Admin1',
+    },
+    {
+      name: 'Santander',
+      accountNumber: '9876543210',
+      clabe: '876543210987654321',
+      titular: 'Admin2',
+    },
+  ];
+
+  return (
+    <View style={styles.container}>
+      {/* Título */}
+      <Text style={styles.title}>Información de Pago:</Text>
+
+      {/* Realiza tu pago a cualquiera de las siguientes cuentas */}
+      <Text style={styles.subtitle}>Realiza tu pago a cualquiera de las siguientes cuentas:</Text>
+
+      {/* Cuentas Bancarias */}
+      {banks.map((bank, index) => (
+        <View key={index} style={styles.bankContainer}>
+          <Text style={styles.bankName}>{`Banco: ${bank.name}`}</Text>
+          <Text style={styles.accountInfo}>{`Número de cuenta: ${bank.accountNumber}`}</Text>
+          <Text style={styles.accountInfo}>{`CLABE: ${bank.clabe}`}</Text>
+          <Text style={styles.accountInfo}>{`Titular: ${bank.titular}`}</Text>
+        </View>
+      ))}
+
+      {/* Instrucciones de Pago */}
+      <Text style={styles.instructionsTitle}>Instrucciones de Pago:</Text>
+      <View style={styles.instructionsContainer}>
+        <Text style={styles.instruction}>
+          - Realiza la transferencia o depósito en cualquiera de las cuentas mencionadas.
+        </Text>
+        <Text style={styles.instruction}>
+          - Asegúrate de dejar como referencia tu nombre completo y el nombre del curso en la referencia.
+        </Text>
+        <Text style={styles.instruction}>
+          - Guarda el comprobante de pago en formato PDF o imagen clara.
+        </Text>
+        <Text style={styles.instruction}>
+          - Regresa a la plataforma y sube tu voucher para validación.
+        </Text>
+      </View>
+
+      {/* Importante */}
+      <View style={styles.importantContainer}>
+        <Image style={styles.warningIcon} />
+        <Text style={styles.importantText}>
+          Importante: Si tu pago no es validado correctamente, tu inscripción no será procesada.
+        </Text>
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    padding: 16,
+  },
+  title: {
+
+  },
+  subtitle: {
+    
+  },
+  bankContainer: {
+   
+  },
+  bankName: {
+   
+  },
+  accountInfo: {
+    
+  },
+  instructionsTitle: {
+   
+  },
+  instructionsContainer: {
+
+  },
+  instruction: {
+  
+  },
+  importantContainer: {
+ 
+  },
+  warningIcon: {
+  
+  },
+  importantText: {
+    
+  },
+});
