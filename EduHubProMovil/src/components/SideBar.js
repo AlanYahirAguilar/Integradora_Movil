@@ -51,6 +51,18 @@ const Sidebar = ({ isOpen, toggleSidebar, navigation }) => {
           </TouchableOpacity>
           <TouchableOpacity style={styles.sidebarItem}><Text style={styles.itemText}>Inscripciones Pendientes</Text></TouchableOpacity>
           <TouchableOpacity style={styles.sidebarItem}><Text style={styles.itemText}>Información de Pago</Text></TouchableOpacity>
+          <TouchableOpacity 
+            style={styles.sidebarItem}
+            onPress={() => navigation.navigate('voucher-verification')}
+          >
+            <Text style={styles.itemText}>Verificación de Voucher</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={styles.sidebarItem}
+            onPress={() => navigation.navigate('course-module-details')}
+          >
+            <Text style={styles.itemText}>Detalles de Módulo</Text>
+          </TouchableOpacity>
 
           {/* Footer */}
           <View style={styles.footer}>

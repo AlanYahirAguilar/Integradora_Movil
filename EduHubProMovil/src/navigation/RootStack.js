@@ -8,6 +8,8 @@ import CustomHeader from '../components/CustomHeader';
 import MyCoursesScreen from '../modules/myCourses/MyCoursesScreen';
 import PaymentInfoScreen from '../components/PaymentInfoScreen';
 import PendingEnrollmentsScreen from '../components/PendingEnrollmentsScreen';
+import VoucherVerification from '../components/4Eri/VoucherVerification';
+import CourseModuleDetails from '../components/4Eri/CourseModuleDetails';
 
 const Stack = createStackNavigator();
 
@@ -57,8 +59,25 @@ export const RootStack = () => {
           title: 'Inscripciones Pendientes',
         })} 
       />
+      {/* Ruta directa a la pantalla de verificación de voucher */}
+      <Stack.Screen 
+        name="voucher-verification" 
+        component={VoucherVerification} 
+        options={({ navigation }) => ({
+          header: () => <CustomHeader toggleSidebar={() => navigation.setParams({ toggleSidebar: true })} />,
+          title: 'Verificación de Voucher',
+        })} 
+      />
+      
+      {/* Ruta directa a la pantalla de detalles del módulo */}
+      <Stack.Screen 
+        name="course-module-details" 
+        component={CourseModuleDetails} 
+        options={({ navigation }) => ({
+          header: () => <CustomHeader toggleSidebar={() => navigation.setParams({ toggleSidebar: true })} />,
+          title: 'Detalles del Módulo',
+        })} 
+      />
     </Stack.Navigator>
   );
 };
-
-
