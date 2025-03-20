@@ -103,7 +103,7 @@ const courses = [
     status: 'Aprobado',
     action: 'Inscripción completa',
   },
-  // Agrega más cursos aquí...
+  // Agregar más cursos aquí...
 ];
 
 const styles = StyleSheet.create({
