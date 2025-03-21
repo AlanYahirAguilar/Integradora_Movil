@@ -30,7 +30,7 @@ const Sidebar = ({ isOpen, toggleSidebar, navigation }) => {
         <Animated.View style={[styles.sidebar, { width: sidebarWidth }]}>
           {/* Header */}
           <View style={styles.header}>
-            <TouchableOpacity style={styles.editButton}>
+            <TouchableOpacity style={styles.editButton} onPress={() => navigation.navigate('perfil')}>
               <Text style={styles.editButtonText}>Edit</Text>
             </TouchableOpacity>
             <Text style={styles.userName}>Johanna zuel</Text>
@@ -49,8 +49,8 @@ const Sidebar = ({ isOpen, toggleSidebar, navigation }) => {
               <TouchableOpacity style={styles.dropdownItem}><Text style={styles.dropdownItemText}>IOT</Text></TouchableOpacity>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.sidebarItem}><Text style={styles.itemText}>Inscripciones Pendientes</Text></TouchableOpacity>
-          <TouchableOpacity style={styles.sidebarItem}><Text style={styles.itemText}>Información de Pago</Text></TouchableOpacity>
+          <TouchableOpacity style={styles.sidebarItem} onPress={() => navigation.navigate('PendingEnrollments')}><Text style={styles.itemText}>Inscripciones Pendientes</Text></TouchableOpacity>
+          <TouchableOpacity style={styles.sidebarItem} onPress={() => navigation.navigate('PaymentInfo')}><Text style={styles.itemText}>Información de Pago</Text></TouchableOpacity>
           <TouchableOpacity 
             style={styles.sidebarItem}
             onPress={() => navigation.navigate('voucher-verification')}

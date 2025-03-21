@@ -8,8 +8,9 @@ import CustomHeader from '../components/CustomHeader';
 import MyCoursesScreen from '../modules/myCourses/MyCoursesScreen';
 import PaymentInfoScreen from '../components/PaymentInfoScreen';
 import PendingEnrollmentsScreen from '../components/PendingEnrollmentsScreen';
-import VoucherVerification from '../components/4Eri/VoucherVerification';
-import CourseModuleDetails from '../components/4Eri/CourseModuleDetails';
+import VoucherVerification from '../components/NUEVOOOOOS/VoucherVerification'
+import CourseModuleDetails from '../components/NUEVOOOOOS/CourseModuleDetails';
+import Profile from '../modules/profile/Profile';
 
 const Stack = createStackNavigator();
 
@@ -29,6 +30,9 @@ export const RootStack = () => {
           header: () => <CustomHeader toggleSidebar={() => navigation.setParams({ toggleSidebar: true })} />
         })} 
       />
+      <Stack.Screen name="perfil" component={Profile} options={({ navigation }) => ({ header: () => <CustomHeader toggleSidebar={() => navigation.setParams({ toggleSidebar: true })} />
+        })} 
+      /> 
       <Stack.Screen 
         name="CourseDetail" 
         component={CourseDetailScreen} 

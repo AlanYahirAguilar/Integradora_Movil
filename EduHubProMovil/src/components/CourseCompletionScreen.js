@@ -139,25 +139,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     padding: 16,
   },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: '#800080',
-    padding: 10,
-  },
-  menuIcon: {
-    width: 24,
-    height: 24,
-  },
-  logo: {
-    width: 50,
-    height: 50,
-  },
-  searchIcon: {
-    width: 24,
-    height: 24,
-  },
   congratulationsContainer: {
     marginBottom: 16,
   },

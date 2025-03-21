@@ -18,6 +18,7 @@ export default function CourseDetailScreen({ route }) {
 
   return (
     <View style={styles.container}>
+
       {/* Imagen del Curso */}
       <Image source={course.image} style={styles.courseImage} />
 
@@ -26,13 +27,13 @@ export default function CourseDetailScreen({ route }) {
 
       {/* Creado por */}
       <View style={styles.creatorContainer}>
-        <Image style={styles.userIcon} />
+        <Image  style={styles.userIcon} />
         <Text style={styles.creator}>Creado por: {course.instructor}</Text>
       </View>
 
       {/* Calificación */}
       <View style={styles.ratingContainer}>
-        <Image style={styles.starIcon} />
+        <Image  style={styles.starIcon} />
         <Text style={styles.rating}>{course.rating.toFixed(1)}</Text>
       </View>
 
@@ -41,12 +42,13 @@ export default function CourseDetailScreen({ route }) {
 
       {/* Contenido Clave */}
       <View style={styles.keyContentContainer}>
-        <Image style={styles.checkIcon} />
+        <Image  style={styles.checkIcon} />
         <Text style={styles.keyContentTitle}>Contenido clave:</Text>
       </View>
+      
       {/* {course.keyContent.map((item, index) => (
         <View key={index} style={styles.keyContentItem}>
-          <Image style={styles.checkIcon} />
+          <Image  style={styles.checkIcon} />
           <Text style={styles.keyContent}>{item}</Text>
         </View>
       ))} */}
@@ -58,14 +60,14 @@ export default function CourseDetailScreen({ route }) {
           <Text style={styles.infoText}>Duración: {course.duration} Hrs</Text>
         </View>
         <View style={styles.prerequisitesContainer}>
-          <Image style={styles.icon} />
+          <Image  style={styles.icon} />
           <Text style={styles.infoText}>Requisitos previos: {course.prerequisites}</Text>
         </View>
       </View>
 
       {/* Comentarios e Inscribirse */}
       <View style={styles.commentsContainer}>
-        <Image style={styles.commentIcon} />
+        <Image  style={styles.commentIcon} />
         <Text style={styles.comments}>{course.comments} Comentarios</Text>
       </View>
 
@@ -93,76 +95,122 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     padding: 16,
   },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#800080',
+    padding: 10,
+  },
   courseImage: {
-   
+    width: '100%',
+    height: 200,
+    borderRadius: 8,
+    marginBottom: 16,
   },
   title: {
- 
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 8,
   },
   creatorContainer: {
- 
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
   },
   userIcon: {
- 
+    width: 20,
+    height: 20,
+    marginRight: 4,
   },
   creator: {
- 
+    fontSize: 14,
+    color: '#800080',
   },
   ratingContainer: {
-  
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
   },
   starIcon: {
- 
+    width: 16,
+    height: 16,
+    marginRight: 4,
   },
   rating: {
-  
+    fontSize: 14,
+    color: '#800080',
   },
   description: {
-  
+    fontSize: 16,
+    color: '#333',
+    marginBottom: 16,
   },
   keyContentContainer: {
-   
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
   },
   checkIcon: {
-
+    width: 16,
+    height: 16,
+    marginRight: 4,
   },
   keyContentTitle: {
- 
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   keyContentItem: {
-  
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
   },
   keyContent: {
-    
+    fontSize: 14,
   },
   infoContainer: {
-  
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 16,
   },
   durationContainer: {
-
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   prerequisitesContainer: {
- 
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   icon: {
-    
+    width: 16,
+    height: 16,
+    marginRight: 4,
   },
   infoText: {
-    
+    fontSize: 14,
   },
   commentsContainer: {
-   
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
   },
   commentIcon: {
-  
+    width: 16,
+    height: 16,
+    marginRight: 4,
   },
   comments: {
-   
+    fontSize: 14,
   },
   enrollButton: {
-   
+    backgroundColor: '#800080',
+    padding: 12,
+    borderRadius: 8,
+    alignItems: 'center',
   },
   enrollButtonText: {
-
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });

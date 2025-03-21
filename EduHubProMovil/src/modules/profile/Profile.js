@@ -13,16 +13,6 @@ export default function Profile() {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity>
-          <Image source={require('./path/to/menu-icon.png')} style={styles.menuIcon} />
-        </TouchableOpacity>
-        <Image source={require('./path/to/logo.png')} style={styles.logo} />
-        <TouchableOpacity>
-          <Image source={require('./path/to/search-icon.png')} style={styles.searchIcon} />
-        </TouchableOpacity>
-      </View>
 
       {/* Perfil */}
       <Text style={styles.title}>Perfil:</Text>
@@ -31,9 +21,9 @@ export default function Profile() {
       <View style={styles.studentContainer}>
         <Text style={styles.studentLabel}>Estudiante:</Text>
         <View style={styles.profileInfo}>
-          <Image source={require('./path/to/user-avatar.png')} style={styles.avatar} />
+          <Image style={styles.avatar} />
           <TouchableOpacity>
-            <Image source={require('./path/to/edit-icon.png')} style={styles.editIcon} />
+            <Image style={styles.editIcon} />
           </TouchableOpacity>
         </View>
         <View style={styles.infoItem}>
@@ -63,25 +53,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     padding: 16,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: '#800080',
-    padding: 10,
-  },
-  menuIcon: {
-    width: 24,
-    height: 24,
-  },
-  logo: {
-    width: 50,
-    height: 50,
-  },
-  searchIcon: {
-    width: 24,
-    height: 24,
   },
   title: {
     fontSize: 20,

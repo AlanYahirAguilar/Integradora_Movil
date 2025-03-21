@@ -71,36 +71,78 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   title: {
-
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginTop: 8,
+    marginBottom: 8,
   },
   subtitle: {
-    
+    fontSize: 16,
+    color: '#333',
+    marginBottom: 8,
   },
   bankContainer: {
-   
+    backgroundColor: '#f0f0f0',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 14,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 5,
   },
   bankName: {
-   
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 4,
   },
   accountInfo: {
-    
+    fontSize: 14,
+    color: '#333',
+    marginBottom: 4,
   },
   instructionsTitle: {
-   
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginTop: 12,
+    marginBottom: 8,
   },
   instructionsContainer: {
-
+    backgroundColor: '#f0f0f0',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 5,
   },
   instruction: {
-  
+    fontSize: 12,
+    color: '#333',
+    marginBottom: 4,
   },
   importantContainer: {
- 
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#800080',
+    padding: 14,
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 5,
   },
   warningIcon: {
-  
+    width: 20,
+    height: 20,
+    marginRight: 2,
   },
   importantText: {
-    
+    fontSize: 14,
+    color: '#fff',
   },
 });

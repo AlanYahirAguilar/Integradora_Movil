@@ -4,7 +4,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import ProgressBar from 'react-native-progress/Bar'; // Importar Progress.Bar
 import { useNavigation } from '@react-navigation/native';
 
-export default function MyCoursesScreen ({ route, navigate }) {
+export default function MyCoursesScreen() {
   const navigation = useNavigation();
 
   const courses = [
@@ -31,7 +31,6 @@ export default function MyCoursesScreen ({ route, navigate }) {
 
   return (
     <View style={styles.container}>
-
       {/* Mis Cursos */}
       <Text style={styles.title}>Mis Cursos:</Text>
 
@@ -39,7 +38,8 @@ export default function MyCoursesScreen ({ route, navigate }) {
       <View style={styles.coursesContainer}>
         {courses.map((course) => (
           <TouchableOpacity key={course.id} onPress={() => handleCoursePress(course.id)} style={styles.courseCard}>
-            <Image source={course.image} style={styles.courseImage} />
+            {/* Usar uri para imágenes remotas */}
+            <Image source={{ uri: course.image }} style={styles.courseImage} />
             <View style={styles.courseInfo}>
               <Text style={styles.courseTitle}>{course.title}</Text>
               <Text style={styles.instructor}>{course.instructor}</Text>
@@ -50,7 +50,7 @@ export default function MyCoursesScreen ({ route, navigate }) {
       </View>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -59,27 +59,49 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   title: {
-  
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginTop: 16,
+    marginBottom: 8,
   },
   coursesContainer: {
-   
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
   },
   courseCard: {
-
+    width: '48%',
+    backgroundColor: '#f0f0f0',
+    borderRadius: 8,
+    padding: 16,
+    marginVertical: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 5,
   },
   courseImage: {
-
+    width: '100%',
+    height: 150,
+    borderRadius: 8,
+    marginBottom: 8,
   },
   courseInfo: {
- 
+    marginTop: 8,
   },
   courseTitle: {
-
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 4,
   },
   instructor: {
- 
+    fontSize: 14,
+    color: '#800080',
+    marginBottom: 8,
   },
   progressBar: {
-
+    height: 8,
+    borderRadius: 4,
   },
 });
