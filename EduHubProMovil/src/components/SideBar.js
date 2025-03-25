@@ -57,6 +57,23 @@ const Sidebar = ({ isOpen, toggleSidebar, navigation }) => {
           >
             <Text style={styles.itemText}>Verificación de Voucher</Text>
           </TouchableOpacity>
+
+          
+
+          <TouchableOpacity 
+            style={styles.sidebarItem}
+            onPress={() => navigation.navigate('recoverPass')}
+          >
+            <Text style={styles.itemText}>Recuperar Contraseña</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={styles.sidebarItem}
+            onPress={() => navigation.navigate('coursePayment')}
+          >
+            <Text style={styles.itemText}>Pagos de Cursos</Text>
+          </TouchableOpacity>
+
           <TouchableOpacity 
             style={styles.sidebarItem}
             onPress={() => navigation.navigate('course-module-details')}
@@ -101,10 +118,7 @@ const styles = StyleSheet.create({
     borderRightColor: '#ccc',
     padding: 16,
     zIndex: 3,
-    shadowColor: '#000',
-    shadowOffset: { width: 4, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
+    boxShadow: '4px 4px 5px rgba(0, 0, 0, 0.3)',
     elevation: 10,
   },
   header: {
@@ -130,10 +144,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 12,
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 2, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
+    boxShadow: '2px 2px 4px rgba(0, 0, 0, 0.3)',
     elevation: 5,
   },
   sidebarItemDropdown: {
@@ -143,10 +154,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 12,
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 2, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
+    boxShadow: '2px 2px 4px rgba(0, 0, 0, 0.3)',
     elevation: 5,
   },
   dropdown: {
@@ -175,10 +183,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 20,
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 2, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
+    boxShadow: '2px 2px 4px rgba(0, 0, 0, 0.3)',
     elevation: 5,
   },
   footerItemText: {

@@ -1,7 +1,7 @@
 // CourseCompletionScreen.js
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput } from 'react-native';
-import StarRating from 'react-native-star-rating'; // Importamos el componente de calificación
+import { AirbnbRating } from 'react-native-ratings'; // Updated import for star rating
 
 export default function CourseCompletionScreen({ navigation }) {
   // Comentamos los estados relacionados con la evaluación y alertas
@@ -61,26 +61,26 @@ export default function CourseCompletionScreen({ navigation }) {
         {/* Calificación del Contenido */}
         <View style={styles.ratingContainer}>
           <Text style={styles.ratingQuestion}>¿Qué te pareció el contenido del curso?</Text>
-          <StarRating
-            disabled={true} // Desactivamos la interacción
-            maxStars={5}
-            rating={4} // Valor estático para mostrar una calificación fija
-            starSize={24}
-            fullStarColor="#800080"
-            emptyStarColor="#ccc"
+          <AirbnbRating
+            count={5}
+            defaultRating={4}
+            size={24}
+            showRating={false}
+            isDisabled={true}
+            selectedColor="#800080"
           />
         </View>
 
         {/* Calificación del Desempeño del Maestro */}
         <View style={styles.ratingContainer}>
           <Text style={styles.ratingQuestion}>¿Qué te pareció el desempeño del maestro?</Text>
-          <StarRating
-            disabled={true} // Desactivamos la interacción
-            maxStars={5}
-            rating={5} // Valor estático para mostrar una calificación fija
-            starSize={24}
-            fullStarColor="#800080"
-            emptyStarColor="#ccc"
+          <AirbnbRating
+            count={5}
+            defaultRating={5}
+            size={24}
+            showRating={false}
+            isDisabled={true}
+            selectedColor="#800080"
           />
         </View>
 

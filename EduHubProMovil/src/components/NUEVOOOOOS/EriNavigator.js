@@ -2,9 +2,6 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import VoucherVerification from './VoucherVerification';
 import CourseModuleDetails from './CourseModuleDetails';
-import EriView2 from './EriView2';
-import EriView3 from './EriView3';
-import EriView4 from './EriView4';
 
 const Stack = createStackNavigator();
 
