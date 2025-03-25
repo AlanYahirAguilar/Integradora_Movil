@@ -91,7 +91,7 @@ export const RootStack = () => {
         })} 
       />
 
-      <Stack.Screen
+      {/* <Stack.Screen
       name="leccion"
       componente={LessonScreen}
       options={({ route }) => ({
@@ -106,7 +106,7 @@ export const RootStack = () => {
     component={CourseCompletionScreenn}
     options={({navigation}) => ({header: () => <CustomHeader toggleSidebar={() => navigation.setParams({ toggleSidebar: true })} />,
     title: 'Detalles del Módulo',})}
-    />
+    /> */}
 
     <Stack.Screen 
     name="informatica"

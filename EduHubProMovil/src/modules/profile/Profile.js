@@ -1,42 +1,133 @@
-import React, { useState } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, TextInput } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, Image, TouchableOpacity, StyleSheet, TextInput, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Profile() {
-  const [name, setName] = useState('Ximena Renata Esqueda Soto');
-  const [email, setEmail] = useState('example.proyect@gmail.com');
-  const [password, setPassword] = useState('***************');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [profileImage, setProfileImage] = useState('https://preview.redd.it/prwa3v3e7cu91.jpg?width=1080&crop=smart&auto=webp&s=cb9cc451b72b6b82f29c1cedca8d393f4a20f991'); // Imagen predeterminada
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [isEditingEmail, setIsEditingEmail] = useState(false);
+  const [isEditingPassword, setIsEditingPassword] = useState(false);
 
+  // Función para cargar datos desde AsyncStorage
+  const loadData = async () => {
+    try {
+      const storedName = await AsyncStorage.getItem('profileName');
+      const storedEmail = await AsyncStorage.getItem('profileEmail');
+      const storedPassword = await AsyncStorage.getItem('profilePassword');
+      const storedImage = await AsyncStorage.getItem('profileImage');
+
+      if (storedName) setName(storedName);
+      if (storedEmail) setEmail(storedEmail);
+      if (storedPassword) setPassword(storedPassword);
+      if (storedImage) setProfileImage(storedImage);
+    } catch (error) {
+      console.error('Error al cargar datos:', error);
+    }
+  };
+
+  // Cargar datos cuando el componente se monta
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  // Función para guardar datos en AsyncStorage
+  const saveData = async () => {
+    try {
+      await AsyncStorage.setItem('profileName', name);
+      await AsyncStorage.setItem('profileEmail', email);
+      await AsyncStorage.setItem('profilePassword', password);
+      await AsyncStorage.setItem('profileImage', profileImage);
+    } catch (error) {
+      console.error('Error al guardar datos:', error);
+    }
+  };
+
+  // Manejar el guardado de cambios
   const handleSaveChanges = () => {
-    // Aquí puedes implementar la lógica para guardar los cambios
-    console.log('Guardar cambios:', { name, email, password });
+    saveData();
+    Alert.alert('Éxito', 'Los cambios han sido guardados correctamente.');
+  };
+
+  // Función para cambiar la foto de perfil
+  const changeProfileImage = () => {
+    // Simulamos la selección de una nueva imagen (en una aplicación real, usarías un módulo como react-native-image-picker)
+    const newImage = 'https://preview.redd.it/prwa3v3e7cu91.jpg?width=1080&crop=smart&auto=webp&s=cb9cc451b72b6b82f29c1cedca8d393f4a20f991'; // URL de ejemplo
+    setProfileImage(newImage);
   };
 
   return (
     <View style={styles.container}>
-
-      {/* Perfil */}
+      {/* Título */}
       <Text style={styles.title}>Perfil:</Text>
 
-      {/* Estudiante */}
+      {/* Contenedor del Estudiante */}
       <View style={styles.studentContainer}>
         <Text style={styles.studentLabel}>Estudiante:</Text>
+
+        {/* Foto de Perfil */}
         <View style={styles.profileInfo}>
-          <Image style={styles.avatar} />
-          <TouchableOpacity>
-            <Image style={styles.editIcon} />
+          <Image source={{ uri: profileImage }} style={styles.avatar} />
+          <TouchableOpacity onPress={changeProfileImage} style={styles.editIconContainer}>
+            <Image
+              source={require('../../../assets/Editar.png')} // Ícono de lápiz
+              style={styles.editIcon}
+            />
           </TouchableOpacity>
         </View>
+
+        {/* Nombre Completo */}
         <View style={styles.infoItem}>
           <Text style={styles.label}>Nombre Completo</Text>
-          <TextInput value={name} onChangeText={setName} style={styles.input} />
+          <TextInput
+            value={name}
+            onChangeText={setName}
+            editable={isEditingName}
+            style={styles.input}
+          />
+          <TouchableOpacity onPress={() => setIsEditingName(!isEditingName)}>
+            <Image
+              source={require('../../../assets/Editar.png')} // Ícono de lápiz
+              style={styles.editIcon}
+            />
+          </TouchableOpacity>
         </View>
+
+        {/* Correo Electrónico */}
         <View style={styles.infoItem}>
           <Text style={styles.label}>Correo electrónico</Text>
-          <TextInput value={email} onChangeText={setEmail} style={styles.input} />
+          <TextInput
+            value={email}
+            onChangeText={setEmail}
+            editable={isEditingEmail}
+            style={styles.input}
+          />
+          <TouchableOpacity onPress={() => setIsEditingEmail(!isEditingEmail)}>
+            <Image
+              source={require('../../../assets/Editar.png')} // Ícono de lápiz
+              style={styles.editIcon}
+            />
+          </TouchableOpacity>
         </View>
+
+        {/* Contraseña */}
         <View style={styles.infoItem}>
           <Text style={styles.label}>Contraseña</Text>
-          <TextInput value={password} onChangeText={setPassword} secureTextEntry style={styles.input} />
+          <TextInput
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry={!isEditingPassword}
+            editable={isEditingPassword}
+            style={styles.input}
+          />
+          <TouchableOpacity onPress={() => setIsEditingPassword(!isEditingPassword)}>
+            <Image
+              source={require('../../../assets/Editar.png')} // Ícono de lápiz
+              style={styles.editIcon}
+            />
+          </TouchableOpacity>
         </View>
       </View>
 
@@ -46,7 +137,7 @@ export default function Profile() {
       </TouchableOpacity>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -88,6 +179,16 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  editIconContainer: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    backgroundColor: '#0ff',
+    borderRadius: 12,
+    padding: 4,
   },
   editIcon: {
     width: 24,
@@ -95,16 +196,16 @@ const styles = StyleSheet.create({
   },
   infoItem: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 8,
   },
   label: {
     fontSize: 16,
     fontWeight: 'bold',
+    flex: 1,
   },
   input: {
-    flex: 1,
+    flex: 2,
     marginLeft: 8,
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',

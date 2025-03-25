@@ -8,10 +8,12 @@ const CustomHeader = ({ toggleSidebar }) => {
         <TouchableOpacity onPress={toggleSidebar} style={styles.menuButton}>
         <Icon name="menu" size={35} color="#fff" />
         </TouchableOpacity>
+          <View style={styles.contentlogo}>
           <Image
                   source={require('../../assets/logoEduHub.png')}
                   style={styles.logo} 
               />
+          </View>
           <TouchableOpacity style={styles.searchButton}>
           <Icon name="search" size={35} color="#fff" />
           </TouchableOpacity>
@@ -26,18 +28,23 @@ const styles = StyleSheet.create({
     backgroundColor: '#AA39AD',
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 12,
+    paddingHorizontal: 14,
   },
   menuButton: {
     marginRight: 20,
     width: 26, 
     color: '#fff'
   },
+  contentlogo:{
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
+  },
   logo: {
     width: 70,
     height: 70,
     marginBottom: 8,
-    marginHorizontal: 90, 
+    marginTop: 14,
 },
   searchButton:{
     marginLeft: 28,
