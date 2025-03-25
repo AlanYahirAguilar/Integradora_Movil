@@ -4,16 +4,17 @@ import Sidebar from '../../components/SideBar';
 
 const courses = [
   { id: '1', title: 'Hackers Éticos: El Arte de Defender', author: 'Dr. Iván Kernel', price: 'MX$980' },
-  { id: '2', title: 'Hackers Éticos: El Arte de Defender', author: 'Dr. Iván Kernel', price: 'MX$800' },
-  { id: '3', title: 'Hackers Éticos: El Arte de Defender', author: 'Dr. Iván Kernel', price: 'MX$1000' },
-  { id: '4', title: 'Hackers Éticos: El Arte de Defender', author: 'Dr. Iván Kernel', price: 'MX$1520' },
-  { id: '5', title: 'Hackers Éticos: El Arte de Defender', author: 'Dr. Iván Kernel', price: 'MX$560' },
-  { id: '6', title: 'Hackers Éticos: El Arte de Defender', author: 'Dr. Iván Kernel', price: 'MX$493' },
+  { id: '2', title: 'Por que el america es el mas grande', author: 'Dr. Iván Kernel', price: 'MX$800' },
+  { id: '3', title: 'Buenas practicas para programacion', author: 'Dr. Iván Kernel', price: 'MX$1000' },
+  { id: '4', title: 'cackers Éticos: El Arte de Defender', author: 'Dr. Iván Kernel', price: 'MX$1520' },
+  { id: '5', title: 'dackers Éticos: El Arte de Defender', author: 'Dr. Iván Kernel', price: 'MX$560' },
+  { id: '6', title: 'fackers Éticos: El Arte de Defender', author: 'Dr. Iván Kernel', price: 'MX$493' },
 ];
 
 const CoursePaymentsScreen = ({ navigation, route }) => {
   const [search, setSearch] = useState('');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [filteredCourses, setFilteredCourses] = useState([]);
 
   useEffect(() => {
     if (route.params?.toggleSidebar) {
@@ -21,7 +22,14 @@ const CoursePaymentsScreen = ({ navigation, route }) => {
       navigation.setParams({ toggleSidebar: false }); // Reset para evitar múltiples activaciones
     }
   }, [route.params?.toggleSidebar]);
-  
+
+  useEffect(() => {
+    const filtered = courses
+      .filter(course => course.title.toLowerCase().includes(search.toLowerCase()))
+      .sort((a, b) => a.title.localeCompare(b.title));
+    setFilteredCourses(filtered);
+  }, [search]);
+
   return (
     <View style={styles.container}>
       <Sidebar 
@@ -51,7 +59,7 @@ const CoursePaymentsScreen = ({ navigation, route }) => {
       
       {/* Lista de cursos */}
       <FlatList
-        data={courses}
+        data={filteredCourses}
         keyExtractor={(item) => item.id}
         numColumns={2}
         renderItem={({ item }) => (

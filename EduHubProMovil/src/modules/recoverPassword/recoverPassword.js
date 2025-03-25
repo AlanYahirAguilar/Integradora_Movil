@@ -25,7 +25,7 @@ const RecoverPassword = ({ navigation, route }) => {
       <View style={styles.header}>
         <Text style={styles.title}>¿Perdiste u olvidaste tu contraseña?</Text>
         {/* Imagen de recuperación de contraseña */}
-        <Image source={require('../../../assets/logoEduHub.png')} style={styles.image} />
+        <Image source={require('../../../assets/imagen4.png')} style={styles.image} />
       </View>
       
       {/* Sección inferior con formulario */}
