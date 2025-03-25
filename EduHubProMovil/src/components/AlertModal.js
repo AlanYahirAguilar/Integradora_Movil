@@ -5,7 +5,7 @@ import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 const AlertModal = ({ isVisible, type, message, onClose }) => {
   if (!isVisible) return null;
 
-//   const iconSource = type === 'success' ? require('./path/to/success-icon.png') : require('./path/to/error-icon.png');
+const iconSource = type === 'success' ? require('../../assets/Exito.png') : require('../../assets/Error.png');
 
   return (
     <View style={styles.modalContainer}>

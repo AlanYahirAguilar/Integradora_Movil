@@ -1,59 +1,50 @@
 // CourseCompletionScreen.js
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, TextInput } from 'react-native';
-import StarRating from 'react-native-star-rating';
-import AlertModal from './AlertModal'; // Importar el componente AlertModal
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput } from 'react-native';
+import StarRating from 'react-native-star-rating'; // Importamos el componente de calificación
 
 export default function CourseCompletionScreen({ navigation }) {
-  const [contentRating, setContentRating] = useState(0);
-  const [instructorRating, setInstructorRating] = useState(0);
-  const [comments, setComments] = useState('');
-  const [showAlert, setShowAlert] = useState(false);
-  const [alertType, setAlertType] = useState('success');
-  const [alertMessage, setAlertMessage] = useState('');
+  // Comentamos los estados relacionados con la evaluación y alertas
+  // const [contentRating, setContentRating] = useState(0);
+  // const [instructorRating, setInstructorRating] = useState(0);
+  // const [comments, setComments] = useState('');
+  // const [showAlert, setShowAlert] = useState(false);
+  // const [alertType, setAlertType] = useState('success');
+  // const [alertMessage, setAlertMessage] = useState('');
 
-  const handleCompleteEvaluation = () => {
-    // Simulando el envío de la evaluación
-    const evaluationData = {
-      contentRating,
-      instructorRating,
-      comments,
-    };
+  // Comentamos la función de envío de evaluación
+  // const handleCompleteEvaluation = () => {
+  //   // Simulando el envío de la evaluación
+  //   const evaluationData = {
+  //     contentRating,
+  //     instructorRating,
+  //     comments,
+  //   };
 
-    // Lógica simulada para enviar la evaluación al backend
-    setTimeout(() => {
-      if (Math.random() > 0.5) { // Simulando un éxito aleatorio
-        setAlertType('success');
-        setAlertMessage('¡Gracias por evaluar! Pronto recibirás tu certificado por correo electrónico.');
-      } else {
-        setAlertType('error');
-        setAlertMessage('Ocurrió un problema al enviar tu evaluación. Por favor, inténtalo de nuevo.');
-      }
-      setShowAlert(true);
-    }, 1000);
-  };
+  //   // Lógica simulada para enviar la evaluación al backend
+  //   setTimeout(() => {
+  //     if (Math.random() > 0.5) { // Simulando un éxito aleatorio
+  //       setAlertType('success');
+  //       setAlertMessage('¡Gracias por evaluar! Pronto recibirás tu certificado por correo electrónico.');
+  //     } else {
+  //       setAlertType('error');
+  //       setAlertMessage('Ocurrió un problema al enviar tu evaluación. Por favor, inténtalo de nuevo.');
+  //     }
+  //     setShowAlert(true);
+  //   }, 1000);
+  // };
 
-  const handleCloseAlert = () => {
-    setShowAlert(false);
-    if (alertType === 'success') {
-      // Navegar a la siguiente pantalla o cerrar esta pantalla
-      navigation.goBack();
-    }
-  };
+  // Comentamos la función de cierre de alerta
+  // const handleCloseAlert = () => {
+  //   setShowAlert(false);
+  //   if (alertType === 'success') {
+  //     // Navegar a la siguiente pantalla o cerrar esta pantalla
+  //     navigation.goBack();
+  //   }
+  // };
 
   return (
     <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity>
-          <Image source={require('./path/to/menu-icon.png')} style={styles.menuIcon} />
-        </TouchableOpacity>
-        <Image source={require('./path/to/logo.png')} style={styles.logo} />
-        <TouchableOpacity>
-          <Image source={require('./path/to/search-icon.png')} style={styles.searchIcon} />
-        </TouchableOpacity>
-      </View>
-
       {/* Mensaje de Felicitación */}
       <View style={styles.congratulationsContainer}>
         <Text style={styles.congratulationsTitle}>¡Felicitaciones!</Text>
@@ -71,10 +62,9 @@ export default function CourseCompletionScreen({ navigation }) {
         <View style={styles.ratingContainer}>
           <Text style={styles.ratingQuestion}>¿Qué te pareció el contenido del curso?</Text>
           <StarRating
-            disabled={false}
+            disabled={true} // Desactivamos la interacción
             maxStars={5}
-            rating={contentRating}
-            selectedStar={(rating) => setContentRating(rating)}
+            rating={4} // Valor estático para mostrar una calificación fija
             starSize={24}
             fullStarColor="#800080"
             emptyStarColor="#ccc"
@@ -85,10 +75,9 @@ export default function CourseCompletionScreen({ navigation }) {
         <View style={styles.ratingContainer}>
           <Text style={styles.ratingQuestion}>¿Qué te pareció el desempeño del maestro?</Text>
           <StarRating
-            disabled={false}
+            disabled={true} // Desactivamos la interacción
             maxStars={5}
-            rating={instructorRating}
-            selectedStar={(rating) => setInstructorRating(rating)}
+            rating={5} // Valor estático para mostrar una calificación fija
             starSize={24}
             fullStarColor="#800080"
             emptyStarColor="#ccc"
@@ -102,8 +91,8 @@ export default function CourseCompletionScreen({ navigation }) {
             multiline
             numberOfLines={4}
             placeholder="Escribe tus comentarios aquí..."
-            value={comments}
-            onChangeText={setComments}
+            editable={false} // Desactivamos la edición
+            value={"Este es un comentario de ejemplo."} // Valor estático
             style={styles.commentsInput}
           />
         </View>
@@ -117,18 +106,22 @@ export default function CourseCompletionScreen({ navigation }) {
         </View>
 
         {/* Botón Completar Evaluación */}
-        <TouchableOpacity onPress={handleCompleteEvaluation} style={styles.completeButton}>
+        <TouchableOpacity
+          onPress={() => console.log('Botón deshabilitado para maquetado')} // Desactivamos la acción
+          style={styles.completeButton}
+        >
           <Text style={styles.completeButtonText}>Completar evaluación</Text>
         </TouchableOpacity>
       </ScrollView>
 
       {/* Alert Modal */}
-      <AlertModal
+      {/* Comentamos el componente de alerta ya que no es necesario para el maquetado */}
+      {/* <AlertModal
         isVisible={showAlert}
         type={alertType}
         message={alertMessage}
         onClose={handleCloseAlert}
-      />
+      /> */}
     </View>
   );
 }

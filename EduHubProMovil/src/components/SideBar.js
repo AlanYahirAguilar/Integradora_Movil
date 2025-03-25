@@ -42,11 +42,11 @@ const Sidebar = ({ isOpen, toggleSidebar, navigation }) => {
           <TouchableOpacity style={styles.sidebarItemDropdown}>
             <Text style={styles.itemText}>Categorias</Text>
             <View style={styles.dropdown}>
-              <TouchableOpacity style={styles.dropdownItem}><Text style={styles.dropdownItemText}>Informatica</Text></TouchableOpacity>
-              <TouchableOpacity style={styles.dropdownItem}><Text style={styles.dropdownItemText}>Programación</Text></TouchableOpacity>
-              <TouchableOpacity style={styles.dropdownItem}><Text style={styles.dropdownItemText}>Comunicación</Text></TouchableOpacity>
-              <TouchableOpacity style={styles.dropdownItem}><Text style={styles.dropdownItemText}>Desarrollo web</Text></TouchableOpacity>
-              <TouchableOpacity style={styles.dropdownItem}><Text style={styles.dropdownItemText}>IOT</Text></TouchableOpacity>
+              <TouchableOpacity style={styles.dropdownItem} onPress={() => navigation.navigate('informatica')}><Text style={styles.dropdownItemText}>Informatica</Text></TouchableOpacity>
+              <TouchableOpacity style={styles.dropdownItem} onPress={() => navigation.navigate('programacion')}><Text style={styles.dropdownItemText}>Programación</Text></TouchableOpacity>
+              <TouchableOpacity style={styles.dropdownItem} onPress={() => navigation.navigate('comunicacion')}><Text style={styles.dropdownItemText}>Comunicación</Text></TouchableOpacity>
+              <TouchableOpacity style={styles.dropdownItem} onPress={() => navigation.navigate('desarrollo')}><Text style={styles.dropdownItemText}>Desarrollo web</Text></TouchableOpacity>
+              <TouchableOpacity style={styles.dropdownItem} onPress={() => navigation.navigate('iot')}><Text style={styles.dropdownItemText}>IOT</Text></TouchableOpacity>
             </View>
           </TouchableOpacity>
           <TouchableOpacity style={styles.sidebarItem} onPress={() => navigation.navigate('PendingEnrollments')}><Text style={styles.itemText}>Inscripciones Pendientes</Text></TouchableOpacity>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const CustomHeader = ({ toggleSidebar }) => {
@@ -8,15 +8,21 @@ const CustomHeader = ({ toggleSidebar }) => {
         <TouchableOpacity onPress={toggleSidebar} style={styles.menuButton}>
         <Icon name="menu" size={35} color="#fff" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle} >EduHub Pro</Text> 
-      </View>
+          <Image
+                  source={require('../../assets/logoEduHub.png')}
+                  style={styles.logo} 
+              />
+          <TouchableOpacity style={styles.searchButton}>
+          <Icon name="search" size={35} color="#fff" />
+          </TouchableOpacity>
+        </View>
     );
   };
   
 
 const styles = StyleSheet.create({
   header: {
-    height: 60,
+    height: 70,
     backgroundColor: '#AA39AD',
     flexDirection: 'row',
     alignItems: 'center',
@@ -27,12 +33,17 @@ const styles = StyleSheet.create({
     width: 26, 
     color: '#fff'
   },
-  headerTitle: {
-    fontSize: 24,
-    color: '#fff',
-    alignContent: 'center',
-    paddingHorizontal: 62
-  },
+  logo: {
+    width: 70,
+    height: 70,
+    marginBottom: 8,
+    marginHorizontal: 90, 
+},
+  searchButton:{
+    marginLeft: 28,
+    width: 26, 
+    color: '#fff'
+  }
 });
 
 export default CustomHeader;
