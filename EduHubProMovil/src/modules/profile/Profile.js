@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, TextInput, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as ImagePicker from 'expo-image-picker'; // Biblioteca de Expo para seleccionar imágenes
 
 export default function Profile() {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [name, setName] = useState('Jhoana Zuel');
+  const [email, setEmail] = useState('example@gmail.com');
+  const [password, setPassword] = useState('123456');
   const [profileImage, setProfileImage] = useState('https://preview.redd.it/prwa3v3e7cu91.jpg?width=1080&crop=smart&auto=webp&s=cb9cc451b72b6b82f29c1cedca8d393f4a20f991'); // Imagen predeterminada
   const [isEditingName, setIsEditingName] = useState(false);
   const [isEditingEmail, setIsEditingEmail] = useState(false);
@@ -48,14 +49,34 @@ export default function Profile() {
   // Manejar el guardado de cambios
   const handleSaveChanges = () => {
     saveData();
-    Alert.alert('Éxito', 'Los cambios han sido guardados correctamente.');
+    Alert.alert(
+      'Éxito',
+      'Los cambios han sido guardados correctamente.',
+      [{ text: 'OK', onPress: () => console.log('Cambios guardados') }],
+      { cancelable: true }
+    );
   };
 
-  // Función para cambiar la foto de perfil
-  const changeProfileImage = () => {
-    // Simulamos la selección de una nueva imagen (en una aplicación real, usarías un módulo como react-native-image-picker)
-    const newImage = 'https://preview.redd.it/prwa3v3e7cu91.jpg?width=1080&crop=smart&auto=webp&s=cb9cc451b72b6b82f29c1cedca8d393f4a20f991'; // URL de ejemplo
-    setProfileImage(newImage);
+  // Función para cambiar la foto de perfil con expo-image-picker
+  const changeProfileImage = async () => {
+    // Solicitar permiso para acceder a la galería
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('Permiso denegado', 'Se requiere acceso a la galería para seleccionar una imagen.');
+      return;
+    }
+
+    // Abrir la galería para seleccionar una imagen
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptionsptions.Images,
+      allowsEditing: true, // Permite recortar la imagen
+      aspect: [1, 1], // Proporción de recorte (cuadrada)
+      quality: 1, // Calidad de la imagen (0 = baja, 1 = alta)
+    });
+
+    if (!result.canceled) {
+      setProfileImage(result.assets[0].uri); // Actualizar la foto de perfil
+    }
   };
 
   return (
@@ -67,14 +88,16 @@ export default function Profile() {
       <View style={styles.studentContainer}>
         <Text style={styles.studentLabel}>Estudiante:</Text>
 
-        {/* Foto de Perfil */}
+        {/* Foto de Perfil Centrada */}
         <View style={styles.profileInfo}>
-          <Image source={{ uri: profileImage }} style={styles.avatar} />
-          <TouchableOpacity onPress={changeProfileImage} style={styles.editIconContainer}>
-            <Image
-              source={require('../../../assets/Editar.png')} // Ícono de lápiz
-              style={styles.editIcon}
-            />
+          <TouchableOpacity onPress={changeProfileImage} style={styles.avatarContainer}>
+            <Image source={{ uri: profileImage }} style={styles.avatar} />
+            <View style={styles.editIconContainer}>
+              <Image
+                source={require('../../../assets/Editar.png')} // Ícono de lápiz
+                style={styles.editIcon}
+              />
+            </View>
           </TouchableOpacity>
         </View>
 
@@ -168,27 +191,32 @@ const styles = StyleSheet.create({
     padding: 8,
     borderRadius: 8,
     marginBottom: 16,
+    textAlign: 'center',
   },
   profileInfo: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'center', // Centra horizontalmente
+    justifyContent: 'center',
     marginBottom: 16,
   },
-  avatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    justifyContent: 'center',
+  avatarContainer: {
+    position: 'relative',
     alignItems: 'center',
+  },
+  avatar: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginBottom: 8,
   },
   editIconContainer: {
     position: 'absolute',
     bottom: 0,
     right: 0,
-    backgroundColor: '#0ff',
+    backgroundColor: '#fff',
     borderRadius: 12,
     padding: 4,
+    borderWidth: 1,
+    borderColor: '#ccc',
   },
   editIcon: {
     width: 24,

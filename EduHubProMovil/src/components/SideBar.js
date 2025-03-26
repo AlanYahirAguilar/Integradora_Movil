@@ -37,7 +37,7 @@ const Sidebar = ({ isOpen, toggleSidebar, navigation }) => {
           </View>
 
           {/* Menu Items */}
-          <TouchableOpacity style={styles.sidebarItem}><Text style={styles.itemText}>Inicio</Text></TouchableOpacity>
+          <TouchableOpacity style={styles.sidebarItem} onPress={() => navigation.navigate('Home')}><Text style={styles.itemText}>Inicio</Text></TouchableOpacity>
           <TouchableOpacity style={styles.sidebarItem} onPress={() => navigation.navigate('mis cursos')}><Text style={styles.itemText}>Mis Cursos</Text></TouchableOpacity>
           <TouchableOpacity style={styles.sidebarItemDropdown}>
             <Text style={styles.itemText}>Categorias</Text>

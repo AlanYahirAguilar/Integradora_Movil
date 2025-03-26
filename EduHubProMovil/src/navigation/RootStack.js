@@ -18,8 +18,8 @@ import CategoryDesarrolloWeb from '../modules/categories/CategoryDesarrolloWeb';
 import CategoryIOT from '../modules/categories/CategoryIOT';
 import CategoryProgramacion from '../modules/categories/CategoryProgramacion';
 import CategoryComunicacion from '../modules/categories/CategoryComunicacion';
-import RecoverPassword from '../modules/recoverPassword/recoverPassword';
 import CoursePaymentsScreen from '../modules/coursePayments/coursePayments';
+import RecoverPassword from '../modules/recoverPassword/recoverPassword';
 
 
 const Stack = createStackNavigator();
@@ -29,8 +29,8 @@ export const RootStack = () => {
     <Stack.Navigator initialRouteName="carga">
       {/* Pantallas sin header */}
       <Stack.Screen name="carga" component={SplashScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="signIn" component={SignIn} options={{ title: 'Inicio'}} />
-      <Stack.Screen name="SignUp" component={SignUp} options={{ title: 'Registro'}} />
+      <Stack.Screen name="signIn" component={SignIn} options={{ headerShown: false }} />
+      <Stack.Screen name="SignUp" component={SignUp} options={{ headerShown: false }} />
 
       {/* Pantallas con header personalizado */}
       <Stack.Screen 
@@ -82,22 +82,6 @@ export const RootStack = () => {
           title: 'Verificación de Voucher',
         })} 
       />
-      <Stack.Screen 
-        name="recoverPass" 
-        component={RecoverPassword} 
-        options={({ navigation, route }) => ({
-          header: () => <CustomHeader toggleSidebar={() => navigation.setParams({ toggleSidebar: true })} />,
-          title: 'Recuperar contraseña',
-        })} 
-      />
-      <Stack.Screen 
-        name="coursePayment" 
-        component={CoursePaymentsScreen} 
-        options={({ navigation, route }) => ({
-          header: () => <CustomHeader toggleSidebar={() => navigation.setParams({ toggleSidebar: true })} />,
-          title: 'Pagos de Cursos',
-        })} 
-      />
       
       {/* Ruta directa a la pantalla de detalles del módulo */}
       <Stack.Screen 
@@ -108,13 +92,8 @@ export const RootStack = () => {
           title: 'Detalles del Módulo',
         })} 
       />
-<<<<<<< HEAD
 
       {/* <Stack.Screen
-=======
-{/* 
-      <Stack.Screen
->>>>>>> 0b7e9273ce4f7ef76f691a9651580afaaf019099
       name="leccion"
       componente={LessonScreen}
       options={({ route }) => ({
@@ -166,6 +145,22 @@ export const RootStack = () => {
 <Stack.Screen 
     name="comunicacion"
     component={CategoryComunicacion}
+    options={({ navigation }) => ({
+      header: () => <CustomHeader toggleSidebar={() => navigation.setParams({ toggleSidebar: true })} />,
+      title: 'Comunicacion',
+    })}/>
+
+    <Stack.Screen
+    name='coursePayment'
+    component={CoursePaymentsScreen}
+    options={({ navigation }) => ({
+      header: () => <CustomHeader toggleSidebar={() => navigation.setParams({ toggleSidebar: true })} />,
+      title: 'Comunicacion',
+    })}/>
+
+<Stack.Screen
+    name='recoverPass'
+    component={RecoverPassword}
     options={({ navigation }) => ({
       header: () => <CustomHeader toggleSidebar={() => navigation.setParams({ toggleSidebar: true })} />,
       title: 'Comunicacion',
