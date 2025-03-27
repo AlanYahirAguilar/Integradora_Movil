@@ -1,12 +1,22 @@
 // MyCoursesScreen.js
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import Sidebar from '../../components/SideBar';
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import ProgressBar from 'react-native-progress/Bar'; // Importar Progress.Bar
 import { useNavigation } from '@react-navigation/native';
 
-export default function MyCoursesScreen() {
+export default function MyCoursesScreen({route}) {
   const navigation = useNavigation();
-
+   
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    
+    useEffect(() => {
+           if (route.params?.toggleSidebar) {
+             setIsSidebarOpen((prev) => !prev);
+             navigation.setParams({ toggleSidebar: false }); // Reset para evitar múltiples activaciones
+           }
+         }, [route.params?.toggleSidebar]);
+    
   const courses = [
     {
       id: '1',
@@ -33,7 +43,11 @@ export default function MyCoursesScreen() {
     <View style={styles.container}>
       {/* Mis Cursos */}
       <Text style={styles.title}>Mis Cursos:</Text>
-
+<Sidebar 
+                  isOpen={isSidebarOpen} 
+                  toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} 
+                  navigation={navigation} 
+                />
       {/* Cards de Cursos */}
       <View style={styles.coursesContainer}>
         {courses.map((course) => (

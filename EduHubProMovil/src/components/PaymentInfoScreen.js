@@ -1,8 +1,18 @@
 // PaymentInfoScreen.js
-import React from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
+import Sidebar from './SideBar';
+import React, { useState, useEffect } from 'react';
 
-export default function PaymentInfoScreen() {
+export default function PaymentInfoScreen({route, navigation}) {
+   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+   useEffect(() => {
+       if (route.params?.toggleSidebar) {
+         setIsSidebarOpen((prev) => !prev);
+         navigation.setParams({ toggleSidebar: false }); // Reset para evitar múltiples activaciones
+       }
+     }, [route.params?.toggleSidebar]);
+
   const banks = [
     {
       name: 'BBVA',
@@ -20,6 +30,12 @@ export default function PaymentInfoScreen() {
 
   return (
     <View style={styles.container}>
+      <Sidebar 
+              isOpen={isSidebarOpen} 
+              toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} 
+              navigation={navigation} 
+            />
+
       {/* Título */}
       <Text style={styles.title}>Información de Pago:</Text>
 

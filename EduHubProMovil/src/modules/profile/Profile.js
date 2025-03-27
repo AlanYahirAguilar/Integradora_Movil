@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import Sidebar from '../../components/SideBar';
 import { View, Text, Image, TouchableOpacity, StyleSheet, TextInput, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker'; // Biblioteca de Expo para seleccionar imágenes
 
-export default function Profile() {
+export default function Profile({ route, navigation }) {
   const [name, setName] = useState('Jhoana Zuel');
   const [email, setEmail] = useState('example@gmail.com');
   const [password, setPassword] = useState('123456');
@@ -11,6 +12,15 @@ export default function Profile() {
   const [isEditingName, setIsEditingName] = useState(false);
   const [isEditingEmail, setIsEditingEmail] = useState(false);
   const [isEditingPassword, setIsEditingPassword] = useState(false);
+
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    if (route.params?.toggleSidebar) {
+      setIsSidebarOpen((prev) => !prev);
+      navigation.setParams({ toggleSidebar: false }); // Reset para evitar múltiples activaciones
+    }
+  }, [route.params?.toggleSidebar]);
 
   // Función para cargar datos desde AsyncStorage
   const loadData = async () => {
@@ -68,7 +78,7 @@ export default function Profile() {
 
     // Abrir la galería para seleccionar una imagen
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptionsptions.Images,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images, // Corregido aquí
       allowsEditing: true, // Permite recortar la imagen
       aspect: [1, 1], // Proporción de recorte (cuadrada)
       quality: 1, // Calidad de la imagen (0 = baja, 1 = alta)
@@ -83,6 +93,11 @@ export default function Profile() {
     <View style={styles.container}>
       {/* Título */}
       <Text style={styles.title}>Perfil:</Text>
+      <Sidebar
+        isOpen={isSidebarOpen}
+        toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+        navigation={navigation}
+      />
 
       {/* Contenedor del Estudiante */}
       <View style={styles.studentContainer}>

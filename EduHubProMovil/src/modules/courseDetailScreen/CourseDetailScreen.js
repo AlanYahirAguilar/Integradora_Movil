@@ -1,11 +1,22 @@
 // CourseDetailScreen.js
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import Sidebar from '../../components/SideBar';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import CourseFullAlert from '../../components/CourseFullAlert'; // Importar el componente de alerta
 
-export default function CourseDetailScreen({ route }) {
+export default function CourseDetailScreen({ route, navigation }) {
   const { course } = route.params; // Recibe el curso seleccionado
 
+  
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  
+  useEffect(() => {
+         if (route.params?.toggleSidebar) {
+           setIsSidebarOpen((prev) => !prev);
+           navigation.setParams({ toggleSidebar: false }); // Reset para evitar múltiples activaciones
+         }
+       }, [route.params?.toggleSidebar]);
+  
   const handleSeeOtherCourses = () => {
     // Lógica para ver otros cursos
     console.log('Ver otros cursos');
@@ -18,7 +29,11 @@ export default function CourseDetailScreen({ route }) {
 
   return (
     <View style={styles.container}>
-
+    <Sidebar 
+                  isOpen={isSidebarOpen} 
+                  toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} 
+                  navigation={navigation} 
+                />
       {/* Imagen del Curso */}
       <Image source={course.image} style={styles.courseImage} />
 

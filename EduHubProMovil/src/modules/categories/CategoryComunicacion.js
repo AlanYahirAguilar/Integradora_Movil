@@ -1,10 +1,20 @@
-import React from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { Text, TouchableOpacity, View, Image, StyleSheet, ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome'; // Importa FontAwesome para los íconos
+import React, { useState, useEffect } from 'react';
+import Sidebar from '../../components/SideBar';
 
-export default function CategoryComunicacion() {
+
+export default function CategoryComunicacion({route}) {
   const navigation = useNavigation();
+const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+useEffect(() => {
+       if (route.params?.toggleSidebar) {
+         setIsSidebarOpen((prev) => !prev);
+         navigation.setParams({ toggleSidebar: false }); // Reset para evitar múltiples activaciones
+       }
+     }, [route.params?.toggleSidebar]);
 
   const courses = [
     {
@@ -63,7 +73,11 @@ export default function CategoryComunicacion() {
     <ScrollView contentContainerStyle={styles.container}>
       {/* Título */}
       <Text style={styles.title}>Cursos de Comunicación:</Text>
-
+    <Sidebar 
+                  isOpen={isSidebarOpen} 
+                  toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} 
+                  navigation={navigation} 
+                />
       {/* Grid de Cursos */}
       <View style={styles.coursesContainer}>
         {courses.map((course) => (

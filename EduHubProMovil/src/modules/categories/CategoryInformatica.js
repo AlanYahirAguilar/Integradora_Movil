@@ -1,10 +1,20 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import Sidebar from '../../components/SideBar';
 import { useNavigation } from '@react-navigation/native';
 import { Text, TouchableOpacity, View, Image, StyleSheet, ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome'; // Importa FontAwesome para los íconos
 
-export default function CategoryInformatica() {
+export default function CategoryInformatica({route}) {
   const navigation = useNavigation();
+
+const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+useEffect(() => {
+       if (route.params?.toggleSidebar) {
+         setIsSidebarOpen((prev) => !prev);
+         navigation.setParams({ toggleSidebar: false }); // Reset para evitar múltiples activaciones
+       }
+     }, [route.params?.toggleSidebar]);
 
   const courses = [
     {
@@ -63,7 +73,11 @@ export default function CategoryInformatica() {
     <ScrollView contentContainerStyle={styles.container}>
       {/* Título */}
       <Text style={styles.title}>Cursos de Informarica:</Text>
-
+    <Sidebar 
+                      isOpen={isSidebarOpen} 
+                      toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} 
+                      navigation={navigation} 
+                    />
       {/* Grid de Cursos */}
       <View style={styles.coursesContainer}>
         {courses.map((course) => (
