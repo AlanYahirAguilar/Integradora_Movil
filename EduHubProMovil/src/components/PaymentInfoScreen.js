@@ -3,15 +3,15 @@ import { View, Text, StyleSheet, Image } from 'react-native';
 import Sidebar from './SideBar';
 import React, { useState, useEffect } from 'react';
 
-export default function PaymentInfoScreen({route, navigation}) {
-   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+export default function PaymentInfoScreen({ route, navigation }) {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-   useEffect(() => {
-       if (route.params?.toggleSidebar) {
-         setIsSidebarOpen((prev) => !prev);
-         navigation.setParams({ toggleSidebar: false }); // Reset para evitar múltiples activaciones
-       }
-     }, [route.params?.toggleSidebar]);
+  useEffect(() => {
+    if (route.params?.toggleSidebar) {
+      setIsSidebarOpen((prev) => !prev);
+      navigation.setParams({ toggleSidebar: false }); // Reset para evitar múltiples activaciones
+    }
+  }, [route.params?.toggleSidebar]);
 
   const banks = [
     {
@@ -30,48 +30,62 @@ export default function PaymentInfoScreen({route, navigation}) {
 
   return (
     <View style={styles.container}>
-      <Sidebar 
-              isOpen={isSidebarOpen} 
-              toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} 
-              navigation={navigation} 
-            />
+      <Sidebar
+        isOpen={isSidebarOpen}
+        toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+        navigation={navigation}
+      />
 
       {/* Título */}
       <Text style={styles.title}>Información de Pago:</Text>
 
       {/* Realiza tu pago a cualquiera de las siguientes cuentas */}
       <Text style={styles.subtitle}>Realiza tu pago a cualquiera de las siguientes cuentas:</Text>
+  
 
       {/* Cuentas Bancarias */}
       {banks.map((bank, index) => (
         <View key={index} style={styles.bankContainer}>
-          <Text style={styles.bankName}>{`Banco: ${bank.name}`}</Text>
-          <Text style={styles.accountInfo}>{`Número de cuenta: ${bank.accountNumber}`}</Text>
-          <Text style={styles.accountInfo}>{`CLABE: ${bank.clabe}`}</Text>
-          <Text style={styles.accountInfo}>{`Titular: ${bank.titular}`}</Text>
+          <View style={styles.row}>
+            <Image source={require('../../assets/Bank.png')} style={styles.icon} />
+            <Text style={styles.bankName}>{`Banco: ${bank.name}`}</Text>
+          </View>
+          <View style={styles.row}>
+            <Image source={require('../../assets/Alfiler.png')} style={styles.icon} />
+            <Text style={styles.accountInfo}>{`Número de cuenta: ${bank.accountNumber}`}</Text>
+          </View>
+          <View style={styles.row}>
+            <Image source={require('../../assets/Clave.png')} style={styles.icon} />
+            <Text style={styles.accountInfo}>{`CLABE: ${bank.clabe}`}</Text>
+          </View>
+          <View style={styles.row}>
+            <Image source={require('../../assets/User.png')} style={styles.icon} />
+            <Text style={styles.accountInfo}>{`Titular: ${bank.titular}`}</Text>
+          </View>
         </View>
       ))}
 
       {/* Instrucciones de Pago */}
-      <Text style={styles.instructionsTitle}>Instrucciones de Pago:</Text>
+      <View style={styles.instructionsTitleContainer}>
+        <Image source={require('../../assets/Alfiler.png')} style={styles.icon} />
+        <Text style={styles.instructionsTitle}>Instrucciones de Pago:</Text>
+      </View>
       <View style={styles.instructionsContainer}>
-        <Text style={styles.instruction}>
-          - Realiza la transferencia o depósito en cualquiera de las cuentas mencionadas.
-        </Text>
-        <Text style={styles.instruction}>
-          - Asegúrate de dejar como referencia tu nombre completo y el nombre del curso en la referencia.
-        </Text>
-        <Text style={styles.instruction}>
-          - Guarda el comprobante de pago en formato PDF o imagen clara.
-        </Text>
-        <Text style={styles.instruction}>
-          - Regresa a la plataforma y sube tu voucher para validación.
-        </Text>
+        {[
+          'Realiza la transferencia o depósito en cualquiera de las cuentas mencionadas.',
+          'Asegúrate de dejar como referencia tu nombre completo y el nombre del curso en la referencia.',
+          'Guarda el comprobante de pago en formato PDF o imagen clara.',
+          'Regresa a la plataforma y sube tu voucher para validación.',
+        ].map((instruction, index) => (
+          <View key={index} style={styles.row}>
+            <Text style={styles.instruction}>{instruction}</Text>
+          </View>
+        ))}
       </View>
 
       {/* Importante */}
       <View style={styles.importantContainer}>
-        <Image style={styles.warningIcon} />
+        <Image source={require('../../assets/Warning.png')} style={styles.warningIcon} />
         <Text style={styles.importantText}>
           Importante: Si tu pago no es validado correctamente, tu inscripción no será procesada.
         </Text>
@@ -89,16 +103,32 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: 'bold',
-    marginTop: 8,
+    marginTop: 2,
     marginBottom: 8,
+    color: '#604274'
+  },
+  instructionsTitleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 6,
+    marginBottom: 8,
+  },
+  icon: {
+    width: 20,
+    height: 20,
+    marginRight: 6,
+  },
+  smallIcon: {
+    width: 16,
+    height: 16,
+    marginRight: 8,
   },
   subtitle: {
     fontSize: 16,
     color: '#333',
-    marginBottom: 8,
   },
   bankContainer: {
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#fff',
     borderRadius: 8,
     padding: 12,
     marginBottom: 14,
@@ -108,28 +138,29 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
   bankName: {
     fontSize: 16,
     fontWeight: 'bold',
-    marginBottom: 4,
   },
   accountInfo: {
     fontSize: 14,
     color: '#333',
-    marginBottom: 4,
   },
   instructionsTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    marginTop: 12,
-    marginBottom: 8,
   },
   instructionsContainer: {
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#fff',
     borderRadius: 8,
     padding: 12,
-    marginBottom: 16,
-    shadowColor: '#000',
+    marginBottom: 4,
+    shadowColor: '#fff',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
@@ -143,19 +174,19 @@ const styles = StyleSheet.create({
   importantContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#800080',
+    backgroundColor: '#AA39AD',
     padding: 14,
-    borderRadius: 8,
+    borderRadius: 18,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
-    shadowRadius: 4,
+    shadowRadius: 4, 
     elevation: 5,
   },
   warningIcon: {
     width: 20,
     height: 20,
-    marginRight: 2,
+    marginRight: 8,
   },
   importantText: {
     fontSize: 14,

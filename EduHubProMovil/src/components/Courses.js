@@ -4,12 +4,12 @@ import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 const courses = [
-  { id: 1, title: 'React Native', autor: 'Prof. Clara Bitwise', description: 'Desarrolla apps móviles.', image: 'https://img.freepik.com/vector-gratis/concepto-diseno-web-dibujado-mano_23-2147839737.jpg', numRating: 4.2, rating: 4, precio: 'MX$ 780' },
-  { id: 2, title: 'JavaScript', autor: 'Dr. Nolan Kernel', description: 'Domina JS desde cero.', image: 'https://img.freepik.com/vector-gratis/concepto-diseno-web-dibujado-mano_23-2147839737.jpg', numRating: 4.2, rating: 5, precio: 'MX$ 980' },
-  { id: 3, title: 'Node.js', autor: 'Ing. Tessa Cachewood', description: 'Backend con Node.js.', image: 'https://img.freepik.com/vector-gratis/concepto-diseno-web-dibujado-mano_23-2147839737.jpg', numRating: 4.2, rating: 4, precio: 'MX$ 567'},
-  { id: 4, title: 'Python', autor: 'Prof. Clara Bitwise',description: 'Programación en Python.', image: 'https://img.freepik.com/vector-gratis/concepto-diseno-web-dibujado-mano_23-2147839737.jpg', numRating: 4.2, rating: 5, precio: 'MX$ 936'},
-  { id: 5, title: 'UX/UI Design', autor: 'Dr. Nolan Kernel', description: 'Diseño de interfaces.', image: 'https://img.freepik.com/vector-gratis/concepto-diseno-web-dibujado-mano_23-2147839737.jpg', numRating: 4.2, rating: 3, precio: 'MX$ 167'},
-  { id: 6, title: 'SQL & Databases', autor: 'Prof. Clara Bitwise', description: 'Bases de datos.', image: 'https://img.freepik.com/vector-gratis/concepto-diseno-web-dibujado-mano_23-2147839737.jpg', numRating: 4.2, rating: 4, precio: 'MX$ 925'},
+  { id: 1, title: 'React Native', isFull: false, autor: 'Prof. Clara Bitwise', description: 'Desarrolla apps móviles.', image: 'https://img.freepik.com/vector-gratis/concepto-diseno-web-dibujado-mano_23-2147839737.jpg', numRating: 4.2, rating: 4, precio: 'MX$ 780' },
+  { id: 2, title: 'JavaScript',  isFull: true, autor: 'Dr. Nolan Kernel', description: 'Domina JS desde cero.', image: 'https://img.freepik.com/vector-gratis/concepto-diseno-web-dibujado-mano_23-2147839737.jpg', numRating: 4.2, rating: 5, precio: 'MX$ 980' },
+  { id: 3, title: 'Node.js',  isFull: false, autor: 'Ing. Tessa Cachewood', description: 'Backend con Node.js.', image: 'https://img.freepik.com/vector-gratis/concepto-diseno-web-dibujado-mano_23-2147839737.jpg', numRating: 4.2, rating: 4, precio: 'MX$ 567'},
+  { id: 4, title: 'Python', isFull: true, autor: 'Prof. Clara Bitwise',description: 'Programación en Python.', image: 'https://img.freepik.com/vector-gratis/concepto-diseno-web-dibujado-mano_23-2147839737.jpg', numRating: 4.2, rating: 5, precio: 'MX$ 936'},
+  { id: 5, title: 'UX/UI Design', isFull: false, autor: 'Dr. Nolan Kernel', description: 'Diseño de interfaces.', image: 'https://img.freepik.com/vector-gratis/concepto-diseno-web-dibujado-mano_23-2147839737.jpg', numRating: 4.2, rating: 3, precio: 'MX$ 167'},
+  { id: 6, title: 'SQL & Databases', isFull: true, autor: 'Prof. Clara Bitwise', description: 'Bases de datos.', image: 'https://img.freepik.com/vector-gratis/concepto-diseno-web-dibujado-mano_23-2147839737.jpg', numRating: 4.2, rating: 4, precio: 'MX$ 925'},
 ];
 
 const Courses = () => {
@@ -74,11 +74,11 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: '#fff',
     padding: 10,
-    borderRadius: 8,
+    borderRadius: 18,
     marginRight: 10,
     borderWidth: 1,
     borderColor: '#ddd',
-    width: 160,
+    width: 170,
     alignItems: 'left',
   },
   cardImage: {

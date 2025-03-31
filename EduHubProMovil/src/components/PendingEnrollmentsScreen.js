@@ -4,9 +4,8 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, FlatList, Image } 
 
 export default function PendingEnrollmentsScreen({ navigation, route }) {
   const [searchQuery, setSearchQuery] = useState('');
-  const filteredCourses = courses.filter(course =>
-    course.title.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const [filteredCourses, setFilteredCourses] = useState([]); // Estado para almacenar los cursos filtrados
+  const [originalCourses, setOriginalCourses] = useState(courses); // Copia de los cursos originales
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -16,6 +15,19 @@ export default function PendingEnrollmentsScreen({ navigation, route }) {
       navigation.setParams({ toggleSidebar: false }); // Reset para evitar múltiples activaciones
     }
   }, [route.params?.toggleSidebar]);
+
+  useEffect(() => {
+    // Inicializar los cursos filtrados con los cursos originales
+    setFilteredCourses(originalCourses);
+  }, [originalCourses]);
+
+  // Función para realizar la búsqueda
+  const handleSearch = () => {
+    const filtered = originalCourses.filter((course) =>
+      course.title.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setFilteredCourses(filtered);
+  };
 
   return (
     <View style={styles.container}>
@@ -35,7 +47,7 @@ export default function PendingEnrollmentsScreen({ navigation, route }) {
           onChangeText={setSearchQuery}
           style={styles.searchInput}
         />
-        <TouchableOpacity style={styles.searchButton}>
+        <TouchableOpacity style={styles.searchButton} onPress={handleSearch}>
           <Image source={require('../../assets/Lupa.png')} style={styles.searchIcon} />
         </TouchableOpacity>
       </View>
@@ -74,7 +86,10 @@ export default function PendingEnrollmentsScreen({ navigation, route }) {
             {/* Columna: Acción */}
             <View style={[styles.cell, styles.centerContent]}>
               {item.action === 'Subir Voucher' && (
-                <TouchableOpacity style={styles.actionButton} onPress={() => navigation.navigate('voucher-verification')}>
+                <TouchableOpacity
+                  style={styles.actionButton}
+                  onPress={() => navigation.navigate('voucher-verification')}
+                >
                   <Text style={styles.actionButtonText}>{item.action}</Text>
                 </TouchableOpacity>
               )}
@@ -136,6 +151,7 @@ const styles = StyleSheet.create({
     marginTop: 16,
     marginBottom: 8,
     textAlign: 'center',
+    color: '#604274'
   },
   searchContainer: {
     flexDirection: 'row',
@@ -152,7 +168,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   searchButton: {
-    backgroundColor: '#800080',
+    backgroundColor: '#65739F',
     padding: 12,
     borderRadius: 8,
   },
@@ -163,7 +179,7 @@ const styles = StyleSheet.create({
   },
   tableHeader: {
     flexDirection: 'row',
-    backgroundColor: '#800080',
+    backgroundColor: '#65739F',
     paddingVertical: 8,
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
@@ -205,7 +221,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   actionButton: {
-    backgroundColor: '#800080',
+    backgroundColor: '#65739F',
     padding: 8,
     borderRadius: 8,
   },

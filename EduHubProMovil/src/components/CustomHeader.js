@@ -1,26 +1,36 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { useNavigation } from '@react-navigation/native'; // Importar useNavigation
 
 const CustomHeader = ({ toggleSidebar }) => {
-    return (
-      <View style={styles.header}>
-        <TouchableOpacity onPress={toggleSidebar} style={styles.menuButton}>
+  const navigation = useNavigation(); // Obtener el objeto navigation
+
+  return (
+    <View style={styles.header}>
+      {/* Botón de Menú */}
+      <TouchableOpacity onPress={toggleSidebar} style={styles.menuButton}>
         <Icon name="menu" size={35} color="#fff" />
-        </TouchableOpacity>
-          <View style={styles.contentlogo}>
-          <Image
-                  source={require('../../assets/logoEduHub.png')}
-                  style={styles.logo} 
-              />
-          </View>
-          <TouchableOpacity style={styles.searchButton}>
-          <Icon name="search" size={35} color="#fff" />
-          </TouchableOpacity>
-        </View>
-    );
-  };
-  
+      </TouchableOpacity>
+
+      {/* Logo */}
+      <View style={styles.contentlogo}>
+        <Image
+          source={require('../../assets/logoEduHub.png')}
+          style={styles.logo}
+        />
+      </View>
+
+      {/* Botón de Búsqueda */}
+      <TouchableOpacity
+        onPress={() => navigation.navigate('busquedaAvanzada')} // Navegar a "busquedaAvanzada"
+        style={styles.searchButton}
+      >
+        <Icon name="search" size={35} color="#fff" />
+      </TouchableOpacity>
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   header: {
@@ -32,10 +42,9 @@ const styles = StyleSheet.create({
   },
   menuButton: {
     marginRight: 20,
-    width: 26, 
-    color: '#fff'
+    width: 26,
   },
-  contentlogo:{
+  contentlogo: {
     alignItems: 'center',
     justifyContent: 'center',
     flex: 1,
@@ -45,14 +54,11 @@ const styles = StyleSheet.create({
     height: 70,
     marginBottom: 8,
     marginTop: 14,
-},
-  searchButton:{
+  },
+  searchButton: {
     marginLeft: 28,
-    width: 26, 
-    color: '#fff'
-  }
+    width: 26,
+  },
 });
 
 export default CustomHeader;
-
-        

@@ -18,7 +18,7 @@ import CategoryDesarrolloWeb from '../modules/categories/CategoryDesarrolloWeb';
 import CategoryIOT from '../modules/categories/CategoryIOT';
 import CategoryProgramacion from '../modules/categories/CategoryProgramacion';
 import CategoryComunicacion from '../modules/categories/CategoryComunicacion';
-import CoursePaymentsScreen from '../modules/coursePayments/coursePayments';
+import AdvancedSearch from '../modules/advancedSearch/AdvancedSearch';
 import RecoverPassword from '../modules/recoverPassword/recoverPassword';
 
 
@@ -151,20 +151,16 @@ export const RootStack = () => {
     })}/>
 
     <Stack.Screen
-    name='coursePayment'
-    component={CoursePaymentsScreen}
+    name='busquedaAvanzada'
+    component={AdvancedSearch}
     options={({ navigation }) => ({
-      header: () => <CustomHeader toggleSidebar={() => navigation.setParams({ toggleSidebar: true })} />,
-      title: 'Comunicacion',
+      header: () => <CustomHeader toggleSidebar={() => navigation.setParams({ toggleSidebar: true })} />
     })}/>
 
 <Stack.Screen
     name='recoverPass'
-    component={RecoverPassword}
-    options={({ navigation }) => ({
-      header: () => <CustomHeader toggleSidebar={() => navigation.setParams({ toggleSidebar: true })} />,
-      title: 'Comunicacion',
-    })}/>
+    component={RecoverPassword} 
+    options={{headerShown: false}}/>
 
     </Stack.Navigator>
   );

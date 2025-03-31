@@ -22,21 +22,28 @@ export default function MyCoursesScreen({route}) {
       id: '1',
       title: 'Hacking Ético: El Arte de Defender',
       image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzxn75BpAlXGDFZdXKqJYSqJmVpi55NipkYA&s',
-      progress: 0.69,
+      progress: 0.30,
       instructor: 'Dr. Nicolas Kozak',
     },
     {
       id: '2',
       title: 'Base de datos en la nube: MongoDB',
-      image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzxn75BpAlXGDFZdXKqJYSqJmVpi55NipkYA&s',
+      image: 'https://cdn-3.expansion.mx/dims4/default/138bc66/2147483647/strip/true/crop/1000x667+0+0/resize/1200x800!/format/webp/quality/60/?url=https%3A%2F%2Fcdn-3.expansion.mx%2Ff0%2F1d%2Fd0b7fd994e67a9f48564db5f7507%2Fistock-856757428-copy.jpg',
       progress: 0.80,
       instructor: 'Dr. Gustavo Peralta',
+    },
+    {
+      id: '3',
+      title: 'React Native',
+      image: 'https://forbes.es/wp-content/uploads/2022/11/tecnologia-cambio-futuro-humano.jpg',
+      progress: 0.00,
+      instructor: 'Dr. Juan Carlos',
     },
     // Agrega más cursos aquí...
   ];
 
   const handleCoursePress = (courseId) => {
-    navigation.navigate('Modules', { courseId });
+    navigation.navigate('course-module-details', { courseId });
   };
 
   return (
@@ -73,10 +80,11 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   title: {
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: 'bold',
-    marginTop: 16,
+    marginTop: 14,
     marginBottom: 8,
+    color: '#604274'
   },
   coursesContainer: {
     flexDirection: 'row',
@@ -85,9 +93,9 @@ const styles = StyleSheet.create({
   },
   courseCard: {
     width: '48%',
-    backgroundColor: '#f0f0f0',
-    borderRadius: 8,
-    padding: 16,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 18,
+    padding: 12,
     marginVertical: 8,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -97,7 +105,7 @@ const styles = StyleSheet.create({
   },
   courseImage: {
     width: '100%',
-    height: 150,
+    height: 130,
     borderRadius: 8,
     marginBottom: 8,
   },

@@ -83,10 +83,6 @@ const SignIn = ({ navigation }) => {
   <Text style={styles.registerButtonText}>REGISTRARSE</Text>
 </TouchableOpacity>
 
-        {/* Texto para registro con Google */}
-        <Text style={styles.googleText}>
-          O REGÍSTRATE CON TU CUENTA DE GOOGLE
-        </Text>
       </View>
     </ScrollView>
   );
