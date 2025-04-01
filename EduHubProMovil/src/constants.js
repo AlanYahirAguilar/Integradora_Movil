@@ -1,7 +1,7 @@
 // Constantes para la aplicación EduHubPro
 
 // URL base para las peticiones al backend
-export const API_BASE_URL = 'http://192.168.111.147:8080/eduhubpro';
+export const API_BASE_URL = 'http://localhost:8080/eduhubpro';
 
 
 // Endpoints específicos
