@@ -64,10 +64,6 @@ const SignUp = ({ navigation }) => {
             source={require('../../../assets/Group 180.png')}
             style={styles.illustration}
           />
-          {/* Botón de "REGISTRARSE" */}
-          <TouchableOpacity style={styles.registerButton} onPress={() => navigation.navigate('signIn')}>
-            <Text style={styles.registerButtonText}>REGISTRARSE</Text>
-          </TouchableOpacity>
         </View>
       </View>
     </View>

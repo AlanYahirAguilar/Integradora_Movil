@@ -15,6 +15,7 @@ const SignIn = ({ navigation }) => {
   const handleLogin = () => {
     // Aquí iría la navegación o la lógica de inicio de sesión
     // Por ejemplo: navigation.replace('Home');
+    navigation.navigate('SignUp'); // Navega a la pantalla de inicio de sesion.
   };
 
   // Lógica para "REGISTRARSE"
