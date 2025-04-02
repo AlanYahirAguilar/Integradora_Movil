@@ -20,6 +20,8 @@ import CategoryProgramacion from '../modules/categories/CategoryProgramacion';
 import CategoryComunicacion from '../modules/categories/CategoryComunicacion';
 import AdvancedSearch from '../modules/advancedSearch/AdvancedSearch';
 import RecoverPassword from '../modules/recoverPassword/recoverPassword';
+import VerificationCodeScreen from '../modules/recoverPassword/VerificationCodeScreen';
+import ResetPasswordScreen from '../modules/recoverPassword/ResetPasswordScreen';
 
 
 const Stack = createStackNavigator();
@@ -157,9 +159,19 @@ export const RootStack = () => {
       header: () => <CustomHeader toggleSidebar={() => navigation.setParams({ toggleSidebar: true })} />
     })}/>
 
-<Stack.Screen
+    <Stack.Screen
     name='recoverPass'
     component={RecoverPassword} 
+    options={{headerShown: false}}/>
+
+    <Stack.Screen
+    name='verificacionCode'
+    component={VerificationCodeScreen} 
+    options={{headerShown: false}}/>
+
+    <Stack.Screen
+    name='resetPassword'
+    component={ResetPasswordScreen} 
     options={{headerShown: false}}/>
 
     </Stack.Navigator>

@@ -26,7 +26,7 @@ const RecoverPassword = ({ navigation, route }) => {
           onChangeText={setEmail} 
         />
         
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('verificacionCode', { email})}>
           <Text style={styles.buttonText}>Recuperar</Text>
         </TouchableOpacity>
       </View>
