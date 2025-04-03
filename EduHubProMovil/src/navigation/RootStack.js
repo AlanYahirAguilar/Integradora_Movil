@@ -18,6 +18,7 @@ import CategoryDesarrolloWeb from '../modules/categories/CategoryDesarrolloWeb';
 import CategoryIOT from '../modules/categories/CategoryIOT';
 import CategoryProgramacion from '../modules/categories/CategoryProgramacion';
 import CategoryComunicacion from '../modules/categories/CategoryComunicacion';
+import CategoryScreen from '../modules/categories/CategoryScreen';
 import AdvancedSearch from '../modules/advancedSearch/AdvancedSearch';
 import RecoverPassword from '../modules/recoverPassword/recoverPassword';
 import VerificationCodeScreen from '../modules/recoverPassword/VerificationCodeScreen';
@@ -26,9 +27,11 @@ import ResetPasswordScreen from '../modules/recoverPassword/ResetPasswordScreen'
 
 const Stack = createStackNavigator();
 
-export const RootStack = () => {
+export const RootStack = ({ initialToken }) => {
+  const initialRouteName = initialToken ? 'Home' : 'carga';
+  
   return (
-    <Stack.Navigator initialRouteName="carga">
+    <Stack.Navigator initialRouteName={initialRouteName}>
       {/* Pantallas sin header */}
       <Stack.Screen name="carga" component={SplashScreen} options={{ headerShown: false }} />
       <Stack.Screen name="signIn" component={SignIn} options={{ headerShown: false }} />
@@ -150,6 +153,14 @@ export const RootStack = () => {
     options={({ navigation }) => ({
       header: () => <CustomHeader toggleSidebar={() => navigation.setParams({ toggleSidebar: true })} />,
       title: 'Comunicacion',
+    })}/>
+
+<Stack.Screen 
+    name="Category"
+    component={CategoryScreen}
+    options={({ navigation, route }) => ({
+      header: () => <CustomHeader toggleSidebar={() => navigation.setParams({ toggleSidebar: true })} />,
+      title: route.params?.categoryName || 'Categoría',
     })}/>
 
     <Stack.Screen

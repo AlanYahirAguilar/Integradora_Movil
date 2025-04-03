@@ -5,8 +5,8 @@ import { View, Text, TouchableOpacity, ScrollView, Image, Modal, StyleSheet, Cli
 export default function CourseDetailScreen({ route, navigation }) {
   const { course } = route.params; // Recibe el curso seleccionado
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isCourseFullModalVisible, setIsCourseFullModalVisible] = useState(false); // Controla el modal de curso lleno
-  const [isSupportModalVisible, setIsSupportModalVisible] = useState(false); // Controla el modal de soporte
+  const [isCourseFullModalVisible, setIsCourseFullModalVisible] = useState(false);
+  const [isSupportModalVisible, setIsSupportModalVisible] = useState(false);
 
   useEffect(() => {
     if (route.params?.toggleSidebar) {
@@ -22,7 +22,10 @@ export default function CourseDetailScreen({ route, navigation }) {
       setIsCourseFullModalVisible(true);
     } else {
       // Redirigir a la pantalla de pagos si hay cupo disponible
-      navigation.navigate('PaymentInfo');
+      navigation.navigate('PaymentInfo', { 
+        courseId: course.id || course.courseId,
+        price: course.price
+      });
     }
   };
 
@@ -31,6 +34,24 @@ export default function CourseDetailScreen({ route, navigation }) {
     const supportEmail = 'SupportEduHubP@gmail.com';
     await Clipboard.setString(supportEmail);
     Alert.alert('Correo copiado', `Envíanos un correo a ${supportEmail}, te ayudaremos a resolver tu problema`);
+  };
+
+  // Calcular la duración en horas basado en fechas si está disponible
+  const calculateDuration = () => {
+    if (!course.startDate || !course.endDate) return '40';
+    
+    try {
+      const start = new Date(course.startDate);
+      const end = new Date(course.endDate);
+      const diffTime = Math.abs(end - start);
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      
+      // Asumimos 8 horas de estudio por día
+      return (diffDays * 8).toString();
+    } catch (error) {
+      console.error('Error al calcular duración:', error);
+      return '40'; // Valor por defecto
+    }
   };
 
   return (
@@ -43,7 +64,15 @@ export default function CourseDetailScreen({ route, navigation }) {
       />
 
       {/* Imagen del Curso */}
-      <Image source={course.image} style={styles.courseImage} />
+      {typeof course.image === 'object' && course.image !== null ? (
+        <Image source={course.image} style={styles.courseImage} />
+      ) : typeof course.image === 'string' && course.image ? (
+        <Image source={{ uri: course.image }} style={styles.courseImage} />
+      ) : course.bannerPath ? (
+        <Image source={{ uri: course.bannerPath }} style={styles.courseImage} />
+      ) : (
+        <Image source={require('../../../assets/Test.png')} style={styles.courseImage} />
+      )}
 
       {/* Título del Curso */}
       <Text style={styles.title}>{course.title}</Text>
@@ -51,17 +80,22 @@ export default function CourseDetailScreen({ route, navigation }) {
       {/* Creado por */}
       <View style={styles.creatorContainer}>
         <Image source={require('../../../assets/User.png')} style={styles.userIcon} />
-        <Text style={styles.creator}>Creado por: {course.instructor}</Text>
+        <Text style={styles.creator}>Creado por: {
+          course.autor || 
+          course.instructor || 
+          (course.instructor && course.instructor.name) || 
+          'Instructor'
+        }</Text>
       </View>
 
       {/* Calificación */}
       <View style={styles.ratingContainer}>
         <Image source={require('../../../assets/Star.png')} style={styles.starIcon} />
-        <Text style={styles.rating}>{course.rating.toFixed(1)}</Text>
+        <Text style={styles.rating}>{course.rating ? course.rating.toFixed(1) : '4.5'}</Text>
       </View>
 
       {/* Descripción */}
-      <Text style={styles.description}>{course.description}</Text>
+      <Text style={styles.description}>{course.description || 'Sin descripción disponible'}</Text>
 
       {/* Contenido Clave */}
       <View style={styles.keyContentContainer}>
@@ -69,22 +103,56 @@ export default function CourseDetailScreen({ route, navigation }) {
         <Text style={styles.keyContentTitle}>Contenido clave:</Text>
       </View>
 
-      {/* Duración y Requisitos Previos */}
+      {/* Información del curso */}
       <View style={styles.infoContainer}>
         <View style={styles.durationContainer}>
           <Image source={require('../../../assets/RelojArena.png')} style={styles.icon} />
-          <Text style={styles.infoText}>Duración: {course.duration} Hrs</Text>
+          <Text style={styles.infoText}>Duración: {course.duration || calculateDuration()} Hrs</Text>
         </View>
         <View style={styles.prerequisitesContainer}>
           <Image source={require('../../../assets/Book.png')} style={styles.icon} />
-          <Text style={styles.infoText}>Requisitos previos: {course.prerequisites}</Text>
+          {course.startDate && course.endDate ? (
+            <Text style={styles.infoText}>
+              Fechas: {new Date(course.startDate).toLocaleDateString()} - {new Date(course.endDate).toLocaleDateString()}
+            </Text>
+          ) : (
+            <Text style={styles.infoText}>Requisitos: {course.prerequisites || 'Ninguno'}</Text>
+          )}
         </View>
       </View>
+
+      {/* Detalles adicionales */}
+      <View style={styles.additionalInfoContainer}>
+        <View style={styles.infoRow}>
+          <Text style={styles.infoLabel}>Precio:</Text>
+          <Text style={styles.infoValue}>
+            {course.precio || (course.price ? `MX$ ${parseFloat(course.price).toFixed(2)}` : 'MX$ 0.00')}
+          </Text>
+        </View>
+        <View style={styles.infoRow}>
+          <Text style={styles.infoLabel}>Cupos totales:</Text>
+          <Text style={styles.infoValue}>{course.size || 0}</Text>
+        </View>
+      </View>
+
+      {/* Categorías */}
+      {course.categories && course.categories.length > 0 && (
+        <View style={styles.categoriesContainer}>
+          <Text style={styles.categoriesTitle}>Categorías:</Text>
+          <View style={styles.categoriesList}>
+            {course.categories.map((category, index) => (
+              <View key={index} style={styles.categoryTag}>
+                <Text style={styles.categoryText}>{category.name}</Text>
+              </View>
+            ))}
+          </View>
+        </View>
+      )}
 
       {/* Comentarios e Inscribirse */}
       <View style={styles.commentsContainer}>
         <Image source={require('../../../assets/Comment.png')} style={styles.commentIcon} />
-        <Text style={styles.comments}>{course.comments} Comentarios</Text>
+        <Text style={styles.comments}>{course.comments || '0'} Comentarios</Text>
       </View>
 
       {/* Botón de Inscribirse */}
@@ -226,6 +294,50 @@ const styles = StyleSheet.create({
   },
   infoText: {
     fontSize: 14,
+  },
+  additionalInfoContainer: {
+    backgroundColor: '#f9f9f9',
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 16,
+  },
+  infoRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+  },
+  infoLabel: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  infoValue: {
+    fontSize: 14,
+    color: '#604274',
+  },
+  categoriesContainer: {
+    marginBottom: 16,
+  },
+  categoriesTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 8,
+  },
+  categoriesList: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  categoryTag: {
+    backgroundColor: '#604274',
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 16,
+    marginRight: 8,
+    marginBottom: 8,
+  },
+  categoryText: {
+    color: '#fff',
+    fontSize: 12,
   },
   commentsContainer: {
     flexDirection: 'row',
