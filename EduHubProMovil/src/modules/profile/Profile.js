@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../../components/SideBar';
-import { View, Text, Image, TouchableOpacity, StyleSheet, TextInput, Alert, Modal, ActivityIndicator, ScrollView } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, TextInput, Alert, Modal, ActivityIndicator, ScrollView, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker'; // Biblioteca de Expo para seleccionar imágenes
 import { STORAGE_KEYS } from '../../constants';
 import UserService from '../../services/UserService';
+import PaymentService from '../../services/PaymentService'; // Importar PaymentService
 
 export default function Profile({ route, navigation }) {
   const [name, setName] = useState('Jhoana Zuel');
@@ -215,21 +216,93 @@ export default function Profile({ route, navigation }) {
 
   // Función para cambiar la foto de perfil con expo-image-picker
   const changeProfileImage = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert('Permiso denegado', 'Se requiere acceso a la galería para seleccionar una imagen.');
-      return;
-    }
+    try {
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permiso denegado', 'Se requiere acceso a la galería para seleccionar una imagen.');
+        return;
+      }
 
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1,
-    });
+      const pickerResult = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaType ? ImagePicker.MediaType.Images : 'Images',
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 1,
+      });
 
-    if (!result.canceled) {
-      setProfileImage(result.assets[0].uri);
+      if (!pickerResult.canceled) {
+        // Mostrar indicador de carga
+        setLoading(true);
+        
+        try {
+          // Obtener la URI de la imagen seleccionada
+          const localUri = pickerResult.assets[0].uri;
+          console.log('Imagen seleccionada:', localUri);
+          
+          // Preparar el archivo para subir
+          const filename = localUri.split('/').pop();
+          
+          // Determinar el tipo MIME
+          const match = /\.([\w]+)$/.exec(filename);
+          const type = match ? `image/${match[1]}` : 'image';
+          
+          // Crear el objeto File para web o un objeto similar para React Native
+          let fileToUpload;
+          
+          if (Platform.OS === 'web') {
+            // En web, podemos obtener un blob desde la URI
+            const response = await fetch(localUri);
+            const blob = await response.blob();
+            fileToUpload = new File([blob], filename, { type });
+          } else {
+            // En React Native, creamos un objeto similar a File
+            fileToUpload = {
+              uri: localUri,
+              name: filename,
+              type,
+            };
+          }
+          
+          console.log('Subiendo archivo:', filename);
+          
+          // Paso 1: Subir la imagen a Cloudflare usando PaymentService
+          const imageUrl = await PaymentService.uploadFile(fileToUpload);
+          console.log('Imagen subida exitosamente a Cloudflare. URL:', imageUrl);
+          
+          // Paso 2: Actualizar la foto de perfil en el backend usando UserService
+          const updateResult = await UserService.uploadProfilePhoto(imageUrl);
+          console.log('Perfil actualizado con nueva foto:', updateResult);
+          
+          // Actualizar la URL de la imagen de perfil en el estado local
+          setProfileImage(imageUrl);
+          
+          // Guardar en AsyncStorage para uso en otras partes de la app
+          await AsyncStorage.setItem('profileImage', imageUrl);
+          
+          // Mostrar mensaje de éxito
+          Alert.alert(
+            'Éxito',
+            'La imagen de perfil se ha actualizado correctamente.',
+            [{ text: 'OK' }]
+          );
+        } catch (error) {
+          console.error('Error al subir la imagen:', error);
+          Alert.alert(
+            'Error',
+            'No se pudo subir la imagen. Por favor, intenta nuevamente.',
+            [{ text: 'OK' }]
+          );
+        } finally {
+          setLoading(false);
+        }
+      }
+    } catch (error) {
+      console.error('Error al seleccionar imagen:', error);
+      Alert.alert(
+        'Error',
+        'No se pudo seleccionar la imagen. Por favor, intenta nuevamente.',
+        [{ text: 'OK' }]
+      );
     }
   };
 

@@ -131,6 +131,71 @@ class UserService {
     }
   }
 
+  /**
+   * Sube una foto de perfil al servidor
+   * @param {string} photoUrl - URL de la foto de perfil
+   * @returns {Promise} Promesa con el resultado de la operación
+   */
+  async uploadProfilePhoto(photoUrl) {
+    try {
+      const token = await this.getAuthToken();
+      console.log('Subiendo foto de perfil con token:', token.substring(0, 15) + '...');
+      console.log('URL de la foto:', photoUrl);
+
+      // Verificar si la URL es demasiado larga (máximo 255 caracteres permitidos por el backend)
+      if (photoUrl && photoUrl.length > 255) {
+        console.log('URL de la foto demasiado larga, truncando a 255 caracteres');
+        // Truncar la URL si es demasiado larga
+        photoUrl = photoUrl.substring(0, 255);
+      }
+
+      // Preparar payload según la estructura esperada por el backend
+      const payload = {
+        userId: token,
+        profilePhotoPath: photoUrl
+      };
+
+      console.log(`Enviando solicitud a ${API_BASE_URL}/student/user/upload-photo`);
+      console.log('Payload:', JSON.stringify(payload, null, 2));
+
+      const response = await fetch(`${API_BASE_URL}/student/user/upload-photo`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      });
+
+      console.log('Código de respuesta:', response.status);
+
+      // Obtener el texto de la respuesta
+      const responseText = await response.text();
+      console.log('Texto de respuesta:', responseText);
+
+      // Intentar parsear como JSON si hay contenido
+      let data;
+      try {
+        data = responseText ? JSON.parse(responseText) : {};
+      } catch (e) {
+        console.error('Error al parsear JSON:', e);
+        throw new Error('Formato de respuesta inválido');
+      }
+
+      if (response.ok && (data.type === 'SUCCESS' || !data.type)) {
+        console.log('Foto de perfil actualizada exitosamente');
+        return { success: true, data: data.result || data };
+      } else {
+        const errorMsg = data.profilePhotoPath || data?.text || data?.message || 'Error desconocido al actualizar la foto de perfil';
+        console.error('Error al actualizar foto de perfil:', errorMsg);
+        throw new Error(errorMsg);
+      }
+    } catch (error) {
+      console.error('Error en la petición de actualización de foto de perfil:', error);
+      throw error;
+    }
+  }
+
   // Obtener el token de autenticación
   async getAuthToken() {
     try {

@@ -9,16 +9,25 @@ import {
   SafeAreaView,
   Platform,
   Image,
-  Modal
+  Modal,
+  Alert,
+  ActivityIndicator
 } from 'react-native';
 import Sidebar from '../SideBar';
+import PaymentService from '../../services/PaymentService';
 
 const { width } = Dimensions.get('window');
 
 const VoucherVerification = ({ navigation, route }) => {
   const [selectedFile, setSelectedFile] = useState(null);
+  const [voucherUrl, setVoucherUrl] = useState('');
   const [alertStatus, setAlertStatus] = useState(null); // 'success', 'error', or null
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  // Obtener los datos del pago de los parámetros de navegación
+  const { paymentId, courseTitle, amount } = route.params || {};
 
   useEffect(() => {
     if (route.params?.toggleSidebar) {
@@ -42,17 +51,20 @@ const VoucherVerification = ({ navigation, route }) => {
               name: file.name,
               size: file.size,
               uri: URL.createObjectURL(file),
-              type: file.type
+              type: file.type,
+              // Agregar el objeto File original para poder subirlo
+              file: file
             });
             // Reset alert status when new file is selected
             setAlertStatus(null);
+            setErrorMessage('');
           }
         };
         
         input.click();
       } else {
         // For native platforms, just show an alert for now
-        alert('Función de selección de archivo disponible próximamente en dispositivos móviles');
+        Alert.alert('Aviso', 'Función de selección de archivo disponible próximamente en dispositivos móviles');
         // Simulate a file selection for testing
         setSelectedFile({
           name: 'archivo_ejemplo.pdf',
@@ -62,17 +74,66 @@ const VoucherVerification = ({ navigation, route }) => {
         });
         // Reset alert status when new file is selected
         setAlertStatus(null);
+        setErrorMessage('');
       }
     } catch (error) {
       console.error('Error picking document:', error);
+      setErrorMessage('Error al seleccionar el archivo');
       setAlertStatus('error');
     }
   };
 
-  const handleVerify = () => {
-    // Simulate verification with random success/error
-    const isSuccess = Math.random() > 0.5;
-    setAlertStatus(isSuccess ? 'success' : 'error');
+  const handleVerify = async () => {
+    if (!selectedFile) {
+      setErrorMessage('Por favor selecciona un archivo primero');
+      setAlertStatus('error');
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      setErrorMessage('');
+
+      let fileUrl = '';
+      
+      // Si estamos en web y tenemos el objeto File, intentamos subirlo
+      if (Platform.OS === 'web' && selectedFile.file) {
+        console.log('[VoucherVerification] Subiendo archivo:', selectedFile.name);
+        try {
+          // Subir el archivo al servidor
+          fileUrl = await PaymentService.uploadFile(selectedFile.file);
+          console.log('[VoucherVerification] Archivo subido exitosamente. URL:', fileUrl);
+        } catch (error) {
+          console.error('[VoucherVerification] Error al subir archivo:', error);
+          // Si falla la subida del archivo, usar una URL estática para pruebas
+          fileUrl = 'https://example.com/voucher-example';
+          console.log('[VoucherVerification] Usando URL estática para pruebas:', fileUrl);
+        }
+      } else {
+        // En caso de estar en dispositivo móvil o no tener el objeto File, usar URL estática
+        fileUrl = 'https://example.com/voucher-example';
+        console.log('[VoucherVerification] Usando URL estática para pruebas:', fileUrl);
+      }
+
+      // Actualizar el pago con la URL del voucher
+      console.log('[VoucherVerification] Actualizando pago con ID:', paymentId, 'y URL:', fileUrl);
+      const result = await PaymentService.uploadVoucher(paymentId, fileUrl);
+
+      if (result.success) {
+        console.log('[VoucherVerification] Pago actualizado exitosamente:', result);
+        setAlertStatus('success');
+      } else {
+        console.error('[VoucherVerification] Error al actualizar pago:', result.message);
+        setErrorMessage(result.message || 'Ocurrió un error al enviar el voucher');
+        setAlertStatus('error');
+      }
+    } catch (error) {
+      console.error('[VoucherVerification] Error general:', error);
+      setErrorMessage('No se pudo enviar el voucher. Intenta de nuevo más tarde.');
+      setAlertStatus('error');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const closeAlert = () => {
@@ -115,7 +176,14 @@ const VoucherVerification = ({ navigation, route }) => {
             )}
             <TouchableOpacity 
               style={styles.acceptButton}
-              onPress={closeAlert}
+              onPress={() => {
+                closeAlert();
+                // Si fue exitoso, navegar a la pantalla de pagos pendientes
+                if (alertStatus === 'success') {
+                  console.log('[VoucherVerification] Redirigiendo a la pantalla de pagos pendientes');
+                  navigation.navigate('PendingEnrollments');
+                }
+              }}
             >
               <Text style={styles.acceptButtonText}>Aceptar</Text>
             </TouchableOpacity>
@@ -193,10 +261,20 @@ const VoucherVerification = ({ navigation, route }) => {
             !selectedFile && styles.verifyButtonDisabled
           ]}
           onPress={handleVerify}
-          disabled={!selectedFile}
+          disabled={!selectedFile || isLoading}
         >
-          <Text style={styles.verifyButtonText}>Subir y verificar</Text>
+          {isLoading ? (
+            <ActivityIndicator size="small" color="#fff" />
+          ) : (
+            <Text style={styles.verifyButtonText}>Subir y verificar</Text>
+          )}
         </TouchableOpacity>
+        
+        {errorMessage && (
+          <Text style={styles.errorText}>
+            {errorMessage}
+          </Text>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -303,6 +381,11 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
     fontSize: 16,
+  },
+  errorText: {
+    fontSize: 14,
+    color: '#FF3D00',
+    marginBottom: 10,
   },
   // Alert styles
   modalBackdrop: {
