@@ -23,6 +23,9 @@ import AdvancedSearch from '../modules/advancedSearch/AdvancedSearch';
 import RecoverPassword from '../modules/recoverPassword/recoverPassword';
 import VerificationCodeScreen from '../modules/recoverPassword/VerificationCodeScreen';
 import ResetPasswordScreen from '../modules/recoverPassword/ResetPasswordScreen';
+// Importar los nuevos componentes
+import LessonDetail from '../components/NUEVOOOOOS/LessonDetail';
+import ModuleSections from '../components/NUEVOOOOOS/ModuleSections';
 
 
 const Stack = createStackNavigator();
@@ -95,6 +98,25 @@ export const RootStack = ({ initialToken }) => {
         options={({ navigation }) => ({
           header: () => <CustomHeader toggleSidebar={() => navigation.setParams({ toggleSidebar: true })} />,
           title: 'Detalles del Módulo',
+        })} 
+      />
+
+      {/* Nuevas pantallas para el detalle de lecciones y secciones */}
+      <Stack.Screen 
+        name="LessonDetail" 
+        component={LessonDetail} 
+        options={({ navigation, route }) => ({
+          header: () => <CustomHeader toggleSidebar={() => navigation.setParams({ toggleSidebar: true })} />,
+          title: route.params?.sectionName || 'Detalle de Lección',
+        })} 
+      />
+
+      <Stack.Screen 
+        name="ModuleSections" 
+        component={ModuleSections} 
+        options={({ navigation, route }) => ({
+          header: () => <CustomHeader toggleSidebar={() => navigation.setParams({ toggleSidebar: true })} />,
+          title: `Módulo ${route.params?.moduleName || ''}`,
         })} 
       />
 

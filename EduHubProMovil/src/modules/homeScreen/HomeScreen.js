@@ -21,7 +21,7 @@ export default function HomeScreen({ navigation, route }) {
         toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} 
         navigation={navigation} 
       />
-      
+        
       <View style={styles.mainContent}>
         <View style={styles.carruselContainer}>
           <Carrusel />

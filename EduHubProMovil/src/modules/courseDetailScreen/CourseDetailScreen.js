@@ -1,12 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import Sidebar from '../../components/SideBar';
-import { View, Text, TouchableOpacity, ScrollView, Image, Modal, StyleSheet, Clipboard, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Image, Modal, StyleSheet, Clipboard, Alert, ActivityIndicator } from 'react-native';
+import CourseService from '../../services/CourseService';
 
 export default function CourseDetailScreen({ route, navigation }) {
   const { course } = route.params; // Recibe el curso seleccionado
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isCourseFullModalVisible, setIsCourseFullModalVisible] = useState(false);
   const [isSupportModalVisible, setIsSupportModalVisible] = useState(false);
+  const [isAlreadyEnrolledModalVisible, setIsAlreadyEnrolledModalVisible] = useState(false);
+  const [isSuccessModalVisible, setIsSuccessModalVisible] = useState(false);
+  const [isErrorModalVisible, setIsErrorModalVisible] = useState(false);
+  const [enrollmentErrorMessage, setEnrollmentErrorMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (route.params?.toggleSidebar) {
@@ -16,16 +22,41 @@ export default function CourseDetailScreen({ route, navigation }) {
   }, [route.params?.toggleSidebar]);
 
   // Función para manejar la inscripción
-  const handleEnroll = () => {
+  const handleEnroll = async () => {
     if (course.isFull) {
       // Mostrar el modal si el curso está lleno
       setIsCourseFullModalVisible(true);
     } else {
-      // Redirigir a la pantalla de pagos si hay cupo disponible
-      navigation.navigate('PaymentInfo', { 
-        courseId: course.id || course.courseId,
-        price: course.price
-      });
+      try {
+        setIsLoading(true); // Mostrar indicador de carga
+        console.log('Iniciando proceso de inscripción al curso:', course.id || course.courseId);
+        
+        // Llamar al servicio para inscribir al estudiante
+        const result = await CourseService.enrollCourse(course.id || course.courseId);
+        
+        console.log('Resultado de inscripción:', result);
+        setIsLoading(false); // Ocultar indicador de carga
+        
+        if (result.success) {
+          // Mostrar modal de éxito
+          setIsSuccessModalVisible(true);
+        } else if (result.isAlreadyEnrolled) {
+          // Caso específico: ya está inscrito en el curso
+          setEnrollmentErrorMessage(result.message || 'Ya estás inscrito en este curso. No es necesario volver a inscribirte.');
+          setIsAlreadyEnrolledModalVisible(true);
+        } else {
+          // Otros errores
+          setEnrollmentErrorMessage(result.message || 'Ocurrió un error al intentar inscribirte al curso');
+          setIsErrorModalVisible(true);
+        }
+      } catch (error) {
+        setIsLoading(false); // Ocultar indicador de carga
+        console.error('Error al inscribirse:', error);
+        
+        // Mostrar modal de error genérico
+        setEnrollmentErrorMessage(error.message || 'Ocurrió un error al intentar inscribirte al curso');
+        setIsErrorModalVisible(true);
+      }
     }
   };
 
@@ -157,7 +188,11 @@ export default function CourseDetailScreen({ route, navigation }) {
 
       {/* Botón de Inscribirse */}
       <TouchableOpacity style={styles.enrollButton} onPress={handleEnroll}>
-        <Text style={styles.enrollButtonText}>Inscribirse</Text>
+        {isLoading ? (
+          <ActivityIndicator size="small" color="#fff" />
+        ) : (
+          <Text style={styles.enrollButtonText}>Inscribirse</Text>
+        )}
       </TouchableOpacity>
 
       {/* Modal de Alerta para Curso Lleno */}
@@ -185,6 +220,96 @@ export default function CourseDetailScreen({ route, navigation }) {
                 onPress={() => {
                   setIsCourseFullModalVisible(false); // Ocultar el primer modal
                   setIsSupportModalVisible(true); // Mostrar el segundo modal
+                }}
+              >
+                <Text style={styles.modalButtonText}>Contactar a soporte</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Modal de Ya Inscrito */}
+      <Modal visible={isAlreadyEnrolledModalVisible} transparent animationType="fade">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            {/* Icono de Información */}
+            <Text style={styles.modalTitle}>ℹ️ Ya estás inscrito</Text>
+
+            {/* Mensaje de la Alerta */}
+            <Text style={styles.modalMessage}>
+              {enrollmentErrorMessage}
+            </Text>
+
+            {/* Opciones */}
+            <View style={styles.modalButtons}>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.modalContactButton]}
+                onPress={() => {
+                  setIsAlreadyEnrolledModalVisible(false);
+                  navigation.navigate('Home');
+                }}
+              >
+                <Text style={styles.modalButtonText}>Entendido</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Modal de Inscripción Exitosa */}
+      <Modal visible={isSuccessModalVisible} transparent animationType="fade">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            {/* Icono de Éxito */}
+            <Text style={styles.modalTitle}>✔️ Inscripción Exitosa</Text>
+
+            {/* Mensaje de Éxito */}
+            <Text style={styles.modalMessage}>
+              ¡Te has inscrito correctamente al curso!
+            </Text>
+
+            {/* Opciones */}
+            <View style={styles.modalButtons}>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.modalContactButton]}
+                onPress={() => {
+                  setIsSuccessModalVisible(false);
+                  navigation.navigate('Home');
+                }}
+              >
+                <Text style={styles.modalButtonText}>Ir a Inicio</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Modal de Error Genérico */}
+      <Modal visible={isErrorModalVisible} transparent animationType="fade">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            {/* Icono de Error */}
+            <Text style={styles.modalTitle}>❌ Error</Text>
+
+            {/* Mensaje de Error */}
+            <Text style={styles.modalMessage}>
+              {enrollmentErrorMessage}
+            </Text>
+
+            {/* Opciones */}
+            <View style={styles.modalButtons}>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.modalCancelButton]}
+                onPress={() => setIsErrorModalVisible(false)}
+              >
+                <Text style={styles.modalButtonText}>Cerrar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.modalContactButton]}
+                onPress={() => {
+                  setIsErrorModalVisible(false);
+                  setIsSupportModalVisible(true);
                 }}
               >
                 <Text style={styles.modalButtonText}>Contactar a soporte</Text>
