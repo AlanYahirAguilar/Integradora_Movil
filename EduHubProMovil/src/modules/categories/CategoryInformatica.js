@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
   },
   courseCard: {
     width: '48%', // Ancho ligeramente reducido
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#ffffff',
     borderRadius: 8,
     padding: 12, // Padding reducido
     marginBottom: 12, // Espaciado entre tarjetas reducido

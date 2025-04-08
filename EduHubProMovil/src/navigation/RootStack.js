@@ -11,8 +11,8 @@ import PendingEnrollmentsScreen from '../components/PendingEnrollmentsScreen';
 import VoucherVerification from '../components/NUEVOOOOOS/VoucherVerification'
 import CourseModuleDetails from '../components/NUEVOOOOOS/CourseModuleDetails';
 import Profile from '../modules/profile/Profile';
-import CourseCompletionScreen from '../components/CourseCompletionScreen';
-import LessonScreen from '../modules/lessonScreen/LessonScreen';
+import CourseCompletionScreen from '../components/CompletionScreen';
+import LessonScreen from '../modules/lessonScreen/LessonProgressScreen';
 import CategoryInformatica from '../modules/categories/CategoryInformatica'; 
 import CategoryDesarrolloWeb from '../modules/categories/CategoryDesarrolloWeb';
 import CategoryIOT from '../modules/categories/CategoryIOT';

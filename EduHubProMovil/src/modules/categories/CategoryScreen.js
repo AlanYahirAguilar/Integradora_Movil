@@ -201,11 +201,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   courseCard: {
-    width: '48%',
-    backgroundColor: '#f0f0f0',
+    width: '48%', // Ancho ligeramente reducido
+    backgroundColor: '#ffffff',
     borderRadius: 8,
-    padding: 12,
-    marginBottom: 12,
+    padding: 12, // Padding reducido
+    marginBottom: 12, // Espaciado entre tarjetas reducido
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
