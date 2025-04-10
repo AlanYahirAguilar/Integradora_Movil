@@ -3,12 +3,14 @@ import { Video } from 'expo-av';
 import React, { useState } from 'react';
 import { StyleSheet, View, Image, ActivityIndicator, Text } from 'react-native';
 
-const VideoPlayer = ({ source, contentType = 'video' }) => {
+const VideoPlayer = ({ source, contentType /* = 'video'  */}) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
 
   // Manejar carga de contenido
   const handleLoadStart = () => {
+    console.log(contentType);
+    
     setIsLoading(true);
     setError(false);
   };
@@ -75,6 +77,8 @@ const VideoPlayer = ({ source, contentType = 'video' }) => {
       </View>
     );
   } else {
+    console.log(contentType);
+    
     // Tipo de contenido no soportado
     return (
       <View style={styles.errorContainer}>

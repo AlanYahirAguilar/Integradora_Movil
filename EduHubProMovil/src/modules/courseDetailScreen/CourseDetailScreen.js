@@ -158,7 +158,7 @@ export default function CourseDetailScreen({ route, navigation }) {
           <Text style={styles.infoLabel}>Precio:</Text>
           <Text style={styles.infoValue}>
             {course.precio || (course.price ? `MX$ ${parseFloat(course.price).toFixed(2)}` : 'MX$ 0.00')}
-          </Text>Ok
+          </Text>
         </View>
         <View style={styles.infoRow}>
           <Text style={styles.infoLabel}>Cupos totales:</Text>
