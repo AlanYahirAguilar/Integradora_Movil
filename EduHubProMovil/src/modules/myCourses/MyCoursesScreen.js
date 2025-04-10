@@ -88,12 +88,7 @@ export default function MyCoursesScreen({route}) {
   };
 
   return (
-    <ScrollView 
-      style={styles.container}
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-      }
-    >
+    <View style={styles.container}>
       {/* Sidebar */}
       <Sidebar 
         isOpen={isSidebarOpen} 
@@ -101,82 +96,98 @@ export default function MyCoursesScreen({route}) {
         navigation={navigation} 
       />
       
-      {/* Mis Cursos */}
-      <Text style={styles.title}>Mis Cursos:</Text>
-      
-      {/* Estado de carga */}
-      {isLoading && !refreshing && (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#604274" />
-          <Text style={styles.loadingText}>Cargando tus cursos...</Text>
-        </View>
-      )}
-      
-      {/* Mensaje de error */}
-      {error && (
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>{error}</Text>
-          <TouchableOpacity style={styles.retryButton} onPress={loadStudentCourses}>
-            <Text style={styles.retryButtonText}>Intentar de nuevo</Text>
-          </TouchableOpacity>
-        </View>
-      )}
-      
-      {/* Mensaje cuando no hay cursos */}
-      {!isLoading && !error && courses.length === 0 && (
-        <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>Aún no estás inscrito en ningún curso.</Text>
-          <TouchableOpacity 
-            style={styles.exploreCourseButton} 
-            onPress={() => navigation.navigate('Home')}
-          >
-            <Text style={styles.exploreCourseButtonText}>Explorar cursos disponibles</Text>
-          </TouchableOpacity>
-        </View>
-      )}
+      <View style={styles.mainContent}>
+        <ScrollView 
+          style={styles.scrollContent}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+        >
+          {/* Mis Cursos */}
+          <Text style={styles.title}>Mis Cursos:</Text>
+          
+          {/* Estado de carga */}
+          {isLoading && !refreshing && (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color="#604274" />
+              <Text style={styles.loadingText}>Cargando tus cursos...</Text>
+            </View>
+          )}
+          
+          {/* Mensaje de error */}
+          {error && (
+            <View style={styles.errorContainer}>
+              <Text style={styles.errorText}>{error}</Text>
+              <TouchableOpacity style={styles.retryButton} onPress={loadStudentCourses}>
+                <Text style={styles.retryButtonText}>Intentar de nuevo</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+          
+          {/* Mensaje cuando no hay cursos */}
+          {!isLoading && !error && courses.length === 0 && (
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyText}>Aún no estás inscrito en ningún curso.</Text>
+              <TouchableOpacity 
+                style={styles.exploreCourseButton} 
+                onPress={() => navigation.navigate('Home')}
+              >
+                <Text style={styles.exploreCourseButtonText}>Explorar cursos disponibles</Text>
+              </TouchableOpacity>
+            </View>
+          )}
 
-      {/* Cards de Cursos */}
-      {!isLoading && !error && courses.length > 0 && (
-        <View style={styles.coursesContainer}>
-          {courses.map((course) => (
-            <TouchableOpacity 
-              key={course.id} 
-              onPress={() => handleCoursePress(course.id)} 
-              style={styles.courseCard}
-            >
-              {/* Usar uri para imágenes remotas */}
-              <Image 
-                source={{ uri: course.image }} 
-                style={styles.courseImage} 
-                defaultSource={require('../../../assets/Test.png')}
-              />
-              <View style={styles.courseInfo}>
-                <Text style={styles.courseTitle}>{course.title}</Text>
-                <Text style={styles.instructor}>{course.instructor}</Text>
-                <View style={styles.progressContainer}>
-                  <ProgressBar 
-                    progress={course.progress} 
-                    width={null} 
-                    color="#604274"
-                    unfilledColor="#E0E0E0"
-                    borderWidth={0}
-                    style={styles.progressBar} 
+          {/* Cards de Cursos */}
+          {!isLoading && !error && courses.length > 0 && (
+            <View style={styles.coursesContainer}>
+              {courses.map((course) => (
+                <TouchableOpacity 
+                  key={course.id} 
+                  onPress={() => handleCoursePress(course.id)} 
+                  style={styles.courseCard}
+                >
+                  {/* Usar uri para imágenes remotas */}
+                  <Image 
+                    source={{ uri: course.image }} 
+                    style={styles.courseImage} 
+                    defaultSource={require('../../../assets/Test.png')}
                   />
-                  <Text style={styles.progressText}>{Math.round(course.progress * 100)}%</Text>
-                </View>
-              </View>
-            </TouchableOpacity>
-          ))}
-        </View>
-      )}
-    </ScrollView>
+                  <View style={styles.courseInfo}>
+                    <Text style={styles.courseTitle}>{course.title}</Text>
+                    <Text style={styles.instructor}>{course.instructor}</Text>
+                    <View style={styles.progressContainer}>
+                      <ProgressBar 
+                        progress={course.progress} 
+                        width={null} 
+                        color="#604274"
+                        unfilledColor="#E0E0E0"
+                        borderWidth={0}
+                        style={styles.progressBar} 
+                      />
+                      <Text style={styles.progressText}>{Math.round(course.progress * 100)}%</Text>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
+        </ScrollView>
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    flexDirection: 'row',
     backgroundColor: '#fff',
+  },
+  mainContent: {
+    flex: 1,
+  },
+  scrollContent: {
+    flex: 1,
     padding: 16,
   },
   title: {

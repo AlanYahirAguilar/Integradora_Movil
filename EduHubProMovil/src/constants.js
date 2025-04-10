@@ -1,5 +1,5 @@
 // Constantes para la aplicación EduHubPro
-const IP = '192.168.111.238';
+const IP = 'localhost';
 
 // URL base para las peticiones al backend
 export const API_BASE_URL = `http://${IP}:8080/eduhubpro`;
