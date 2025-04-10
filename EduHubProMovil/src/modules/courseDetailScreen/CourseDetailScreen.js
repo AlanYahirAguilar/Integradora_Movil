@@ -29,32 +29,27 @@ export default function CourseDetailScreen({ route, navigation }) {
     } else {
       try {
         setIsLoading(true); // Mostrar indicador de carga
-        /* console.log('Iniciando proceso de inscripción al curso:', course.id || course.courseId); */
         
-        // Llamar al servicio para inscribir al estudiante
-        const result = await CourseService.enrollCourse(course.id || course.courseId);
+        // Generar un ID de pago temporal (en un sistema real, esto vendría del backend)
+        const tempPaymentId = `payment_${Date.now()}`;
         
-        /* console.log('Resultado de inscripción:', result); */
+        // Obtener el precio del curso
+        const coursePrice = course.price || 0;
+        
+        // Redirigir a la pantalla de subir voucher con los datos necesarios
+        navigation.navigate('voucher-verification', {
+          paymentId: tempPaymentId,
+          courseTitle: course.title,
+          amount: coursePrice,
+          courseId: course.id || course.courseId
+        });
+        
         setIsLoading(false); // Ocultar indicador de carga
-        
-        if (result.success) {
-          // Mostrar modal de éxito
-          setIsSuccessModalVisible(true);
-        } else if (result.isAlreadyEnrolled) {
-          // Caso específico: ya está inscrito en el curso
-          setEnrollmentErrorMessage(result.message || 'Ya estás inscrito en este curso. No es necesario volver a inscribirte.');
-          setIsAlreadyEnrolledModalVisible(true);
-        } else {
-          // Otros errores
-          setEnrollmentErrorMessage(result.message || 'Ocurrió un error al intentar inscribirte al curso');
-          setIsErrorModalVisible(true);
-        }
       } catch (error) {
         setIsLoading(false); // Ocultar indicador de carga
-     //   console.error('Error al inscribirse:', error);
         
         // Mostrar modal de error genérico
-        setEnrollmentErrorMessage(error.message || 'Ocurrió un error al intentar inscribirte al curso');
+        setEnrollmentErrorMessage(error.message || 'Ocurrió un error al procesar tu solicitud');
         setIsErrorModalVisible(true);
       }
     }
