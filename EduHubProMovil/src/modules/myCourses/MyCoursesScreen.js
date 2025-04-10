@@ -34,7 +34,7 @@ export default function MyCoursesScreen({route}) {
       setError(null);
       
       const studentCourses = await CourseService.getStudentCourses();
-      console.log('Cursos obtenidos:', studentCourses);
+      /* console.log('Cursos obtenidos:', studentCourses); */
       
       // Transformar los datos para adaptarlos al formato esperado por el componente
       const formattedCourses = studentCourses.map(course => ({
@@ -53,7 +53,7 @@ export default function MyCoursesScreen({route}) {
       
       setCourses(formattedCourses);
     } catch (err) {
-      console.error('Error al cargar cursos:', err);
+  //    console.error('Error al cargar cursos:', err);
       setError('No se pudieron cargar tus cursos. Intenta de nuevo más tarde.');
     } finally {
       setIsLoading(false);

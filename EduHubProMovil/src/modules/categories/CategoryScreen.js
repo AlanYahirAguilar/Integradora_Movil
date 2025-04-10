@@ -48,7 +48,7 @@ const CategoryScreen = ({ route, navigation }) => {
       
       setCourses(formattedCourses);
     } catch (error) {
-      console.error('Error al cargar cursos por categoría:', error);
+    //  console.error('Error al cargar cursos por categoría:', error);
       setError('No se pudieron cargar los cursos de esta categoría');
       setCourses([]);
     } finally {

@@ -55,7 +55,7 @@ const Courses = () => {
       
       setCourses(formattedCourses);
     } catch (error) {
-      console.error('Error al cargar cursos:', error);
+      /* console.error('Error al cargar cursos:', error); */
       setError('No se pudieron cargar los cursos. Por favor, intenta nuevamente.');
       // En caso de error, usar datos estáticos como fallback
       setCourses(staticCourses);

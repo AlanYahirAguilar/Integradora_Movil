@@ -77,7 +77,7 @@ const VoucherVerification = ({ navigation, route }) => {
         setErrorMessage('');
       }
     } catch (error) {
-      console.error('Error picking document:', error);
+   //   console.error('Error picking document:', error);
       setErrorMessage('Error al seleccionar el archivo');
       setAlertStatus('error');
     }
@@ -98,37 +98,37 @@ const VoucherVerification = ({ navigation, route }) => {
       
       // Si estamos en web y tenemos el objeto File, intentamos subirlo
       if (Platform.OS === 'web' && selectedFile.file) {
-        console.log('[VoucherVerification] Subiendo archivo:', selectedFile.name);
+        /* console.log('[VoucherVerification] Subiendo archivo:', selectedFile.name); */
         try {
           // Subir el archivo al servidor
           fileUrl = await PaymentService.uploadFile(selectedFile.file);
-          console.log('[VoucherVerification] Archivo subido exitosamente. URL:', fileUrl);
+          /* console.log('[VoucherVerification] Archivo subido exitosamente. URL:', fileUrl); */
         } catch (error) {
-          console.error('[VoucherVerification] Error al subir archivo:', error);
+    //      console.error('[VoucherVerification] Error al subir archivo:', error);
           // Si falla la subida del archivo, usar una URL estática para pruebas
           fileUrl = 'https://example.com/voucher-example';
-          console.log('[VoucherVerification] Usando URL estática para pruebas:', fileUrl);
+          /* console.log('[VoucherVerification] Usando URL estática para pruebas:', fileUrl); */
         }
       } else {
         // En caso de estar en dispositivo móvil o no tener el objeto File, usar URL estática
         fileUrl = 'https://example.com/voucher-example';
-        console.log('[VoucherVerification] Usando URL estática para pruebas:', fileUrl);
+        /* console.log('[VoucherVerification] Usando URL estática para pruebas:', fileUrl); */
       }
 
       // Actualizar el pago con la URL del voucher
-      console.log('[VoucherVerification] Actualizando pago con ID:', paymentId, 'y URL:', fileUrl);
+      /* console.log('[VoucherVerification] Actualizando pago con ID:', paymentId, 'y URL:', fileUrl); */
       const result = await PaymentService.uploadVoucher(paymentId, fileUrl);
 
       if (result.success) {
-        console.log('[VoucherVerification] Pago actualizado exitosamente:', result);
+        /* console.log('[VoucherVerification] Pago actualizado exitosamente:', result); */
         setAlertStatus('success');
       } else {
-        console.error('[VoucherVerification] Error al actualizar pago:', result.message);
+   //     console.error('[VoucherVerification] Error al actualizar pago:', result.message);
         setErrorMessage(result.message || 'Ocurrió un error al enviar el voucher');
         setAlertStatus('error');
       }
     } catch (error) {
-      console.error('[VoucherVerification] Error general:', error);
+  //    console.error('[VoucherVerification] Error general:', error);
       setErrorMessage('No se pudo enviar el voucher. Intenta de nuevo más tarde.');
       setAlertStatus('error');
     } finally {
@@ -180,7 +180,7 @@ const VoucherVerification = ({ navigation, route }) => {
                 closeAlert();
                 // Si fue exitoso, navegar a la pantalla de pagos pendientes
                 if (alertStatus === 'success') {
-                  console.log('[VoucherVerification] Redirigiendo a la pantalla de pagos pendientes');
+                  /* console.log('[VoucherVerification] Redirigiendo a la pantalla de pagos pendientes'); */
                   navigation.navigate('PendingEnrollments');
                 }
               }}

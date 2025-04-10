@@ -29,12 +29,12 @@ export default function CourseDetailScreen({ route, navigation }) {
     } else {
       try {
         setIsLoading(true); // Mostrar indicador de carga
-        console.log('Iniciando proceso de inscripción al curso:', course.id || course.courseId);
+        /* console.log('Iniciando proceso de inscripción al curso:', course.id || course.courseId); */
         
         // Llamar al servicio para inscribir al estudiante
         const result = await CourseService.enrollCourse(course.id || course.courseId);
         
-        console.log('Resultado de inscripción:', result);
+        /* console.log('Resultado de inscripción:', result); */
         setIsLoading(false); // Ocultar indicador de carga
         
         if (result.success) {
@@ -51,7 +51,7 @@ export default function CourseDetailScreen({ route, navigation }) {
         }
       } catch (error) {
         setIsLoading(false); // Ocultar indicador de carga
-        console.error('Error al inscribirse:', error);
+     //   console.error('Error al inscribirse:', error);
         
         // Mostrar modal de error genérico
         setEnrollmentErrorMessage(error.message || 'Ocurrió un error al intentar inscribirte al curso');
@@ -80,7 +80,7 @@ export default function CourseDetailScreen({ route, navigation }) {
       // Asumimos 8 horas de estudio por día
       return (diffDays * 8).toString();
     } catch (error) {
-      console.error('Error al calcular duración:', error);
+   //   console.error('Error al calcular duración:', error);
       return '40'; // Valor por defecto
     }
   };

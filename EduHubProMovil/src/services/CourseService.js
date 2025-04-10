@@ -29,14 +29,14 @@ export default class CourseService {
       
       // Validar si la respuesta fue exitosa (type SUCCESS)
       if (data && data.type === 'SUCCESS') {
-        console.log('Cursos cargados exitosamente:', data.result);
+        /* console.log('Cursos cargados exitosamente:', data.result); */
         return data.result;
       } else {
-        console.error('Error al cargar cursos:', data);
+        //console.error('Error al cargar cursos:', data);
         throw new Error(data?.text || 'Error al obtener los cursos');
       }
     } catch (error) {
-      console.error('Error en la petición de cursos:', error);
+  //    console.error('Error en la petición de cursos:', error);
       throw error;
     }
   }
@@ -48,7 +48,7 @@ export default class CourseService {
    */
   static async enrollCourse(courseId) {
     try {
-      console.log('Iniciando inscripción al curso con ID:', courseId);
+      /* console.log('Iniciando inscripción al curso con ID:', courseId); */
       
       // Obtener el token de autenticación
       const token = await AsyncStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
@@ -57,7 +57,7 @@ export default class CourseService {
         throw new Error('No se encontró token de autenticación');
       }
       
-      console.log('Token obtenido para inscripción:', token.substring(0, 15) + '...');
+      /* console.log('Token obtenido para inscripción:', token.substring(0, 15) + '...'); */
       
       // Estructura del payload según el ejemplo proporcionado
       const payload = {
@@ -65,7 +65,7 @@ export default class CourseService {
         courseId: courseId
       };
       
-      console.log('Enviando solicitud de inscripción con payload:', JSON.stringify(payload));
+      /* console.log('Enviando solicitud de inscripción con payload:', JSON.stringify(payload)); */
       
       // Realizar petición al endpoint de inscripción
       const response = await fetch(`${API_BASE_URL}/student/registration/create`, {
@@ -77,11 +77,11 @@ export default class CourseService {
         body: JSON.stringify(payload)
       });
       
-      console.log('Código de respuesta inscripción:', response.status);
+      /* console.log('Código de respuesta inscripción:', response.status); */
       
       // Obtener el texto de la respuesta
       const responseText = await response.text();
-      console.log('Texto de respuesta inscripción:', responseText);
+      /* console.log('Texto de respuesta inscripción:', responseText); */
       
       // Manejar caso específico de error 409 (Conflict) - Ya inscrito
       if (response.status === 409) {
@@ -92,7 +92,7 @@ export default class CourseService {
             errorMessage = data.text;
           }
         } catch (e) {
-          console.error('Error al parsear respuesta de conflicto:', e);
+      //    console.error('Error al parsear respuesta de conflicto:', e);
         }
         
         // Devolver objeto con información del error para mostrar alerta personalizada
@@ -113,7 +113,7 @@ export default class CourseService {
       try {
         data = responseText ? JSON.parse(responseText) : {};
       } catch (e) {
-        console.error('Error al parsear JSON de inscripción:', e);
+    //    console.error('Error al parsear JSON de inscripción:', e);
         // Si la respuesta es exitosa pero no es JSON, consideramos éxito
         if (response.ok) {
           return { success: true, message: 'Inscripción realizada correctamente' };
@@ -122,15 +122,15 @@ export default class CourseService {
       }
       
       if (response.ok) {
-        console.log('Inscripción exitosa:', data);
+        /* console.log('Inscripción exitosa:', data); */
         return { success: true, message: 'Inscripción realizada correctamente', data: data.result || data };
       } else {
         const errorMsg = data?.text || data?.message || 'Error desconocido al realizar la inscripción';
-        console.error('Error en inscripción:', errorMsg);
+    //    console.error('Error en inscripción:', errorMsg);
         return { success: false, message: errorMsg };
       }
     } catch (error) {
-      console.error('Error en inscripción al curso:', error);
+   //   console.error('Error en inscripción al curso:', error);
       return { success: false, message: error.message || 'Error al procesar la inscripción' };
     }
   }
@@ -148,14 +148,14 @@ export default class CourseService {
         throw new Error('No se encontró token de autenticación');
       }
       
-      console.log('Obteniendo cursos del estudiante con token:', token.substring(0, 15) + '...');
+      /* console.log('Obteniendo cursos del estudiante con token:', token.substring(0, 15) + '...'); */
       
       // Estructura del payload según el ejemplo proporcionado
       const payload = {
         userId: token // El ID del estudiante es el token JWT
       };
       
-      console.log('Enviando solicitud para obtener cursos del estudiante:', JSON.stringify(payload));
+      /* console.log('Enviando solicitud para obtener cursos del estudiante:', JSON.stringify(payload)); */
       
       // Realizar petición al endpoint
       const response = await fetch(`${API_BASE_URL}/student/course/by-student`, {
@@ -167,11 +167,11 @@ export default class CourseService {
         body: JSON.stringify(payload)
       });
       
-      console.log('Código de respuesta cursos del estudiante:', response.status);
+      /* console.log('Código de respuesta cursos del estudiante:', response.status); */
       
       // Obtener el texto de la respuesta
       const responseText = await response.text();
-      console.log('Texto de respuesta cursos del estudiante:', responseText);
+      /* console.log('Texto de respuesta cursos del estudiante:', responseText); */
       
       // Si el texto está vacío pero la respuesta es exitosa
       if (!responseText && response.ok) {
@@ -183,20 +183,20 @@ export default class CourseService {
       try {
         data = responseText ? JSON.parse(responseText) : {};
       } catch (e) {
-        console.error('Error al parsear JSON de cursos del estudiante:', e);
+      //  console.error('Error al parsear JSON de cursos del estudiante:', e);
         return [];
       }
       
       if (response.ok && data.type === 'SUCCESS') {
-        console.log('Cursos del estudiante obtenidos exitosamente:', data.result);
+        /* console.log('Cursos del estudiante obtenidos exitosamente:', data.result); */
         return data.result || [];
       } else {
         const errorMsg = data?.text || data?.message || 'Error desconocido al obtener los cursos del estudiante';
-        console.error('Error al obtener cursos del estudiante:', errorMsg);
+       // console.error('Error al obtener cursos del estudiante:', errorMsg);
         throw new Error(errorMsg);
       }
     } catch (error) {
-      console.error('Error en la petición de cursos del estudiante:', error);
+  //    console.error('Error en la petición de cursos del estudiante:', error);
       throw error;
     }
   }

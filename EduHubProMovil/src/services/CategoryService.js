@@ -29,14 +29,14 @@ export default class CategoryService {
       
       // Validar si la respuesta fue exitosa (type SUCCESS)
       if (data && data.type === 'SUCCESS') {
-        console.log('Categorías cargadas exitosamente:', data.result);
+        /* console.log('Categorías cargadas exitosamente:', data.result); */
         return data.result;
       } else {
-        console.error('Error al cargar categorías:', data);
+    //    console.error('Error al cargar categorías:', data);
         throw new Error(data?.text || 'Error al obtener las categorías');
       }
     } catch (error) {
-      console.error('Error en la petición de categorías:', error);
+  //    console.error('Error en la petición de categorías:', error);
       throw error;
     }
   }
@@ -68,14 +68,14 @@ export default class CategoryService {
       
       // Validar si la respuesta fue exitosa (type SUCCESS)
       if (data && data.type === 'SUCCESS') {
-        console.log('Cursos por categoría cargados exitosamente:', data.result);
+        /* console.log('Cursos por categoría cargados exitosamente:', data.result); */
         return data.result;
       } else {
-        console.error('Error al cargar cursos por categoría:', data);
+     //   console.error('Error al cargar cursos por categoría:', data);
         throw new Error(data?.text || 'Error al obtener los cursos por categoría');
       }
     } catch (error) {
-      console.error('Error en la petición de cursos por categoría:', error);
+   //   console.error('Error en la petición de cursos por categoría:', error);
       throw error;
     }
   }

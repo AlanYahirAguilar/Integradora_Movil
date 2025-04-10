@@ -16,7 +16,7 @@ export default function App() {
         const token = await AsyncStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
         setUserToken(token);
       } catch (error) {
-        console.error('Error al verificar token:', error);
+        /* console.error('Error al verificar token:', error); */
       } finally {
         setIsLoading(false);
       }

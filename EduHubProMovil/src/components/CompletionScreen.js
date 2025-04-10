@@ -18,9 +18,6 @@ const CompletionScreen = ({ navigation }) => {
     }
 
     // Aquí puedes enviar los datos al backend o realizar otras acciones
-    console.log('Calificación:', rating);
-    console.log('Comentarios:', comments);
-
     Alert.alert(
       'Éxito',
       'Tu evaluación ha sido enviada. ¡Gracias por tu retroalimentación!',

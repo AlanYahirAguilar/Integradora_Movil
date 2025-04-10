@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { 
-  View, Text, TouchableOpacity, StyleSheet, Animated, Dimensions, Pressable, 
+import {
+  View, Text, TouchableOpacity, StyleSheet, Animated, Dimensions, Pressable,
   Image, Modal, Clipboard, Alert, ActivityIndicator, ScrollView
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -18,7 +18,7 @@ const Sidebar = ({ isOpen, toggleSidebar, navigation }) => {
   const [categories, setCategories] = useState([]);
   const [loadingCategories, setLoadingCategories] = useState(false);
   const [categoriesError, setCategoriesError] = useState(null);
-  
+
   useEffect(() => {
     // Cargar datos del usuario desde AsyncStorage
     const loadUserData = async () => {
@@ -31,13 +31,13 @@ const Sidebar = ({ isOpen, toggleSidebar, navigation }) => {
           setUserName(storedUserName);
         }
       } catch (error) {
-        console.error('Error al cargar datos del usuario:', error);
+        /* console.error('Error al cargar datos del usuario:', error); */
       }
     };
 
     loadUserData();
   }, []);
-  
+
   // Cargar categorías cuando se abre el sidebar
   useEffect(() => {
     if (isOpen) {
@@ -49,11 +49,11 @@ const Sidebar = ({ isOpen, toggleSidebar, navigation }) => {
     try {
       setLoadingCategories(true);
       setCategoriesError(null);
-      
+
       const categoriesData = await CategoryService.getActiveCategories();
       setCategories(categoriesData);
     } catch (error) {
-      console.error('Error al cargar categorías en Sidebar:', error);
+      //    console.error('Error al cargar categorías en Sidebar:', error);
       setCategoriesError('No se pudieron cargar las categorías');
     } finally {
       setLoadingCategories(false);
@@ -90,22 +90,22 @@ const Sidebar = ({ isOpen, toggleSidebar, navigation }) => {
       await AsyncStorage.removeItem(STORAGE_KEYS.USER_EMAIL);
       await AsyncStorage.removeItem(STORAGE_KEYS.USER_NAME);
       await AsyncStorage.removeItem(STORAGE_KEYS.USER_ROLE);
-      
+
       // Redirigir a la pantalla de login
       navigation.reset({
         index: 0,
         routes: [{ name: 'signIn' }],
       });
     } catch (error) {
-      console.error('Error al cerrar sesión:', error);
+      // console.error('Error al cerrar sesión:', error);
       Alert.alert('Error', 'No se pudo cerrar la sesión. Intente nuevamente.');
     }
   };
-  
+
   // Función para navegar a la pantalla de categoría
   const navigateToCategory = (categoryId, categoryName) => {
-    navigation.navigate('Category', { 
-      categoryId, 
+    navigation.navigate('Category', {
+      categoryId,
       categoryName,
     });
     toggleSidebar(); // Cerrar sidebar al navegar
@@ -132,8 +132,8 @@ const Sidebar = ({ isOpen, toggleSidebar, navigation }) => {
           </View>
 
           {/* Contenido con scroll */}
-          <ScrollView 
-            style={styles.scrollContent} 
+          <ScrollView
+            style={styles.scrollContent}
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.scrollContentContainer}
           >
@@ -144,14 +144,14 @@ const Sidebar = ({ isOpen, toggleSidebar, navigation }) => {
             }}>
               <Text style={styles.itemText}>Inicio</Text>
             </TouchableOpacity>
-            
+
             <TouchableOpacity style={styles.sidebarItem} onPress={() => {
               navigation.navigate('mis cursos');
               toggleSidebar();
             }}>
               <Text style={styles.itemText}>Mis Cursos</Text>
             </TouchableOpacity>
-            
+
             <TouchableOpacity style={styles.sidebarItemDropdown}>
               <Text style={styles.itemText}>Categorías</Text>
               <View style={styles.dropdown}>
@@ -165,9 +165,9 @@ const Sidebar = ({ isOpen, toggleSidebar, navigation }) => {
                   </TouchableOpacity>
                 ) : categories.length > 0 ? (
                   categories.map((category) => (
-                    <TouchableOpacity 
+                    <TouchableOpacity
                       key={category.categoryId}
-                      style={styles.dropdownItem} 
+                      style={styles.dropdownItem}
                       onPress={() => navigateToCategory(category.categoryId, category.name)}
                     >
                       <Text style={styles.dropdownItemText}>{category.name}</Text>
@@ -180,21 +180,21 @@ const Sidebar = ({ isOpen, toggleSidebar, navigation }) => {
                 )}
               </View>
             </TouchableOpacity>
-            
+
             <TouchableOpacity style={styles.sidebarItem} onPress={() => {
               navigation.navigate('PendingEnrollments');
               toggleSidebar();
             }}>
               <Text style={styles.itemText}>Inscripciones Pendientes</Text>
             </TouchableOpacity>
-            
+
             <TouchableOpacity style={styles.sidebarItem} onPress={() => {
               navigation.navigate('PaymentInfo');
               toggleSidebar();
             }}>
               <Text style={styles.itemText}>Información de Pago</Text>
             </TouchableOpacity>
-            
+
             <TouchableOpacity style={styles.sidebarItem} onPress={() => {
               navigation.navigate('busquedaAvanzada');
               toggleSidebar();
@@ -202,14 +202,14 @@ const Sidebar = ({ isOpen, toggleSidebar, navigation }) => {
               <Text style={styles.itemText}>Búsqueda Avanzada</Text>
             </TouchableOpacity>
           </ScrollView>
-          
+
           {/* Footer */}
           <View style={styles.footer}>
             <TouchableOpacity style={styles.footerItem} onPress={handleLogout}>
               <Text style={styles.footerItemText}>Cerrar Sesión</Text>
               <Image source={require('../../assets/Exit.png')} style={styles.iconic2} />
             </TouchableOpacity>
-            
+
             <TouchableOpacity style={styles.footerItem} onPress={() => setIsModalVisible(true)}>
               <Text style={styles.footerItemText}>Ayuda y Soporte</Text>
               <Image source={require('../../assets/Support.png')} style={styles.iconic} />

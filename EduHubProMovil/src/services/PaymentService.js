@@ -16,7 +16,7 @@ class PaymentService {
         throw new Error('No hay token de autenticación');
       }
       
-      console.log('Obteniendo pagos del estudiante con token:', token.substring(0, 15) + '...');
+      /* console.log('Obteniendo pagos del estudiante con token:', token.substring(0, 15) + '...'); */
       
       // Preparar la petición
       const endpoint = `${API_BASE_URL}/student/payment/by-student`;
@@ -24,7 +24,7 @@ class PaymentService {
         studentId: token
       };
       
-      console.log('Enviando solicitud para obtener pagos del estudiante:', JSON.stringify(payload));
+      /* console.log('Enviando solicitud para obtener pagos del estudiante:', JSON.stringify(payload)); */
       
       // Realizar la petición usando fetch
       const response = await fetch(endpoint, {
@@ -36,11 +36,11 @@ class PaymentService {
         body: JSON.stringify(payload)
       });
       
-      console.log('Código de respuesta pagos del estudiante:', response.status);
+      /* console.log('Código de respuesta pagos del estudiante:', response.status); */
       
       // Obtener el texto de la respuesta
       const responseText = await response.text();
-      console.log('Texto de respuesta pagos del estudiante:', responseText);
+      /* console.log('Texto de respuesta pagos del estudiante:', responseText); */
       
       // Si el texto está vacío pero la respuesta es exitosa
       if (!responseText && response.ok) {
@@ -52,20 +52,20 @@ class PaymentService {
       try {
         data = responseText ? JSON.parse(responseText) : {};
       } catch (e) {
-        console.error('Error al parsear JSON de pagos del estudiante:', e);
+   //     console.error('Error al parsear JSON de pagos del estudiante:', e);
         return [];
       }
       
       if (response.ok && data.type === 'SUCCESS') {
-        console.log('Pagos del estudiante obtenidos exitosamente:', data.result);
+        /* console.log('Pagos del estudiante obtenidos exitosamente:', data.result); */
         return data.result || [];
       } else {
         const errorMsg = data?.text || data?.message || 'Error desconocido al obtener los pagos del estudiante';
-        console.error('Error al obtener pagos del estudiante:', errorMsg);
+   //     console.error('Error al obtener pagos del estudiante:', errorMsg);
         throw new Error(errorMsg);
       }
     } catch (error) {
-      console.error('Error en la petición de pagos del estudiante:', error);
+ //     console.error('Error en la petición de pagos del estudiante:', error);
       throw error;
     }
   }
@@ -85,8 +85,8 @@ class PaymentService {
         throw new Error('No hay token de autenticación');
       }
       
-      console.log('[PaymentService] Actualizando voucher para el pago:', paymentId, 'con URL:', paymentUrl);
-      console.log('[PaymentService] Token de autenticación (parcial):', token.substring(0, 15) + '...');
+      /* console.log('[PaymentService] Actualizando voucher para el pago:', paymentId, 'con URL:', paymentUrl);
+      console.log('[PaymentService] Token de autenticación (parcial):', token.substring(0, 15) + '...'); */
       
       // Preparar la petición
       const endpoint = `${API_BASE_URL}/student/payment/update-url`;
@@ -95,8 +95,8 @@ class PaymentService {
         paymentUrl: paymentUrl
       };
       
-      console.log('[PaymentService] Enviando solicitud a:', endpoint);
-      console.log('[PaymentService] Payload:', JSON.stringify(payload));
+      /* console.log('[PaymentService] Enviando solicitud a:', endpoint);
+      console.log('[PaymentService] Payload:', JSON.stringify(payload)); */
       
       // Realizar la petición usando fetch
       const response = await fetch(endpoint, {
@@ -108,11 +108,11 @@ class PaymentService {
         body: JSON.stringify(payload)
       });
       
-      console.log('[PaymentService] Código de respuesta actualizar voucher:', response.status);
+      /* console.log('[PaymentService] Código de respuesta actualizar voucher:', response.status); */
       
       // Obtener el texto de la respuesta
       const responseText = await response.text();
-      console.log('[PaymentService] Texto de respuesta actualizar voucher:', responseText);
+      /* console.log('[PaymentService] Texto de respuesta actualizar voucher:', responseText); */
       
       // Si el texto está vacío pero la respuesta es exitosa
       if (!responseText && response.ok) {
@@ -123,14 +123,14 @@ class PaymentService {
       let data;
       try {
         data = responseText ? JSON.parse(responseText) : {};
-        console.log('[PaymentService] Datos parseados:', data);
+        /* console.log('[PaymentService] Datos parseados:', data); */
       } catch (e) {
-        console.error('[PaymentService] Error al parsear JSON de actualizar voucher:', e);
+     //   console.error('[PaymentService] Error al parsear JSON de actualizar voucher:', e);
         return { success: false, message: 'Error al procesar la respuesta del servidor' };
       }
       
       if (response.ok && data.type === 'SUCCESS') {
-        console.log('[PaymentService] Voucher actualizado exitosamente:', data.result);
+        /* console.log('[PaymentService] Voucher actualizado exitosamente:', data.result); */
         return { 
           success: true, 
           message: data.text || 'Voucher actualizado correctamente',
@@ -138,11 +138,11 @@ class PaymentService {
         };
       } else {
         const errorMsg = data?.text || data?.message || 'Error desconocido al actualizar el voucher';
-        console.error('[PaymentService] Error al actualizar voucher:', errorMsg);
+      //  console.error('[PaymentService] Error al actualizar voucher:', errorMsg);
         return { success: false, message: errorMsg };
       }
     } catch (error) {
-      console.error('[PaymentService] Error en la petición de actualizar voucher:', error);
+ //     console.error('[PaymentService] Error en la petición de actualizar voucher:', error);
       return { success: false, message: error.message || 'Error al actualizar el voucher' };
     }
   }
@@ -161,7 +161,7 @@ class PaymentService {
         throw new Error('No hay token de autenticación');
       }
       
-      console.log('[PaymentService] Iniciando carga de archivo');
+      /* console.log('[PaymentService] Iniciando carga de archivo'); */
       
       // Preparar la petición
       const endpoint = `${API_BASE_URL}/api/storage/upload`;
@@ -170,7 +170,7 @@ class PaymentService {
       const formData = new FormData();
       formData.append('file', fileData);
       
-      console.log('[PaymentService] Enviando archivo a:', endpoint);
+      /* console.log('[PaymentService] Enviando archivo a:', endpoint); */
       
       // Realizar la petición usando fetch
       const response = await fetch(endpoint, {
@@ -182,11 +182,11 @@ class PaymentService {
         body: formData
       });
       
-      console.log('[PaymentService] Código de respuesta subida de archivo:', response.status);
+      /* console.log('[PaymentService] Código de respuesta subida de archivo:', response.status); */
       
       // Obtener el texto de la respuesta
       const responseText = await response.text();
-      console.log('[PaymentService] Respuesta subida de archivo:', responseText);
+      /* console.log('[PaymentService] Respuesta subida de archivo:', responseText); */
       
       if (!response.ok) {
         throw new Error(`Error al subir archivo: ${response.status}`);
@@ -195,7 +195,7 @@ class PaymentService {
       // La respuesta es directamente la URL como string
       return responseText;
     } catch (error) {
-      console.error('[PaymentService] Error al subir archivo:', error);
+    //  console.error('[PaymentService] Error al subir archivo:', error);
       throw error;
     }
   }

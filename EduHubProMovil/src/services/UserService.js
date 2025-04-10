@@ -12,7 +12,7 @@ class UserService {
   async getUserProfile() {
     try {
       const token = await this.getAuthToken();
-      console.log('Obteniendo perfil con token:', token.substring(0, 15) + '...');
+      /* console.log('Obteniendo perfil con token:', token.substring(0, 15) + '...'); */
 
       const response = await fetch(`${API_BASE_URL}/student/user/profile`, {
         method: 'POST',
@@ -30,11 +30,11 @@ class UserService {
       try {
         data = responseText ? JSON.parse(responseText) : {};
       } catch (e) {
-        console.error('Error al parsear respuesta:', e, responseText);
+      //  console.error('Error al parsear respuesta:', e, responseText);
         throw new Error('Formato de respuesta inválido');
       }
       
-      console.log('Respuesta perfil:', JSON.stringify(data, null, 2));
+      /* console.log('Respuesta perfil:', JSON.stringify(data, null, 2)); */
       
       if (response.ok) {
         return data.result || data;
@@ -42,7 +42,7 @@ class UserService {
         throw new Error(data.text || 'Error al obtener perfil');
       }
     } catch (error) {
-      console.error('Error al obtener perfil:', error);
+  //    console.error('Error al obtener perfil:', error);
       throw new Error('No se pudo obtener la información del perfil');
     }
   }
@@ -76,12 +76,12 @@ class UserService {
       // Verificación adicional para password - asegurar que nunca sea vacía o null
       if (!payload.password || payload.password === '') {
         payload.password = 'DefaultPassword123';
-        console.log('⚠️ Usando contraseña por defecto para evitar error 400');
+        /* console.log('⚠️ Usando contraseña por defecto para evitar error 400'); */
       }
       
       // Log detallado para depuración
-      console.log(`Enviando actualización a ${API_BASE_URL}/student/user/update-profile`);
-      console.log('Payload:', JSON.stringify(payload, null, 2));
+      /* console.log(`Enviando actualización a ${API_BASE_URL}/student/user/update-profile`);
+      console.log('Payload:', JSON.stringify(payload, null, 2)); */
       
       // Usar método PUT en lugar de POST - El backend espera PUT para actualizar el perfil
       const response = await fetch(`${API_BASE_URL}/student/user/update-profile`, {
@@ -93,11 +93,11 @@ class UserService {
         body: JSON.stringify(payload)
       });
       
-      console.log('Código de respuesta:', response.status);
+      /* console.log('Código de respuesta:', response.status); */
       
       // Obtener el texto de la respuesta
       const responseText = await response.text();
-      console.log('Texto de respuesta:', responseText);
+      /* console.log('Texto de respuesta:', responseText); */
       
       // Si el texto está vacío pero la respuesta es exitosa
       if (!responseText && response.ok) {
@@ -109,7 +109,7 @@ class UserService {
       try {
         data = responseText ? JSON.parse(responseText) : {};
       } catch (e) {
-        console.error('Error al parsear JSON:', e);
+   //     console.error('Error al parsear JSON:', e);
         // Si la respuesta es exitosa pero no es JSON, consideramos éxito
         if (response.ok) {
           return { success: true, message: 'Perfil actualizado correctamente' };
@@ -118,15 +118,15 @@ class UserService {
       }
       
       if (response.ok) {
-        console.log('Perfil actualizado exitosamente:', data);
+        /* console.log('Perfil actualizado exitosamente:', data); */
         return data.result || data;
       } else {
         const errorMsg = data?.text || data?.message || 'Error desconocido al actualizar el perfil';
-        console.error('Error actualización:', errorMsg);
+     //   console.error('Error actualización:', errorMsg);
         throw new Error(errorMsg);
       }
     } catch (error) {
-      console.error('Error en actualización de perfil:', error);
+   //   console.error('Error en actualización de perfil:', error);
       throw error;
     }
   }
@@ -139,12 +139,12 @@ class UserService {
   async uploadProfilePhoto(photoUrl) {
     try {
       const token = await this.getAuthToken();
-      console.log('Subiendo foto de perfil con token:', token.substring(0, 15) + '...');
-      console.log('URL de la foto:', photoUrl);
+      /* console.log('Subiendo foto de perfil con token:', token.substring(0, 15) + '...');
+      console.log('URL de la foto:', photoUrl); */
 
       // Verificar si la URL es demasiado larga (máximo 255 caracteres permitidos por el backend)
       if (photoUrl && photoUrl.length > 255) {
-        console.log('URL de la foto demasiado larga, truncando a 255 caracteres');
+        /* console.log('URL de la foto demasiado larga, truncando a 255 caracteres'); */
         // Truncar la URL si es demasiado larga
         photoUrl = photoUrl.substring(0, 255);
       }
@@ -155,8 +155,8 @@ class UserService {
         profilePhotoPath: photoUrl
       };
 
-      console.log(`Enviando solicitud a ${API_BASE_URL}/student/user/upload-photo`);
-      console.log('Payload:', JSON.stringify(payload, null, 2));
+      /* console.log(`Enviando solicitud a ${API_BASE_URL}/student/user/upload-photo`);
+      console.log('Payload:', JSON.stringify(payload, null, 2)); */
 
       const response = await fetch(`${API_BASE_URL}/student/user/upload-photo`, {
         method: 'POST',
@@ -167,31 +167,31 @@ class UserService {
         body: JSON.stringify(payload)
       });
 
-      console.log('Código de respuesta:', response.status);
+      /* console.log('Código de respuesta:', response.status); */
 
       // Obtener el texto de la respuesta
       const responseText = await response.text();
-      console.log('Texto de respuesta:', responseText);
+      /* console.log('Texto de respuesta:', responseText); */
 
       // Intentar parsear como JSON si hay contenido
       let data;
       try {
         data = responseText ? JSON.parse(responseText) : {};
       } catch (e) {
-        console.error('Error al parsear JSON:', e);
+     //   console.error('Error al parsear JSON:', e);
         throw new Error('Formato de respuesta inválido');
       }
 
       if (response.ok && (data.type === 'SUCCESS' || !data.type)) {
-        console.log('Foto de perfil actualizada exitosamente');
+        /* console.log('Foto de perfil actualizada exitosamente'); */
         return { success: true, data: data.result || data };
       } else {
         const errorMsg = data.profilePhotoPath || data?.text || data?.message || 'Error desconocido al actualizar la foto de perfil';
-        console.error('Error al actualizar foto de perfil:', errorMsg);
+      //  console.error('Error al actualizar foto de perfil:', errorMsg);
         throw new Error(errorMsg);
       }
     } catch (error) {
-      console.error('Error en la petición de actualización de foto de perfil:', error);
+    //  console.error('Error en la petición de actualización de foto de perfil:', error);
       throw error;
     }
   }
@@ -205,7 +205,7 @@ class UserService {
       }
       return token;
     } catch (error) {
-      console.error('Error al obtener token:', error);
+ //     console.error('Error al obtener token:', error);
       throw error;
     }
   }

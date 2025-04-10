@@ -30,8 +30,7 @@ export default function PendingEnrollmentsScreen({ navigation, route }) {
       setError(null);
       
       const studentPayments = await PaymentService.getStudentPayments();
-      console.log('Pagos obtenidos:', studentPayments);
-      
+ 
       // Transformar los datos para adaptarlos al formato de la tabla
       const formattedPayments = studentPayments.map(payment => ({
         id: payment.paymentId,
@@ -49,7 +48,7 @@ export default function PendingEnrollmentsScreen({ navigation, route }) {
       setPayments(formattedPayments);
       setFilteredPayments(formattedPayments);
     } catch (err) {
-      console.error('Error al cargar pagos:', err);
+      /* console.error('Error al cargar pagos:', err); */
       setError('No se pudieron cargar tus pagos. Intenta de nuevo más tarde.');
     } finally {
       setIsLoading(false);
@@ -103,11 +102,11 @@ export default function PendingEnrollmentsScreen({ navigation, route }) {
 
   // Función para manejar la acción de subir voucher
   const handleUploadVoucher = (payment) => {
-    console.log('[PendingEnrollmentsScreen] Navegando a voucher-verification con datos:', {
+  /*   console.log('[PendingEnrollmentsScreen] Navegando a voucher-verification con datos:', {
       paymentId: payment.id,
       courseTitle: payment.title,
       amount: payment.amount
-    });
+    }); */
     
     navigation.navigate('voucher-verification', { 
       paymentId: payment.id,

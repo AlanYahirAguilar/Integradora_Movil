@@ -54,7 +54,7 @@ const AdvancedSearch = ({ navigation, route }) => {
       // Aplicar filtros iniciales
       applyFilters(formattedCourses, search, sortOrder);
     } catch (error) {
-      console.error('Error al cargar cursos:', error);
+  //    console.error('Error al cargar cursos:', error);
       setError('No se pudieron cargar los cursos');
       // Usar datos estáticos en caso de error
       setCourses([]);

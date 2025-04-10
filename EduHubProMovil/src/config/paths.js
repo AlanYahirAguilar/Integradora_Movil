@@ -1,6 +1,6 @@
 // paths.js
 // Base api url
-export const base_api_url = "http://192.168.0.169:8080/eduhubpro/";
+export const base_api_url = "http://192.168.111.238:8080/eduhubpro/";
 
 // Controllers
 export const auth_path = "auth/"

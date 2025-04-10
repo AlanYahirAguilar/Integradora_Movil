@@ -23,7 +23,7 @@ const SignIn = ({ navigation }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
-  
+
   // Estados para el formulario de registro
   const [registerName, setRegisterName] = useState('');
   const [registerEmail, setRegisterEmail] = useState('');
@@ -45,8 +45,8 @@ const SignIn = ({ navigation }) => {
 
   // Función para mostrar mensajes
   const showMessage = (message, isError = false) => {
-    console.log(message);
-    
+    /* console.log(message); */
+
     if (Platform.OS === 'android') {
       ToastAndroid.showWithGravity(
         message,
@@ -54,7 +54,7 @@ const SignIn = ({ navigation }) => {
         ToastAndroid.CENTER
       );
     }
-    
+
     // También establecemos el mensaje en el estado para mostrarlo visualmente
     if (isError) {
       setErrorMessage(message);
@@ -86,7 +86,7 @@ const SignIn = ({ navigation }) => {
     setSuccessMessage('');
 
     try {
-      console.log('Iniciando petición de login...');
+      /* console.log('Iniciando petición de login...'); */
       const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.LOGIN}`, {
         method: 'POST',
         headers: {
@@ -99,38 +99,47 @@ const SignIn = ({ navigation }) => {
       });
 
       const data = await response.json();
-      console.log('Respuesta del servidor:', data);
-
+      /* console.log('Respuesta del servidor:', data); */
+      
       if (response.ok) {
-        // Guardar el token JWT y datos del usuario en AsyncStorage
-        console.log('Guardando token JWT en AsyncStorage:', data.jwt);
-        await AsyncStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, data.jwt);
-        console.log('Token JWT guardado correctamente');
+
+        console.log(data);
+     
+        if (data.role !== 'STUDENT') {
+          showMessage('Este portal es solo para estudiantes.', true);
+          setIsLoading(false);
+          return;
+        }
         
-        console.log('Guardando datos del usuario en AsyncStorage');
+        // Guardar el token JWT y datos del usuario en AsyncStorage
+        /* console.log('Guardando token JWT en AsyncStorage:', data.jwt); */
+        await AsyncStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, data.jwt);
+        /* console.log('Token JWT guardado correctamente'); */
+
+        /* console.log('Guardando datos del usuario en AsyncStorage'); */
         await AsyncStorage.setItem(STORAGE_KEYS.USER_EMAIL, data.email);
         await AsyncStorage.setItem(STORAGE_KEYS.USER_NAME, data.name);
         await AsyncStorage.setItem(STORAGE_KEYS.USER_ROLE, data.role);
-        
+
         // También guardamos todos los datos del usuario como un objeto JSON
         await AsyncStorage.setItem(STORAGE_KEYS.USER_DATA, JSON.stringify(data));
-        console.log('Datos del usuario guardados correctamente');
-        
+        /* console.log('Datos del usuario guardados correctamente'); */
+
         // Mostrar mensaje de éxito
         showMessage(MESSAGES.LOGIN_SUCCESS);
-        
+
         // Navegar a la pantalla principal
-        console.log('Navegando a la pantalla principal...');
+        /* console.log('Navegando a la pantalla principal...'); */
         setTimeout(() => {
           navigation.replace('Home');
         }, 1000); // Pequeño retraso para que el usuario vea el mensaje de éxito
       } else {
         // Mostrar mensaje de error
-        console.log('Error en inicio de sesión:', data.message || MESSAGES.LOGIN_ERROR);
+        /* console.log('Error en inicio de sesión:', data.message || MESSAGES.LOGIN_ERROR); */
         showMessage(data.message || MESSAGES.LOGIN_ERROR, true);
       }
     } catch (error) {
-      console.error('Error en inicio de sesión:', error);
+      //   console.error('Error en inicio de sesión:', error);
       showMessage(MESSAGES.NETWORK_ERROR, true);
     } finally {
       setIsLoading(false);
@@ -156,7 +165,7 @@ const SignIn = ({ navigation }) => {
     setSuccessMessage('');
 
     try {
-      console.log('Iniciando petición de registro...');
+      /* console.log('Iniciando petición de registro...'); */
       const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.REGISTER}`, {
         method: 'POST',
         headers: {
@@ -171,18 +180,18 @@ const SignIn = ({ navigation }) => {
       });
 
       const data = await response.json();
-      console.log('Respuesta del servidor (registro):', data);
+      /* console.log('Respuesta del servidor (registro):', data); */
 
       if (response.ok && data.type === 'SUCCESS') {
         // Mostrar mensaje de éxito
         showMessage(data.text || MESSAGES.REGISTER_SUCCESS);
-        
+
         // Limpiar formulario
         setRegisterName('');
         setRegisterEmail('');
         setRegisterPassword('');
         setConfirmPassword('');
-        
+
         // Opcional: Cambiar a la pantalla de login después de un registro exitoso
         setTimeout(() => {
           setShowLoginForm(true);
@@ -191,7 +200,7 @@ const SignIn = ({ navigation }) => {
       } else {
         // Extraer y mostrar mensajes de error específicos del backend
         let errorMsg = MESSAGES.REGISTER_ERROR;
-        
+
         // Si la respuesta es un objeto con propiedades que contienen mensajes de error
         if (typeof data === 'object' && data !== null) {
           // Buscar el primer mensaje de error en el objeto
@@ -201,17 +210,17 @@ const SignIn = ({ navigation }) => {
               break;
             }
           }
-        } 
+        }
         // Si la respuesta tiene un campo 'text' (formato estándar de error)
         else if (data && data.text) {
           errorMsg = data.text;
         }
-        
-        console.log('Error en registro:', errorMsg);
+
+        /* console.log('Error en registro:', errorMsg); */
         showMessage(errorMsg, true);
       }
     } catch (error) {
-      console.error('Error en registro:', error);
+      //   console.error('Error en registro:', error);
       showMessage(MESSAGES.NETWORK_ERROR, true);
     } finally {
       setIsRegistering(false);
@@ -219,7 +228,7 @@ const SignIn = ({ navigation }) => {
   };
 
   return (
-    <ScrollView 
+    <ScrollView
       ref={scrollViewRef}
       contentContainerStyle={styles.container}
     >
@@ -229,18 +238,18 @@ const SignIn = ({ navigation }) => {
           <Text style={styles.errorText}>{errorMessage}</Text>
         </View>
       ) : null}
-      
+
       {successMessage ? (
         <View style={styles.successContainer}>
           <Text style={styles.successText}>{successMessage}</Text>
         </View>
       ) : null}
-      
+
       {showLoginForm ? (
         // Formulario de inicio de sesión
         <View style={styles.loginFormContainer}>
           <Text style={styles.loginFormTitle}>Iniciar Sesión</Text>
-          
+
           <TextInput
             style={styles.input}
             placeholder="Correo electrónico"
@@ -251,7 +260,7 @@ const SignIn = ({ navigation }) => {
             onChangeText={setEmail}
             autoFocus={true}
           />
-          
+
           <TextInput
             style={styles.input}
             placeholder="Contraseña"
@@ -260,8 +269,8 @@ const SignIn = ({ navigation }) => {
             value={password}
             onChangeText={setPassword}
           />
-          
-          <TouchableOpacity 
+
+          <TouchableOpacity
             style={[styles.loginFormButton, isLoading && styles.disabledButton]}
             onPress={performLogin}
             disabled={isLoading}
@@ -272,16 +281,16 @@ const SignIn = ({ navigation }) => {
               <Text style={styles.loginButtonText}>INICIA SESIÓN</Text>
             )}
           </TouchableOpacity>
-          
-          <TouchableOpacity 
+
+          <TouchableOpacity
             style={styles.switchFormButton}
             onPress={() => setShowLoginForm(false)}
             disabled={isLoading}
           >
             <Text style={styles.switchFormText}>¿No tienes cuenta? Regístrate</Text>
           </TouchableOpacity>
-          
-          <TouchableOpacity 
+
+          <TouchableOpacity
             style={styles.forgotPasswordButton}
             onPress={() => navigation.navigate('recoverPass')}
             disabled={isLoading}
@@ -373,7 +382,7 @@ export default SignIn;
 
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1, 
+    flexGrow: 1,
     backgroundColor: '#FFFFFF',
   },
   headerContainer: {
@@ -463,7 +472,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 3,
   },
-  
+
   registerButtonText: {
     color: '#FFFFFF',
     fontSize: 16,

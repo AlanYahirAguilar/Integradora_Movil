@@ -66,7 +66,7 @@ export default function Profile({ route, navigation }) {
         }
       }
     } catch (error) {
-      console.error('Error al cargar perfil:', error);
+   //   console.error('Error al cargar perfil:', error);
       setError('No se pudo cargar la información del perfil. Por favor, intenta nuevamente.');
       
       // Cargar datos locales como fallback
@@ -88,7 +88,7 @@ export default function Profile({ route, navigation }) {
       if (storedImage) setProfileImage(storedImage);
       setPassword('********'); // Valor por defecto
     } catch (error) {
-      console.error('Error al cargar datos locales:', error);
+    //  console.error('Error al cargar datos locales:', error);
     }
   };
 
@@ -196,7 +196,7 @@ export default function Profile({ route, navigation }) {
         { cancelable: true }
       );
     } catch (error) {
-      console.error('Error al actualizar perfil:', error);
+    //  console.error('Error al actualizar perfil:', error);
       
       // Extraer mensaje de error
       const errorMessage = error.message || 'Error desconocido al actualizar el perfil';
@@ -237,7 +237,7 @@ export default function Profile({ route, navigation }) {
         try {
           // Obtener la URI de la imagen seleccionada
           const localUri = pickerResult.assets[0].uri;
-          console.log('Imagen seleccionada:', localUri);
+          /* console.log('Imagen seleccionada:', localUri); */
           
           // Preparar el archivo para subir
           const filename = localUri.split('/').pop();
@@ -263,15 +263,15 @@ export default function Profile({ route, navigation }) {
             };
           }
           
-          console.log('Subiendo archivo:', filename);
+          /* console.log('Subiendo archivo:', filename); */
           
           // Paso 1: Subir la imagen a Cloudflare usando PaymentService
           const imageUrl = await PaymentService.uploadFile(fileToUpload);
-          console.log('Imagen subida exitosamente a Cloudflare. URL:', imageUrl);
+          /* console.log('Imagen subida exitosamente a Cloudflare. URL:', imageUrl); */
           
           // Paso 2: Actualizar la foto de perfil en el backend usando UserService
           const updateResult = await UserService.uploadProfilePhoto(imageUrl);
-          console.log('Perfil actualizado con nueva foto:', updateResult);
+          /* console.log('Perfil actualizado con nueva foto:', updateResult); */
           
           // Actualizar la URL de la imagen de perfil en el estado local
           setProfileImage(imageUrl);
@@ -286,7 +286,7 @@ export default function Profile({ route, navigation }) {
             [{ text: 'OK' }]
           );
         } catch (error) {
-          console.error('Error al subir la imagen:', error);
+     //     console.error('Error al subir la imagen:', error);
           Alert.alert(
             'Error',
             'No se pudo subir la imagen. Por favor, intenta nuevamente.',
@@ -297,7 +297,7 @@ export default function Profile({ route, navigation }) {
         }
       }
     } catch (error) {
-      console.error('Error al seleccionar imagen:', error);
+    //  console.error('Error al seleccionar imagen:', error);
       Alert.alert(
         'Error',
         'No se pudo seleccionar la imagen. Por favor, intenta nuevamente.',
