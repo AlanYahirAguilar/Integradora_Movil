@@ -192,7 +192,7 @@ export default function Profile({ route, navigation }) {
       Alert.alert(
         'Éxito',
         'Los cambios han sido guardados correctamente.',
-        [{ text: 'OK', onPress: () => console.log('Cambios guardados') }],
+        [{ text: 'Guardar Cambios', onPress: () => console.log('Cambios guardados') }],
         { cancelable: true }
       );
     } catch (error) {
