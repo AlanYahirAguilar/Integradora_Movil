@@ -23,6 +23,7 @@ import AdvancedSearch from '../modules/advancedSearch/AdvancedSearch';
 import RecoverPassword from '../modules/recoverPassword/recoverPassword';
 import VerificationCodeScreen from '../modules/recoverPassword/VerificationCodeScreen';
 import ResetPasswordScreen from '../modules/recoverPassword/ResetPasswordScreen';
+import MyInscriptionsCourses from '../modules/myCourses/MyInscriptionsCourses'; 
 // Importar los nuevos componentes
 import LessonDetail from '../components/NUEVOOOOOS/LessonDetail';
 import ModuleSections from '../components/NUEVOOOOOS/ModuleSections';
@@ -59,11 +60,16 @@ export const RootStack = ({ initialToken }) => {
           title: 'Detalles del Curso'
         })} 
       />
-      <Stack.Screen name='mis cursos' component={MyCoursesScreen} options={({ navigation }) => ({
+      <Stack.Screen name='En curso' component={MyCoursesScreen} options={({ navigation }) => ({
+          header: () => <CustomHeader toggleSidebar={() => navigation.setParams({ toggleSidebar: true })} />
+        })} 
+        />
+        <Stack.Screen name='Inscritos' component={MyInscriptionsCourses} options={({ navigation }) => ({
           header: () => <CustomHeader toggleSidebar={() => navigation.setParams({ toggleSidebar: true })} />,
           title: 'Mis Cursos'
         })} 
         />
+
       {/* Nuevas pantallas agregadas */}
       <Stack.Screen 
         name="PaymentInfo" 

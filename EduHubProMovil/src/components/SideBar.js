@@ -151,6 +151,7 @@ const Sidebar = ({ isOpen, toggleSidebar, navigation }) => {
             }}>
               <Text style={styles.itemText}>Mis Cursos</Text>
             </TouchableOpacity>
+            
 
             <TouchableOpacity style={styles.sidebarItemDropdown}>
               <Text style={styles.itemText}>Categorías</Text>
