@@ -6,9 +6,10 @@ import CourseService from '../../services/CourseService';
 export default function CourseDetailScreen({ route, navigation }) {
   const { course } = route.params; // Recibe el curso seleccionado
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isCourseFullModalVisible, setIsCourseFullModalVisible] = useState(false);
   const [isSupportModalVisible, setIsSupportModalVisible] = useState(false);
   const [isAlreadyEnrolledModalVisible, setIsAlreadyEnrolledModalVisible] = useState(false);
+  const [isFullCourseModalVisible, setIsFullCourseModalVisible] = useState(false);
+  const [isPaymentModalVisible, setIsPaymentModalVisible] = useState(false);
   const [isSuccessModalVisible, setIsSuccessModalVisible] = useState(false);
   const [isErrorModalVisible, setIsErrorModalVisible] = useState(false);
   const [enrollmentErrorMessage, setEnrollmentErrorMessage] = useState('');
@@ -117,7 +118,7 @@ export default function CourseDetailScreen({ route, navigation }) {
       {/* Calificación */}
       <View style={styles.ratingContainer}>
         <Image source={require('../../../assets/Star.png')} style={styles.starIcon} />
-        <Text style={styles.rating}>{course.rating ? course.rating.toFixed(1) : '4.5'}</Text>
+        <Text style={styles.rating}>{course.rating ? course.rating.toFixed(1) : '0.0'}</Text>
       </View>
 
       {/* Descripción */}
@@ -190,12 +191,11 @@ export default function CourseDetailScreen({ route, navigation }) {
         )}
       </TouchableOpacity>
 
-      {/* Modal de Alerta para Curso Lleno */}
-      <Modal visible={isCourseFullModalVisible} transparent animationType="fade">
+      <Modal visible={isFullCourseModalVisible} transparent animationType="fade">
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             {/* Icono de Advertencia */}
-            <Text style={styles.modalTitle}>⚠️ Curso Lleno</Text>
+            <Text style={styles.modalTitle}>Curso Lleno</Text>
 
             {/* Mensaje de la Alerta */}
             <Text style={styles.modalMessage}>
@@ -212,10 +212,7 @@ export default function CourseDetailScreen({ route, navigation }) {
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.modalButton, styles.modalContactButton]}
-                onPress={() => {
-                  setIsCourseFullModalVisible(false); // Ocultar el primer modal
-                  setIsSupportModalVisible(true); // Mostrar el segundo modal
-                }}
+                onPress={() => setIsFullCourseModalVisible(false)}
               >
                 <Text style={styles.modalButtonText}>Contactar a soporte</Text>
               </TouchableOpacity>
@@ -224,28 +221,35 @@ export default function CourseDetailScreen({ route, navigation }) {
         </View>
       </Modal>
 
-      {/* Modal de Ya Inscrito */}
-      <Modal visible={isAlreadyEnrolledModalVisible} transparent animationType="fade">
+      {/* Modal de Pago del Curso */}
+      <Modal visible={isPaymentModalVisible} transparent animationType="fade">
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
-            {/* Icono de Información */}
-            <Text style={styles.modalTitle}>ℹ️ Ya estás inscrito</Text>
+            {/* Icono de Advertencia */}
+            <Text style={styles.modalTitle}>Pago del curso</Text>
 
             {/* Mensaje de la Alerta */}
             <Text style={styles.modalMessage}>
-              {enrollmentErrorMessage}
+              Para poder inscribirte al curso, deberás realizar el pago correspondiente.
             </Text>
 
             {/* Opciones */}
             <View style={styles.modalButtons}>
               <TouchableOpacity
-                style={[styles.modalButton, styles.modalContactButton]}
-                onPress={() => {
-                  setIsAlreadyEnrolledModalVisible(false);
+                style={[styles.modalButton, styles.modalPayButton]}
+                onPress={() => { setIsPaymentModalVisible(false); 
                   navigation.navigate('Home');
                 }}
               >
-                <Text style={styles.modalButtonText}>Entendido</Text>
+                <Text style={styles.modalButtonText}>Pagar ahora</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.modalPayButton]}
+                onPress={() => { setIsPaymentModalVisible(false); 
+                  navigation.navigate('PaymentInfo');
+                }}
+              >
+                <Text style={styles.modalButtonText}>Pagar después</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -257,23 +261,32 @@ export default function CourseDetailScreen({ route, navigation }) {
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             {/* Icono de Éxito */}
-            <Text style={styles.modalTitle}>✔️ Inscripción Exitosa</Text>
+            <Text style={styles.modalTitle}>¡Felicidades!</Text>
 
             {/* Mensaje de Éxito */}
             <Text style={styles.modalMessage}>
-              ¡Te has inscrito correctamente al curso!
+              ¡Tu inscripción al curso se ha completado con éxito!
             </Text>
 
             {/* Opciones */}
             <View style={styles.modalButtons}>
               <TouchableOpacity
-                style={[styles.modalButton, styles.modalContactButton]}
+                style={[styles.modalButton, styles.modalSuccessButton]}
+                onPress={() => {
+                  setIsSuccessModalVisible(false);
+                  navigation.navigate('Inscritos');
+                }}
+              >
+                <Text style={styles.modalButtonText}>Ir a "Mis Cursos"</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.modalSuccessButton]}
                 onPress={() => {
                   setIsSuccessModalVisible(false);
                   navigation.navigate('Home');
                 }}
               >
-                <Text style={styles.modalButtonText}>Ir a Inicio</Text>
+                <Text style={styles.modalButtonText}>Volver al Inicio</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -296,7 +309,9 @@ export default function CourseDetailScreen({ route, navigation }) {
             <View style={styles.modalButtons}>
               <TouchableOpacity
                 style={[styles.modalButton, styles.modalCancelButton]}
-                onPress={() => setIsErrorModalVisible(false)}
+                onPress={() => {setIsErrorModalVisible(false);
+                  navigation.navigate('Home'); 
+                }}
               >
                 <Text style={styles.modalButtonText}>Cerrar</Text>
               </TouchableOpacity>
@@ -328,7 +343,9 @@ export default function CourseDetailScreen({ route, navigation }) {
             </TouchableOpacity>
 
             {/* Botón para Cerrar el Modal */}
-            <TouchableOpacity style={styles.closeButton} onPress={() => setIsSupportModalVisible(false)}>
+            <TouchableOpacity style={styles.closeButton} onPress={() => {setIsSupportModalVisible(false);
+              navigation.navigate('Home')
+            }}>
               <Text style={styles.closeButtonText}>Cerrar</Text>
             </TouchableOpacity>
           </View>
@@ -486,16 +503,15 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
     backgroundColor: '#fff',
     padding: 24,
     borderRadius: 8,
     width: '80%',
-    alignItems: 'center',
   },
   modalTitle: {
     fontSize: 18,
@@ -505,19 +521,27 @@ const styles = StyleSheet.create({
   },
   modalMessage: {
     fontSize: 16,
-    textAlign: 'center',
+    color: '#333',
     marginBottom: 16,
+    textAlign: 'center',
   },
   modalButtons: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '100%',
   },
   modalButton: {
-    padding: 12,
+    backgroundColor: '#604274',
+    paddingVertical: 12,
     borderRadius: 8,
+    alignItems: 'center',
     flex: 1,
-    marginHorizontal: 4,
+    marginHorizontal: 8,
+  },
+  modalButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
   modalCancelButton: {
     backgroundColor: '#65739F',

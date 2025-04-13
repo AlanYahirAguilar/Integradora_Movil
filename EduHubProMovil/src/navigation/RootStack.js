@@ -65,8 +65,7 @@ export const RootStack = ({ initialToken }) => {
         })} 
         />
         <Stack.Screen name='Inscritos' component={MyInscriptionsCourses} options={({ navigation }) => ({
-          header: () => <CustomHeader toggleSidebar={() => navigation.setParams({ toggleSidebar: true })} />,
-          title: 'Mis Cursos'
+          header: () => <CustomHeader toggleSidebar={() => navigation.setParams({ toggleSidebar: true })} />
         })} 
         />
 
