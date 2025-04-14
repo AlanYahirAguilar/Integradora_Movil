@@ -145,12 +145,32 @@ const Sidebar = ({ isOpen, toggleSidebar, navigation }) => {
               <Text style={styles.itemText}>Inicio</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.sidebarItem} onPress={() => {
-              navigation.navigate('mis cursos');
-              toggleSidebar();
-            }}>
-              <Text style={styles.itemText}>Mis Cursos</Text>
-            </TouchableOpacity>
+            <TouchableOpacity style={styles.sidebarItemDropdown}>
+          <Text style={styles.itemText}>Cursos</Text>
+          <View style={styles.dropdown}>
+          {/* Subbotón para "Inscritos" */}
+          <TouchableOpacity
+            style={styles.dropdownItem}
+            onPress={() => {
+              navigation.navigate('Inscritos'); // Redirige a la vista "Inscritos"
+              toggleSidebar(); // Cierra el sidebar
+              }}
+                >
+          <Text style={styles.dropdownItemText}>Inscritos</Text>
+          </TouchableOpacity>
+
+           {/* Subbotón para "En Curso" */}
+          <TouchableOpacity
+            style={styles.dropdownItem}
+            onPress={() => {
+            navigation.navigate('En curso'); // Redirige a la vista "En Curso"
+            toggleSidebar(); // Cierra el sidebar
+            }}
+          >
+          <Text style={styles.dropdownItemText}>En Curso</Text>
+          </TouchableOpacity>
+          </View>
+          </TouchableOpacity>
             
 
             <TouchableOpacity style={styles.sidebarItemDropdown}>
@@ -428,6 +448,26 @@ const styles = StyleSheet.create({
   errorText: {
     fontSize: 12,
     color: '#ff0000',
+  },
+  sidebarItemDropdown: {
+    paddingVertical: 12,
+    paddingHorizontal: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+  },
+  dropdown: {
+    marginTop: 8,
+    backgroundColor: '#f9f9f9',
+    borderRadius: 5,
+    padding: 5,
+  },
+  dropdownItem: {
+    paddingVertical: 8,
+    paddingHorizontal: 15,
+  },
+  dropdownItemText: {
+    fontSize: 14,
+    color: '#555',
   },
 });
 
