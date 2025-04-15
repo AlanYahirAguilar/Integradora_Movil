@@ -22,31 +22,31 @@ class UserService {
         },
         body: JSON.stringify({ userId: token })
       });
-      
+
       // Verificar respuesta
       const responseText = await response.text();
       let data;
-      
+
       try {
         data = responseText ? JSON.parse(responseText) : {};
       } catch (e) {
-      //  console.error('Error al parsear respuesta:', e, responseText);
+        //  console.error('Error al parsear respuesta:', e, responseText);
         throw new Error('Formato de respuesta inválido');
       }
-      
+
       /* console.log('Respuesta perfil:', JSON.stringify(data, null, 2)); */
-      
+
       if (response.ok) {
         return data.result || data;
       } else {
         throw new Error(data.text || 'Error al obtener perfil');
       }
     } catch (error) {
-  //    console.error('Error al obtener perfil:', error);
+      //    console.error('Error al obtener perfil:', error);
       throw new Error('No se pudo obtener la información del perfil');
     }
   }
-  
+
   /**
    * Actualiza el perfil del usuario
    * @param {Object} profileData - Datos del perfil a actualizar
@@ -60,29 +60,29 @@ class UserService {
       }
 
       const token = await this.getAuthToken();
-      
+
       // Estructura exacta esperada por el backend - IMPORTANTE: userId es el token mismo y password NUNCA debe ser null
       const payload = {
         userId: token,
         name: profileData.name || '',
         email: profileData.email || '',
         // Si la contraseña es null o undefined, usar una contraseña por defecto que cumpla con los requisitos
-        password: (profileData.password === null || profileData.password === undefined) 
+        password: (profileData.password === null || profileData.password === undefined)
           ? 'DefaultPassword123' // Contraseña por defecto que cumple con los requisitos
           : profileData.password,
         profilePhotoPath: profileData.profilePhotoPath || ''
       };
-      
+
       // Verificación adicional para password - asegurar que nunca sea vacía o null
       if (!payload.password || payload.password === '') {
         payload.password = 'DefaultPassword123';
         /* console.log('⚠️ Usando contraseña por defecto para evitar error 400'); */
       }
-      
+
       // Log detallado para depuración
       /* console.log(`Enviando actualización a ${API_BASE_URL}/student/user/update-profile`);
       console.log('Payload:', JSON.stringify(payload, null, 2)); */
-      
+
       // Usar método PUT en lugar de POST - El backend espera PUT para actualizar el perfil
       const response = await fetch(`${API_BASE_URL}/student/user/update-profile`, {
         method: 'PUT',
@@ -92,41 +92,41 @@ class UserService {
         },
         body: JSON.stringify(payload)
       });
-      
+
       /* console.log('Código de respuesta:', response.status); */
-      
+
       // Obtener el texto de la respuesta
       const responseText = await response.text();
       /* console.log('Texto de respuesta:', responseText); */
-      
+
       // Si el texto está vacío pero la respuesta es exitosa
       if (!responseText && response.ok) {
         return { success: true, message: 'Perfil actualizado correctamente' };
       }
-      
+
       // Intentar parsear como JSON si hay contenido
       let data;
       try {
         data = responseText ? JSON.parse(responseText) : {};
       } catch (e) {
-   //     console.error('Error al parsear JSON:', e);
+        //     console.error('Error al parsear JSON:', e);
         // Si la respuesta es exitosa pero no es JSON, consideramos éxito
         if (response.ok) {
           return { success: true, message: 'Perfil actualizado correctamente' };
         }
         throw new Error('El servidor no respondió con un formato válido');
       }
-      
+
       if (response.ok) {
         /* console.log('Perfil actualizado exitosamente:', data); */
         return data.result || data;
       } else {
         const errorMsg = data?.text || data?.message || 'Error desconocido al actualizar el perfil';
-     //   console.error('Error actualización:', errorMsg);
+        //   console.error('Error actualización:', errorMsg);
         throw new Error(errorMsg);
       }
     } catch (error) {
-   //   console.error('Error en actualización de perfil:', error);
+      //   console.error('Error en actualización de perfil:', error);
       throw error;
     }
   }
@@ -178,7 +178,7 @@ class UserService {
       try {
         data = responseText ? JSON.parse(responseText) : {};
       } catch (e) {
-     //   console.error('Error al parsear JSON:', e);
+        //   console.error('Error al parsear JSON:', e);
         throw new Error('Formato de respuesta inválido');
       }
 
@@ -187,11 +187,114 @@ class UserService {
         return { success: true, data: data.result || data };
       } else {
         const errorMsg = data.profilePhotoPath || data?.text || data?.message || 'Error desconocido al actualizar la foto de perfil';
-      //  console.error('Error al actualizar foto de perfil:', errorMsg);
+        //  console.error('Error al actualizar foto de perfil:', errorMsg);
         throw new Error(errorMsg);
       }
     } catch (error) {
-    //  console.error('Error en la petición de actualización de foto de perfil:', error);
+      //  console.error('Error en la petición de actualización de foto de perfil:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Recupera la contraseña del usuario enviando un correo electrónico
+   * @param {string} email - Correo electrónico del usuario
+   * @returns {Promise} Promesa con el resultado de la operación
+   */
+  async getResetCode(email) {
+    try {
+      if (!email || email.trim() === '') {
+        throw new Error('Debes proporcionar un correo electrónico');
+      }
+
+      const payload = { email };
+
+      // Si tu endpoint necesita autenticación, descomenta esto:
+      // const token = await this.getAuthToken();
+
+      const response = await fetch(`${API_BASE_URL}/auth/request-reset-student`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          // 'Authorization': `Bearer ${token}` // Solo si lo requiere
+        },
+        body: JSON.stringify(payload)
+      });
+      console.log(response);
+
+      const responseText = await response.text();
+
+      let data;
+      try {
+        data = responseText ? JSON.parse(responseText) : {};
+      } catch (e) {
+        if (response.ok) {
+          return { success: true, message: 'Correo de recuperación enviado' };
+        }
+        throw new Error('Respuesta no válida del servidor');
+      }
+
+      if (response.ok) {
+        return data.result || data;
+      } else {
+        console.log("\n");
+
+        console.log(data);
+
+        const errorMsg = data?.text || data?.email || 'No se pudo enviar el correo de recuperación';
+        throw new Error(errorMsg);
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Confirma el restablecimiento de la contraseña del usuario
+   * @param {string} code - Código de verificación
+   * @param {string} email - Correo electrónico del usuario
+   * @param {string} password - Nueva contraseña
+   * @returns {Promise} Promesa con el resultado de la operación
+   */
+  async resetPassword(code, email, password) {
+    try {
+      if (!email || !code || !password) {
+        throw new Error('Todos los campos son obligatorios');
+      }
+
+      const payload = {
+        code: code.trim(),
+        email: email.trim(),
+        password: password.trim(),
+      };
+
+      const response = await fetch(`${API_BASE_URL}/auth/reset`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const responseText = await response.text();
+
+      let data;
+      try {
+        data = responseText ? JSON.parse(responseText) : {};
+      } catch (e) {
+        if (response.ok) {
+          return { success: true, message: 'Contraseña restablecida correctamente.' };
+        }
+        throw new Error('Respuesta no válida del servidor');
+      }
+
+      if (response.ok) {
+        return data.result || data.message || { message: 'Contraseña restablecida correctamente' };
+      } else {
+        const errorMsg = data?.text || data?.password || 'No se pudo restablecer la contraseña';
+        throw new Error(errorMsg);
+      }
+    } catch (error) {
       throw error;
     }
   }
@@ -205,7 +308,7 @@ class UserService {
       }
       return token;
     } catch (error) {
- //     console.error('Error al obtener token:', error);
+      //     console.error('Error al obtener token:', error);
       throw error;
     }
   }
