@@ -1,10 +1,49 @@
 // PaymentInfoScreen.js
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import Sidebar from './SideBar';
 import React, { useState, useEffect } from 'react';
+import { API_BASE_URL } from '../constants';
+import UserService from '../services/UserService';
 
 export default function PaymentInfoScreen({ route, navigation }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [banks, setBanks] = useState([]);
+
+  const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+
+  // Función para mostrar mensajes de error o éxito
+  const showMessage = (message, isError = false) => {
+    /* console.log(message); */
+
+    if (Platform.OS === 'android' || Platform.OS === 'ios') {
+      ToastAndroid.showWithGravity(
+        message,
+        ToastAndroid.LONG,
+        ToastAndroid.CENTER
+      );
+    }
+
+    // También establecemos el mensaje en el estado para mostrarlo visualmente
+    if (isError) {
+      setErrorMessage(message);
+    } else {
+      setSuccessMessage(message);
+    }
+  };
+
+  // Limpiar mensajes después de un tiempo
+  useEffect(() => {
+    let timer;
+    if (errorMessage || successMessage) {
+      timer = setTimeout(() => {
+        setErrorMessage('');
+        setSuccessMessage('');
+      }, 3000);
+    }
+    return () => clearTimeout(timer);
+  }, [errorMessage, successMessage]);
+
 
   useEffect(() => {
     if (route.params?.toggleSidebar) {
@@ -13,23 +52,49 @@ export default function PaymentInfoScreen({ route, navigation }) {
     }
   }, [route.params?.toggleSidebar]);
 
-  const banks = [
-    {
-      name: 'BBVA',
-      accountNumber: '0123456789',
-      clabe: '123456789012345678',
-      titular: 'Admin1',
-    },
-    {
-      name: 'Santander',
-      accountNumber: '9876543210',
-      clabe: '876543210987654321',
-      titular: 'Admin2',
-    },
-  ];
+  const getAccounts = async () => {
+    const token = await UserService.getAuthToken();
+
+    await fetch(`${API_BASE_URL}/account/all`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+    }).then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        if (data.type === 'SUCCESS') {
+          setBanks(data.result);
+          showMessage('Cuentas bancarias cargadas correctamente');
+        } else {
+          showMessage(data.message || 'Error al obtener las cuentas bancarias', true);
+        }
+      }).catch((err) => {
+        showMessage('Fallo la conexión al servidor de cuentas', true);
+        console.log(err);
+      });
+  }
+
+  // Fetch de cuentas bancarias al montar
+  useEffect(() => {
+    getAccounts();
+  }, []);
 
   return (
     <View style={styles.container}>
+      {/* Mensajes de error o éxito */}
+      {errorMessage ? (
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>{errorMessage}</Text>
+        </View>
+      ) : null}
+
+      {successMessage ? (
+        <View style={styles.successContainer}>
+          <Text style={styles.successText}>{successMessage}</Text>
+        </View>
+      ) : null}
       <Sidebar
         isOpen={isSidebarOpen}
         toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -41,7 +106,7 @@ export default function PaymentInfoScreen({ route, navigation }) {
 
       {/* Realiza tu pago a cualquiera de las siguientes cuentas */}
       <Text style={styles.subtitle}>Realiza tu pago a cualquiera de las siguientes cuentas:</Text>
-  
+
 
       {/* Cuentas Bancarias */}
       {banks.map((bank, index) => (
@@ -56,11 +121,11 @@ export default function PaymentInfoScreen({ route, navigation }) {
           </View>
           <View style={styles.row}>
             <Image source={require('../../assets/Clave.png')} style={styles.icon} />
-            <Text style={styles.accountInfo}>{`CLABE: ${bank.clabe}`}</Text>
+            <Text style={styles.accountInfo}>{`CLABE: ${bank.key}`}</Text>
           </View>
           <View style={styles.row}>
             <Image source={require('../../assets/User.png')} style={styles.icon} />
-            <Text style={styles.accountInfo}>{`Titular: ${bank.titular}`}</Text>
+            <Text style={styles.accountInfo}>{`Titular: ${bank?.instructorId}`}</Text>
           </View>
         </View>
       ))}
@@ -91,10 +156,10 @@ export default function PaymentInfoScreen({ route, navigation }) {
         </Text>
 
         <TouchableOpacity style={styles.actionButton} onPress={() => {
-                      navigation.navigate('PendingEnrollments');
-                      toggleSidebar();
-                    }}>
-                      <Text style={styles.itemText}>Ir A Inscripciones Pendientes</Text>
+          navigation.navigate('PendingEnrollments');
+          toggleSidebar();
+        }}>
+          <Text style={styles.itemText}>Ir A Inscripciones Pendientes</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -187,7 +252,7 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
-    shadowRadius: 4, 
+    shadowRadius: 4,
     elevation: 5,
   },
   warningIcon: {
@@ -204,5 +269,41 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     paddingHorizontal: 12,
     borderRadius: 4,
+  },
+  errorContainer: {
+    backgroundColor: '#ffebee',
+    padding: 10,
+    borderRadius: 5,
+    marginHorizontal: 20,
+    marginTop: 10,
+    borderLeftWidth: 4,
+    borderLeftColor: '#f44336',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 999,
+  },
+  errorText: {
+    color: '#d32f2f',
+    fontSize: 14,
+  },
+  successContainer: {
+    backgroundColor: '#e8f5e9',
+    padding: 10,
+    borderRadius: 5,
+    marginHorizontal: 20,
+    marginTop: 10,
+    borderLeftWidth: 4,
+    borderLeftColor: '#4caf50',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 999,
+  },
+  successText: {
+    color: '#2e7d32',
+    fontSize: 14,
   },
 });
