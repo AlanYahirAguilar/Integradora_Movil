@@ -105,7 +105,7 @@ const Courses = () => {
       />
       <Text style={styles.cardTitle}>{course.title}</Text>
       <Text style={styles.autor}>{course.autor}</Text>
-      <Text style={styles.cardDescription}>{course.description}</Text>
+      <Text style={styles.cardDescription}>{truncateText(course.description, 50)}</Text>
       <Text>
         <Text style={styles.rank}>{course.numRating}</Text> {renderStars(course.rating)}
       </Text>

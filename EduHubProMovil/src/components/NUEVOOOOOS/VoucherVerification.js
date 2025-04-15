@@ -26,9 +26,6 @@ const VoucherVerification = ({ navigation, route }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  // Obtener los datos del pago de los parámetros de navegación
-  const { paymentId, courseTitle, amount } = route.params || {};
-
   useEffect(() => {
     if (route.params?.toggleSidebar) {
       setIsSidebarOpen((prev) => !prev);
@@ -42,8 +39,7 @@ const VoucherVerification = ({ navigation, route }) => {
       if (Platform.OS === 'web') {
         const input = document.createElement('input');
         input.type = 'file';
-        input.accept = 'application/pdf,image/*';
-        
+        input.accept = 'image/*'; // Solo acepta imágenes
         input.onchange = (e) => {
           const file = e.target.files[0];
           if (file) {
@@ -52,40 +48,35 @@ const VoucherVerification = ({ navigation, route }) => {
               size: file.size,
               uri: URL.createObjectURL(file),
               type: file.type,
-              // Agregar el objeto File original para poder subirlo
               file: file
             });
-            // Reset alert status when new file is selected
             setAlertStatus(null);
             setErrorMessage('');
           }
         };
-        
         input.click();
       } else {
-        // For native platforms, just show an alert for now
+        // Para dispositivos móviles, muestra un alerta
         Alert.alert('Aviso', 'Función de selección de archivo disponible próximamente en dispositivos móviles');
-        // Simulate a file selection for testing
         setSelectedFile({
-          name: 'archivo_ejemplo.pdf',
+          name: 'ejemplo_imagen.jpg',
           size: 1024,
           uri: '',
-          type: 'application/pdf'
+          type: 'image/jpeg'
         });
-        // Reset alert status when new file is selected
         setAlertStatus(null);
         setErrorMessage('');
       }
     } catch (error) {
-   //   console.error('Error picking document:', error);
-      setErrorMessage('Error al seleccionar el archivo');
+      console.error('Error picking image:', error);
+      setErrorMessage('Error al seleccionar la imagen');
       setAlertStatus('error');
     }
   };
 
   const handleVerify = async () => {
     if (!selectedFile) {
-      setErrorMessage('Por favor selecciona un archivo primero');
+      setErrorMessage('Por favor selecciona una imagen primero');
       setAlertStatus('error');
       return;
     }
@@ -93,43 +84,29 @@ const VoucherVerification = ({ navigation, route }) => {
     try {
       setIsLoading(true);
       setErrorMessage('');
-
       let fileUrl = '';
-      
-      // Si estamos en web y tenemos el objeto File, intentamos subirlo
       if (Platform.OS === 'web' && selectedFile.file) {
-        /* console.log('[VoucherVerification] Subiendo archivo:', selectedFile.name); */
         try {
-          // Subir el archivo al servidor
           fileUrl = await PaymentService.uploadFile(selectedFile.file);
-          /* console.log('[VoucherVerification] Archivo subido exitosamente. URL:', fileUrl); */
         } catch (error) {
-    //      console.error('[VoucherVerification] Error al subir archivo:', error);
-          // Si falla la subida del archivo, usar una URL estática para pruebas
-          fileUrl = 'https://example.com/voucher-example';
-          /* console.log('[VoucherVerification] Usando URL estática para pruebas:', fileUrl); */
+          console.error('Error uploading file:', error);
+          fileUrl = 'https://example.com/image-example';
         }
       } else {
-        // En caso de estar en dispositivo móvil o no tener el objeto File, usar URL estática
-        fileUrl = 'https://example.com/voucher-example';
-        /* console.log('[VoucherVerification] Usando URL estática para pruebas:', fileUrl); */
+        fileUrl = 'https://example.com/image-example';
       }
 
-      // Actualizar el pago con la URL del voucher
-      /* console.log('[VoucherVerification] Actualizando pago con ID:', paymentId, 'y URL:', fileUrl); */
       const result = await PaymentService.uploadVoucher(paymentId, fileUrl);
-
       if (result.success) {
-        /* console.log('[VoucherVerification] Pago actualizado exitosamente:', result); */
         setAlertStatus('success');
       } else {
-   //     console.error('[VoucherVerification] Error al actualizar pago:', result.message);
-        setErrorMessage(result.message || 'Ocurrió un error al enviar el voucher');
+        console.error('Error updating payment:', result.message);
+        setErrorMessage(result.message || 'Ocurrió un error al enviar la imagen');
         setAlertStatus('error');
       }
     } catch (error) {
-  //    console.error('[VoucherVerification] Error general:', error);
-      setErrorMessage('No se pudo enviar el voucher. Intenta de nuevo más tarde.');
+      console.error('General error:', error);
+      setErrorMessage('No se pudo enviar la imagen. Intenta de nuevo más tarde.');
       setAlertStatus('error');
     } finally {
       setIsLoading(false);
@@ -140,7 +117,6 @@ const VoucherVerification = ({ navigation, route }) => {
     setAlertStatus(null);
   };
 
-  // Alert component based on status
   const renderAlert = () => {
     if (!alertStatus) return null;
 
@@ -160,7 +136,7 @@ const VoucherVerification = ({ navigation, route }) => {
                 </View>
                 <Text style={styles.alertTitle}>¡EXITO!</Text>
                 <Text style={styles.alertMessage}>
-                  Voucher enviado correctamente
+                  Imagen enviada correctamente
                 </Text>
               </>
             ) : (
@@ -170,7 +146,7 @@ const VoucherVerification = ({ navigation, route }) => {
                 </View>
                 <Text style={styles.alertTitle}>¡ERROR!</Text>
                 <Text style={styles.alertMessage}>
-                  Ha ocurrido un problema al enviar el voucher. Por favor, verifica la información e inténtalo nuevamente.
+                  Ha ocurrido un problema al enviar la imagen. Por favor, verifica la información e inténtalo nuevamente.
                 </Text>
               </>
             )}
@@ -178,9 +154,7 @@ const VoucherVerification = ({ navigation, route }) => {
               style={styles.acceptButton}
               onPress={() => {
                 closeAlert();
-                // Si fue exitoso, navegar a la pantalla de pagos pendientes
                 if (alertStatus === 'success') {
-                  /* console.log('[VoucherVerification] Redirigiendo a la pantalla de pagos pendientes'); */
                   navigation.navigate('PendingEnrollments');
                 }
               }}
@@ -201,64 +175,55 @@ const VoucherVerification = ({ navigation, route }) => {
         navigation={navigation} 
       />
       {renderAlert()}
-      
       <ScrollView style={styles.contentContainer}>
-        <Text style={styles.title}>Verificación de voucher:</Text>
-        
+        <Text style={styles.title}>Verificación de imagen:</Text>
         <View style={styles.instructionsContainer}>
-          <Text style={styles.instructionsTitle}>Instrucciones para cargar tu voucher:</Text>
-          
+          <Text style={styles.instructionsTitle}>Instrucciones para cargar tu imagen:</Text>
           <View style={styles.instructionItem}>
             <Text style={styles.instructionNumber}>1.</Text>
             <View style={styles.instructionTextContainer}>
               <Text style={styles.instructionTitle}>Prioriza una imagen clara y legible.</Text>
               <Text style={styles.instructionDescription}>
-                Asegúrate de que los detalles del voucher sean visibles para facilitar su verificación.
+                Asegúrate de que los detalles sean visibles para facilitar su verificación.
               </Text>
             </View>
           </View>
-          
           <View style={styles.instructionItem}>
             <Text style={styles.instructionNumber}>2.</Text>
             <View style={styles.instructionTextContainer}>
-              <Text style={styles.instructionTitle}>Sube el archivo en formato PDF para evitar problemas de compatibilidad.</Text>
+              <Text style={styles.instructionTitle}>Sube la imagen en formato JPEG, PNG o GIF.</Text>
               <Text style={styles.instructionDescription}>
                 Si no es posible, otros formatos de imagen son aceptables.
               </Text>
             </View>
           </View>
         </View>
-        
         <View style={styles.uploadContainer}>
           <Text style={styles.uploadText}>
-            Por favor, carga tu voucher para ser verificado.
+            Por favor, carga tu imagen para ser verificada.
           </Text>
-          
           <TouchableOpacity 
             style={styles.uploadButton}
             onPress={handleFileUpload}
           >
-            <Text style={styles.uploadButtonText}>Cargar Archivo</Text>
+            <Text style={styles.uploadButtonText}>Cargar Imagen</Text>
           </TouchableOpacity>
-          
           {selectedFile && (
             <Text style={styles.fileNameText}>
               Archivo: {selectedFile.name}
             </Text>
           )}
         </View>
-        
         <View style={styles.warningContainer}>
           <Text style={styles.warningTitle}>Aviso importante:</Text>
           <Text style={styles.warningText}>
-            Si el archivo no cumple con los requisitos o si el pago no es correcto, el voucher será rechazado.
+            Si la imagen no cumple con los requisitos o si el pago no es correcto, la imagen será rechazada.
           </Text>
         </View>
-        
         <TouchableOpacity 
           style={[
             styles.verifyButton, 
-            !selectedFile && styles.verifyButtonDisabled
+            !selectedFile || isLoading ? styles.verifyButtonDisabled : null
           ]}
           onPress={handleVerify}
           disabled={!selectedFile || isLoading}
@@ -266,10 +231,9 @@ const VoucherVerification = ({ navigation, route }) => {
           {isLoading ? (
             <ActivityIndicator size="small" color="#fff" />
           ) : (
-            <Text style={styles.verifyButtonText}>Subir y verificar</Text>
+            <Text style={styles.verifyButtonText}>Subir e verificar</Text>
           )}
         </TouchableOpacity>
-        
         {errorMessage && (
           <Text style={styles.errorText}>
             {errorMessage}
@@ -387,7 +351,6 @@ const styles = StyleSheet.create({
     color: '#FF3D00',
     marginBottom: 10,
   },
-  // Alert styles
   modalBackdrop: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
