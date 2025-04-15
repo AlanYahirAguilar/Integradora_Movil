@@ -1,27 +1,45 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Image } from 'react-native';
+import UserService from '../../services/UserService';
 
-export default function ResetPasswordScreen({ navigation }) {
+export default function ResetPasswordScreen({ navigation, route }) {
+  const { email, code } = route.params;
+
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
   // Función para manejar el cambio de contraseña
-  const handleResetPassword = () => {
-    if (password !== confirmPassword) {
-      Alert.alert('Contraseñas no coinciden', 'Las contraseñas deben coincidir.');
-      return;
+  const handleResetPassword = async () => {
+    if (!password || !confirmPassword) {
+      return Alert.alert('Campos requeridos', 'Debes completar ambos campos de contraseña.');
     }
 
-    // Simulación de cambio de contraseña
-    Alert.alert('Éxito', 'Tu contraseña se ha actualizado correctamente.');
-    navigation.navigate('signIn'); 
-  };
+    if (password !== confirmPassword) {
+      return Alert.alert('Contraseñas no coinciden', 'Las contraseñas deben coincidir.');
+    }
 
+    if (password.length < 8) {
+      return Alert.alert('Contraseña muy corta', 'La contraseña debe tener al menos 8 caracteres.');
+    }
+
+    try {
+      await UserService.resetPassword(code, email, password);
+      Alert.alert(
+        'Éxito',
+        'Tu contraseña se ha actualizado correctamente.',
+        [{ text: 'OK', onPress: () => navigation.navigate('signIn') }],
+        { cancelable: false }
+      );
+    } catch (error) {
+      const errorMessage = error.message || 'No se pudo restablecer la contraseña.';
+      Alert.alert('Error', errorMessage);
+    }
+  };
   return (
     <View style={styles.container}>
       {/* Encabezado */}
       <Text style={styles.title}>Restablecer contraseña</Text>
-      <Image source={require('../../../assets/Reset.png')} style={styles.illustration}/>
+      <Image source={require('../../../assets/Reset.png')} style={styles.illustration} />
 
       {/* Campos de Entrada */}
       <TextInput
@@ -52,8 +70,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#BE6DC0',
     padding: 16,
-    justifyContent: 'center', 
-    alignItems: 'center', 
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   title: {
     fontSize: 20,
@@ -65,7 +83,7 @@ const styles = StyleSheet.create({
   input: {
     borderWidth: 1,
     borderColor: '#000',
-    borderRadius: 8, 
+    borderRadius: 8,
     backgroundColor: '#fff',
     width: '80%',
     padding: 12,
