@@ -24,48 +24,60 @@ export default function CourseDetailScreen({ route, navigation }) {
 
   // Función para manejar la inscripción
   // Función para manejar la inscripción
-// Función para manejar la inscripción
-const handleEnroll = async () => {
-  try {
-    setIsLoading(true); // Mostrar indicador de carga
+  // Función para manejar la inscripción
+  const handleEnroll = async () => {
+    try {
+      setIsLoading(true); // Mostrar indicador de carga
 
-    // Validación 1: Verificar si el curso está lleno
-    if (course.isFull || (course.size !== undefined && course.size <= 0)) {
-      setIsLoading(false);
-      setIsFullCourseModalVisible(true); // Mostrar modal de curso lleno
-      return;
+      // Validación 1: Verificar si el curso está lleno
+      if (course.isFull || (course.size !== undefined && course.size <= 0)) {
+        setIsLoading(false);
+        setIsFullCourseModalVisible(true); // Mostrar modal de curso lleno
+        return;
+      }
+
+      // Validación 2: Verificar si el curso tiene un precio
+      if (course.price > 0) {
+        const enrollmentResponse = await CourseService.enrollCourse(course.id || course.courseId);
+        setIsLoading(false);
+
+        if (enrollmentResponse.success) {
+          // Inscripción exitosa
+          setIsPaymentModalVisible(true); // Mostrar modal de pago
+        } else if (enrollmentResponse.isAlreadyEnrolled) {
+          // Ya inscrito
+          setIsAlreadyEnrolledModalVisible(true); // Mostrar modal de ya inscrito
+        } else {
+          // Error genérico
+          setEnrollmentErrorMessage(enrollmentResponse.message || 'Ocurrió un error al procesar tu solicitud');
+          setIsErrorModalVisible(true); // Mostrar modal de error
+        }
+        return;
+      }
+
+      // Validación 3: Curso gratuito -> Intentar inscribirse directamente
+      const enrollmentResponse = await CourseService.enrollCourse(course.id || course.courseId);
+
+      setIsLoading(false); // Ocultar indicador de carga
+
+      if (enrollmentResponse.success) {
+        // Inscripción exitosa
+        setIsSuccessModalVisible(true); // Mostrar modal de inscripción exitosa
+      } else if (enrollmentResponse.isAlreadyEnrolled) {
+        // Ya inscrito
+        setIsAlreadyEnrolledModalVisible(true); // Mostrar modal de ya inscrito
+      } else {
+        // Error genérico
+        setEnrollmentErrorMessage(enrollmentResponse.message || 'Ocurrió un error al procesar tu solicitud');
+        setIsErrorModalVisible(true); // Mostrar modal de error
+      }
+    } catch (error) {
+      setIsLoading(false); // Ocultar indicador de carga
+      // Mostrar modal de error genérico
+      setEnrollmentErrorMessage(error.message || 'Ocurrió un error al procesar tu solicitud');
+      setIsErrorModalVisible(true);
     }
-
-    // Validación 2: Verificar si el curso tiene un precio
-    if (course.price > 0) {
-      setIsLoading(false);
-      setIsPaymentModalVisible(true); // Mostrar modal de pago
-      return;
-    }
-
-    // Validación 3: Curso gratuito -> Intentar inscribirse directamente
-    const enrollmentResponse = await CourseService.enrollCourse(course.id || course.courseId);
-
-    setIsLoading(false); // Ocultar indicador de carga
-
-    if (enrollmentResponse.success) {
-      // Inscripción exitosa
-      setIsSuccessModalVisible(true); // Mostrar modal de inscripción exitosa
-    } else if (enrollmentResponse.isAlreadyEnrolled) {
-      // Ya inscrito
-      setIsAlreadyEnrolledModalVisible(true); // Mostrar modal de ya inscrito
-    } else {
-      // Error genérico
-      setEnrollmentErrorMessage(enrollmentResponse.message || 'Ocurrió un error al procesar tu solicitud');
-      setIsErrorModalVisible(true); // Mostrar modal de error
-    }
-  } catch (error) {
-    setIsLoading(false); // Ocultar indicador de carga
-    // Mostrar modal de error genérico
-    setEnrollmentErrorMessage(error.message || 'Ocurrió un error al procesar tu solicitud');
-    setIsErrorModalVisible(true);
-  }
-};
+  };
 
   // Función para copiar el correo al portapapeles
   const copyToClipboard = async () => {
@@ -77,17 +89,17 @@ const handleEnroll = async () => {
   // Calcular la duración en horas basado en fechas si está disponible
   const calculateDuration = () => {
     if (!course.startDate || !course.endDate) return '40';
-    
+
     try {
       const start = new Date(course.startDate);
       const end = new Date(course.endDate);
       const diffTime = Math.abs(end - start);
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-      
+
       // Asumimos 8 horas de estudio por día
       return (diffDays * 8).toString();
     } catch (error) {
-   //   console.error('Error al calcular duración:', error);
+      //   console.error('Error al calcular duración:', error);
       return '40'; // Valor por defecto
     }
   };
@@ -119,9 +131,9 @@ const handleEnroll = async () => {
       <View style={styles.creatorContainer}>
         <Image source={require('../../../assets/User.png')} style={styles.userIcon} />
         <Text style={styles.creator}>Creado por: {
-          course.autor || 
-          course.instructor || 
-          (course.instructor && course.instructor.name) || 
+          course.autor ||
+          course.instructor ||
+          (course.instructor && course.instructor.name) ||
           'Instructor'
         }</Text>
       </View>
@@ -223,7 +235,8 @@ const handleEnroll = async () => {
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.modalButton, styles.modalContactButton]}
-                onPress={() => {setIsFullCourseModalVisible(false);
+                onPress={() => {
+                  setIsFullCourseModalVisible(false);
                   setIsSupportModalVisible(true);
                 }}
               >
@@ -236,43 +249,43 @@ const handleEnroll = async () => {
 
       {/* Modal de Pago del Curso */}
       <Modal visible={isPaymentModalVisible} transparent animationType="fade">
-  <View style={styles.modalOverlay}>
-    <View style={styles.modalContent}>
-      {/* Icono de Advertencia */}
-      <Text style={styles.modalTitle}>Pago del curso</Text>
-      {/* Mensaje de la Alerta */}
-      <Text style={styles.modalMessage}>
-        Para poder inscribirte al curso, deberás realizar el pago correspondiente.
-      </Text>
-      {/* Opciones */}
-      <View style={styles.modalButtons}>
-        <TouchableOpacity
-          style={[styles.modalButton, styles.modalPayButton]}
-          onPress={() => { 
-            setIsPaymentModalVisible(false); 
-            navigation.navigate('PaymentInfo', {
-              paymentId: `payment_${Date.now()}`,
-              courseTitle: course.title,
-              amount: course.price,
-              courseId: course.id || course.courseId
-            });
-          }}
-        >
-          <Text style={styles.modalButtonText}>Pagar ahora</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.modalButton, styles.modalPayButton]}
-          onPress={() => { 
-            setIsPaymentModalVisible(false); 
-            navigation.navigate('Home');
-          }}
-        >
-          <Text style={styles.modalButtonText}>Pagar después</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  </View>
-</Modal>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            {/* Icono de Advertencia */}
+            <Text style={styles.modalTitle}>Pago del curso</Text>
+            {/* Mensaje de la Alerta */}
+            <Text style={styles.modalMessage}>
+              Ahora estas inscrito. Para asegurar tu lugar, deberás realizar el pago correspondiente y subir un comprobante. Pulsa en "Siguiente sección" para ver las cuentas disponibles para realizar el pago
+            </Text>
+            {/* Opciones */}
+            <View style={styles.modalButtons}>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.modalPayButton]}
+                onPress={() => {
+                  setIsPaymentModalVisible(false);
+                  navigation.navigate('PaymentInfo', {
+                    paymentId: `payment_${Date.now()}`,
+                    courseTitle: course.title,
+                    amount: course.price,
+                    courseId: course.id || course.courseId
+                  });
+                }}
+              >
+                <Text style={styles.modalButtonText}>Siguiente sección</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.modalPayButton]}
+                onPress={() => {
+                  setIsPaymentModalVisible(false);
+                  navigation.navigate('Home');
+                }}
+              >
+                <Text style={styles.modalButtonText}>Ir al inicio</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
 
       {/* Modal de Inscripción Exitosa */}
       <Modal visible={isSuccessModalVisible} transparent animationType="fade">
@@ -327,8 +340,9 @@ const handleEnroll = async () => {
             <View style={styles.modalButtons}>
               <TouchableOpacity
                 style={[styles.modalButton, styles.modalCancelButton]}
-                onPress={() => {setIsErrorModalVisible(false);
-                  navigation.navigate('Home'); 
+                onPress={() => {
+                  setIsErrorModalVisible(false);
+                  navigation.navigate('Home');
                 }}
               >
                 <Text style={styles.modalButtonText}>Cerrar</Text>
@@ -346,24 +360,24 @@ const handleEnroll = async () => {
           </View>
         </View>
       </Modal>
-      
+
       {/* Modal de Ya estas inscrito */}
       <Modal visible={isAlreadyEnrolledModalVisible} transparent animationType="fade">
-  <View style={styles.modalOverlay}>
-    <View style={styles.modalContent}>
-      <Text style={styles.modalTitle}>¡Ya estás inscrito!</Text>
-      <Text style={styles.modalMessage}>
-        Ya te encuentras registrado en este curso.
-      </Text>
-      <TouchableOpacity
-        style={[styles.modalButton, styles.modalSuccessButton]}
-        onPress={() => navigation.navigate('Inscritos')}
-      >
-        <Text style={styles.modalButtonText}>Ir a "Mis Cursos"</Text>
-      </TouchableOpacity>
-    </View>
-  </View>
-</Modal>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>¡Ya estás inscrito!</Text>
+            <Text style={styles.modalMessage}>
+              Ya te encuentras registrado en este curso.
+            </Text>
+            <TouchableOpacity
+              style={[styles.modalButton, styles.modalSuccessButton]}
+              onPress={() => navigation.navigate('Inscritos')}
+            >
+              <Text style={styles.modalButtonText}>Ir a "Mis Cursos"</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
 
       {/* Modal de Ayuda y Soporte */}
       <Modal visible={isSupportModalVisible} transparent animationType="fade">
@@ -379,7 +393,8 @@ const handleEnroll = async () => {
             </TouchableOpacity>
 
             {/* Botón para Cerrar el Modal */}
-            <TouchableOpacity style={styles.closeButton} onPress={() => {setIsSupportModalVisible(false);
+            <TouchableOpacity style={styles.closeButton} onPress={() => {
+              setIsSupportModalVisible(false);
               navigation.navigate('Home')
             }}>
               <Text style={styles.closeButtonText}>Cerrar</Text>

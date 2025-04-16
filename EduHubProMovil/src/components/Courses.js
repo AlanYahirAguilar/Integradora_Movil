@@ -7,8 +7,8 @@ import CourseService from '../services/CourseService';
 // Datos estáticos como fallback en caso de error
 const staticCourses = [
   { id: 1, title: 'React Native', isFull: false, autor: 'Prof. Clara Bitwise', description: 'Desarrolla apps móviles.', image: 'https://img.freepik.com/vector-gratis/concepto-diseno-web-dibujado-mano_23-2147839737.jpg', numRating: 4.2, rating: 4, precio: 'MX$ 780' },
-  { id: 2, title: 'JavaScript',  isFull: true, autor: 'Dr. Nolan Kernel', description: 'Domina JS desde cero.', image: 'https://img.freepik.com/vector-gratis/concepto-diseno-web-dibujado-mano_23-2147839737.jpg', numRating: 4.2, rating: 5, precio: 'MX$ 980' },
-  { id: 3, title: 'Node.js',  isFull: false, autor: 'Ing. Tessa Cachewood', description: 'Backend con Node.js.', image: 'https://img.freepik.com/vector-gratis/concepto-diseno-web-dibujado-mano_23-2147839737.jpg', numRating: 4.2, rating: 4, precio: 'MX$ 567'},
+  { id: 2, title: 'JavaScript', isFull: true, autor: 'Dr. Nolan Kernel', description: 'Domina JS desde cero.', image: 'https://img.freepik.com/vector-gratis/concepto-diseno-web-dibujado-mano_23-2147839737.jpg', numRating: 4.2, rating: 5, precio: 'MX$ 980' },
+  { id: 3, title: 'Node.js', isFull: false, autor: 'Ing. Tessa Cachewood', description: 'Backend con Node.js.', image: 'https://img.freepik.com/vector-gratis/concepto-diseno-web-dibujado-mano_23-2147839737.jpg', numRating: 4.2, rating: 4, precio: 'MX$ 567' },
 ];
 
 const Courses = () => {
@@ -26,9 +26,9 @@ const Courses = () => {
     try {
       setLoading(true);
       setError(null);
-      
+
       const coursesData = await CourseService.getAllCourses();
-      
+
       // Mapear los datos del backend al formato que espera el componente
       const formattedCourses = coursesData.map(course => ({
         id: course.courseId,
@@ -52,7 +52,7 @@ const Courses = () => {
         modules: course.modules || [],
         instructor: course.instructor
       }));
-      
+
       setCourses(formattedCourses);
     } catch (error) {
       /* console.error('Error al cargar cursos:', error); */
@@ -76,7 +76,7 @@ const Courses = () => {
     <TouchableOpacity
       key={course.id}
       style={styles.card}
-      onPress={() => navigation.navigate('CourseDetail', { 
+      onPress={() => navigation.navigate('CourseDetail', {
         course: {
           ...course,
           // Aseguramos que todos los datos necesarios estén presentes y formateados correctamente
@@ -95,17 +95,17 @@ const Courses = () => {
           categories: course.categories || [],
           size: course.size || 0,
           courseStatus: course.courseStatus || 'PUBLISHED'
-        } 
+        }
       })}
     >
-      <Image 
-        source={{ uri: course.image }} 
-        style={styles.cardImage} 
-        defaultSource={require('../../assets/Test.png')} 
+      <Image
+        source={{ uri: course.image }}
+        style={styles.cardImage}
+        defaultSource={require('../../assets/Test.png')}
       />
       <Text style={styles.cardTitle}>{course.title}</Text>
       <Text style={styles.autor}>{course.autor}</Text>
-      <Text style={styles.cardDescription}>{truncateText(course.description, 50)}</Text>
+      <Text style={styles.cardDescription}>{(course.description, 50)}</Text>
       <Text>
         <Text style={styles.rank}>{course.numRating}</Text> {renderStars(course.rating)}
       </Text>
@@ -229,16 +229,16 @@ const styles = StyleSheet.create({
     alignContent: 'space-between',
     flexDirection: 'row',
   },
-  textPrice:{
+  textPrice: {
     fontSize: 14,
     fontWeight: 'bold',
   },
-  rank:{
+  rank: {
     fontSize: 16,
     fontWeight: 'bold',
     alignContent: 'space-between'
   },
-  autor:{
+  autor: {
     fontSize: 10,
     fontWeight: 'bold',
   },
