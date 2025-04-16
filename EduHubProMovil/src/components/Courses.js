@@ -105,7 +105,10 @@ const Courses = () => {
       />
       <Text style={styles.cardTitle}>{course.title}</Text>
       <Text style={styles.autor}>{course.autor}</Text>
-      <Text style={styles.cardDescription}>{(course.description, 50)}</Text>
+      <Text style={styles.cardDescription}>
+        {course.description.length > 46 ?
+          course.description.substring(0, 46) + '...'
+          : course.description}</Text>
       <Text>
         <Text style={styles.rank}>{course.numRating}</Text> {renderStars(course.rating)}
       </Text>

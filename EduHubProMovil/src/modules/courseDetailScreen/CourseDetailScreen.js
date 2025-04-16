@@ -371,7 +371,7 @@ export default function CourseDetailScreen({ route, navigation }) {
             </Text>
             <TouchableOpacity
               style={[styles.modalButton, styles.modalSuccessButton]}
-              onPress={() => navigation.navigate('Inscritos')}
+              onPress={() => { setIsAlreadyEnrolledModalVisible(false); navigation.navigate('Inscritos') }}
             >
               <Text style={styles.modalButtonText}>Ir a "Mis Cursos"</Text>
             </TouchableOpacity>
