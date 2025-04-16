@@ -155,10 +155,9 @@ export default function PaymentInfoScreen({ route, navigation }) {
           Importante: Si tu pago no es validado correctamente, tu inscripción no será procesada.
         </Text>
 
-        <TouchableOpacity style={styles.actionButton} onPress={() => {
-          navigation.navigate('PendingEnrollments');
-          toggleSidebar();
-        }}>
+        <TouchableOpacity style={styles.actionButton} onPress={() => 
+          navigation.navigate('PendingEnrollments')
+        }>
           <Text style={styles.itemText}>Ir A Inscripciones Pendientes</Text>
         </TouchableOpacity>
       </View>
