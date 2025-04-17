@@ -21,7 +21,7 @@ const SplashScreen = ({ navigation }) => {
                     }
                 }, 2000); // Reducimos el tiempo de splash a 2 segundos
             } catch (error) {
-                console.error('Error al verificar autenticación:', error);
+                //console.error('Error al verificar autenticación:', error);
                 // En caso de error, ir a login
                 setTimeout(() => {
                     navigation.replace('signIn');

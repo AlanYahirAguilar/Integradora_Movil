@@ -60,7 +60,7 @@ const VoucherVerification = ({ navigation, route }) => {
         Alert.alert('Aviso', 'Función de selección de archivo disponible próximamente en dispositivos móviles');
         setSelectedFile({
           name: 'ejemplo_imagen.jpg',
-          size: 1024,
+          size: 0,
           uri: '',
           type: 'image/jpeg'
         });
@@ -68,7 +68,7 @@ const VoucherVerification = ({ navigation, route }) => {
         setErrorMessage('');
       }
     } catch (error) {
-      console.error('Error picking image:', error);
+    //  console.error('Error picking image:', error);
       setErrorMessage('Error al seleccionar la imagen');
       setAlertStatus('error');
     }
@@ -89,7 +89,7 @@ const VoucherVerification = ({ navigation, route }) => {
         try {
           fileUrl = await PaymentService.uploadFile(selectedFile.file);
         } catch (error) {
-          console.error('Error uploading file:', error);
+        //  console.error('Error uploading file:', error);
           fileUrl = 'https://example.com/image-example';
         }
       } else {
@@ -100,12 +100,12 @@ const VoucherVerification = ({ navigation, route }) => {
       if (result.success) {
         setAlertStatus('success');
       } else {
-        console.error('Error updating payment:', result.message);
+      //  console.error('Error updating payment:', result.message);
         setErrorMessage(result.message || 'Ocurrió un error al enviar la imagen');
         setAlertStatus('error');
       }
     } catch (error) {
-      console.error('General error:', error);
+     // console.error('General error:', error);
       setErrorMessage('No se pudo enviar la imagen. Intenta de nuevo más tarde.');
       setAlertStatus('error');
     } finally {
