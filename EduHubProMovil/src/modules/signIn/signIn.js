@@ -103,7 +103,7 @@ const SignIn = ({ navigation }) => {
       
       if (response.ok) {
 
-        console.log(data);
+       // console.log(data);
      
         if (data.role !== 'STUDENT') {
           showMessage('Este portal es solo para estudiantes.', true);

@@ -1,20 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  TouchableOpacity, 
-  ScrollView,
+import * as ImagePicker from 'expo-image-picker';
+import React, { useEffect, useState } from 'react';
+import {
+  ActivityIndicator,
   Dimensions,
-  SafeAreaView,
-  Platform,
-  Image,
   Modal,
-  Alert,
-  ActivityIndicator
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
 } from 'react-native';
-import Sidebar from '../SideBar';
+
 import PaymentService from '../../services/PaymentService';
+import Sidebar from '../SideBar';
 
 const { width } = Dimensions.get('window');
 
@@ -26,6 +25,8 @@ const VoucherVerification = ({ navigation, route }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
+  const paymentId = route.params?.paymentId;
+
   useEffect(() => {
     if (route.params?.toggleSidebar) {
       setIsSidebarOpen((prev) => !prev);
@@ -33,43 +34,47 @@ const VoucherVerification = ({ navigation, route }) => {
     }
   }, [route.params?.toggleSidebar]);
 
+
   const handleFileUpload = async () => {
     try {
-      // Web implementation only since we don't have expo-document-picker
-      if (Platform.OS === 'web') {
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = 'image/*'; // Solo acepta imágenes
-        input.onchange = (e) => {
-          const file = e.target.files[0];
-          if (file) {
-            setSelectedFile({
-              name: file.name,
-              size: file.size,
-              uri: URL.createObjectURL(file),
-              type: file.type,
-              file: file
-            });
-            setAlertStatus(null);
-            setErrorMessage('');
-          }
-        };
-        input.click();
-      } else {
-        // Para dispositivos móviles, muestra un alerta
-        Alert.alert('Aviso', 'Función de selección de archivo disponible próximamente en dispositivos móviles');
-        setSelectedFile({
-          name: 'ejemplo_imagen.jpg',
-          size: 0,
-          uri: '',
-          type: 'image/jpeg'
-        });
-        setAlertStatus(null);
-        setErrorMessage('');
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== 'granted') {
+        setErrorMessage('Permiso denegado para acceder a la galería');
+        setAlertStatus('error');
+        return;
       }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ['images'], // ✅ evita warning deprecado
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
+
+      if (result.canceled) {
+        // console.log('Usuario canceló la selección');
+        return;
+      }
+
+      const asset = result.assets[0];
+      const localUri = asset.uri;
+      const filename = localUri.split('/').pop();
+      const match = /\.(\w+)$/.exec(filename);
+      const type = match ? `image/${match[1]}` : 'image';
+
+      const fileToUpload = {
+        uri: localUri,
+        name: filename,
+        type,
+      };
+
+      setSelectedFile(fileToUpload);
+      setErrorMessage('');
+      setAlertStatus(null);
+
     } catch (error) {
-    //  console.error('Error picking image:', error);
-      setErrorMessage('Error al seleccionar la imagen');
+    //  console.log('Error al seleccionar imagen:', error);
+      setErrorMessage('No se pudo seleccionar la imagen');
       setAlertStatus('error');
     }
   };
@@ -85,27 +90,22 @@ const VoucherVerification = ({ navigation, route }) => {
       setIsLoading(true);
       setErrorMessage('');
       let fileUrl = '';
-      if (Platform.OS === 'web' && selectedFile.file) {
-        try {
-          fileUrl = await PaymentService.uploadFile(selectedFile.file);
-        } catch (error) {
-        //  console.error('Error uploading file:', error);
-          fileUrl = 'https://example.com/image-example';
-        }
-      } else {
-        fileUrl = 'https://example.com/image-example';
+      try {
+        fileUrl = await PaymentService.uploadFile(selectedFile);
+      } catch (error) {
+      //  console.log('Error uploading file:', error);
       }
 
       const result = await PaymentService.uploadVoucher(paymentId, fileUrl);
       if (result.success) {
         setAlertStatus('success');
       } else {
-      //  console.error('Error updating payment:', result.message);
+       // console.log('Error updating payment:', result.message);
         setErrorMessage(result.message || 'Ocurrió un error al enviar la imagen');
         setAlertStatus('error');
       }
     } catch (error) {
-     // console.error('General error:', error);
+      //console.log('General error:', error);
       setErrorMessage('No se pudo enviar la imagen. Intenta de nuevo más tarde.');
       setAlertStatus('error');
     } finally {
@@ -150,7 +150,7 @@ const VoucherVerification = ({ navigation, route }) => {
                 </Text>
               </>
             )}
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.acceptButton}
               onPress={() => {
                 closeAlert();
@@ -169,10 +169,10 @@ const VoucherVerification = ({ navigation, route }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Sidebar 
-        isOpen={isSidebarOpen} 
-        toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} 
-        navigation={navigation} 
+      <Sidebar
+        isOpen={isSidebarOpen}
+        toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+        navigation={navigation}
       />
       {renderAlert()}
       <ScrollView style={styles.contentContainer}>
@@ -202,7 +202,7 @@ const VoucherVerification = ({ navigation, route }) => {
           <Text style={styles.uploadText}>
             Por favor, carga tu imagen para ser verificada.
           </Text>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.uploadButton}
             onPress={handleFileUpload}
           >
@@ -220,9 +220,9 @@ const VoucherVerification = ({ navigation, route }) => {
             Si la imagen no cumple con los requisitos o si el pago no es correcto, la imagen será rechazada.
           </Text>
         </View>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={[
-            styles.verifyButton, 
+            styles.verifyButton,
             !selectedFile || isLoading ? styles.verifyButtonDisabled : null
           ]}
           onPress={handleVerify}

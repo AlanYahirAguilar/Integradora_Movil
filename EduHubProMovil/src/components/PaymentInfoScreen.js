@@ -70,7 +70,7 @@ export default function PaymentInfoScreen({ route, navigation }) {
       })
       .catch((err) => {
         showMessage('Fallo la conexión al servidor de cuentas', true);
-        console.log(err);
+       // console.log(err);
       });
   };
 

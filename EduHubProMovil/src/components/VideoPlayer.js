@@ -9,7 +9,7 @@ const VideoPlayer = ({ source, contentType /* = 'video'  */}) => {
 
   // Manejar carga de contenido
   const handleLoadStart = () => {
-    console.log(contentType);
+   // console.log(contentType);
     
     setIsLoading(true);
     setError(false);
@@ -77,7 +77,7 @@ const VideoPlayer = ({ source, contentType /* = 'video'  */}) => {
       </View>
     );
   } else {
-    console.log(contentType);
+    // console.log(contentType);
     
     // Tipo de contenido no soportado
     return (
