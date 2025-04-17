@@ -6,6 +6,9 @@ import { API_BASE_URL } from '../constants';
 import UserService from '../services/UserService';
 
 export default function PaymentInfoScreen({ route, navigation }) {
+
+  const isRegistration = route.params?.isRegistration;
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [banks, setBanks] = useState([]);
 
@@ -44,7 +47,6 @@ export default function PaymentInfoScreen({ route, navigation }) {
     return () => clearTimeout(timer);
   }, [errorMessage, successMessage]);
 
-
   useEffect(() => {
     if (route.params?.toggleSidebar) {
       setIsSidebarOpen((prev) => !prev);
@@ -55,7 +57,7 @@ export default function PaymentInfoScreen({ route, navigation }) {
   const getAccounts = async () => {
     const token = await UserService.getAuthToken();
 
-    await fetch(`${API_BASE_URL}/account/all`, {
+    await fetch(`${API_BASE_URL}/student/account/all`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -63,7 +65,6 @@ export default function PaymentInfoScreen({ route, navigation }) {
       },
     }).then((res) => res.json())
       .then((data) => {
-        console.log(data);
         if (data.type === 'SUCCESS') {
           setBanks(data.result);
           showMessage('Cuentas bancarias cargadas correctamente');
@@ -79,6 +80,10 @@ export default function PaymentInfoScreen({ route, navigation }) {
   // Fetch de cuentas bancarias al montar
   useEffect(() => {
     getAccounts();
+    const interval = setInterval(getAccounts, 30000);
+    // Limpiar el intervalo cuando el componente se desmonte
+    return () => clearInterval(interval);
+
   }, []);
 
   return (
@@ -113,7 +118,7 @@ export default function PaymentInfoScreen({ route, navigation }) {
         <View key={index} style={styles.bankContainer}>
           <View style={styles.row}>
             <Image source={require('../../assets/Bank.png')} style={styles.icon} />
-            <Text style={styles.bankName}>{`Banco: ${bank.name}`}</Text>
+            <Text style={styles.bankName}>{`Banco: ${bank.bankName}`}</Text>
           </View>
           <View style={styles.row}>
             <Image source={require('../../assets/Alfiler.png')} style={styles.icon} />
@@ -125,7 +130,7 @@ export default function PaymentInfoScreen({ route, navigation }) {
           </View>
           <View style={styles.row}>
             <Image source={require('../../assets/User.png')} style={styles.icon} />
-            <Text style={styles.accountInfo}>{`Titular: ${bank?.instructorId}`}</Text>
+            <Text style={styles.accountInfo}>{`Titular: ${bank?.admin.name}`}</Text>
           </View>
         </View>
       ))}
@@ -138,8 +143,8 @@ export default function PaymentInfoScreen({ route, navigation }) {
       <View style={styles.instructionsContainer}>
         {[
           'Realiza la transferencia o depósito en cualquiera de las cuentas mencionadas.',
-          'Asegúrate de dejar como referencia tu nombre completo y el nombre del curso en la referencia.',
-          'Guarda el comprobante de pago en formato PDF o imagen clara.',
+          'Asegúrate de dejar como referencia tu nombre completo y el nombre del curso.',
+          'Guarda el comprobante de pago en formato de imagen, ésta debe ser clara.',
           'Regresa a la plataforma y sube tu voucher para validación.',
         ].map((instruction, index) => (
           <View key={index} style={styles.row}>
@@ -154,13 +159,17 @@ export default function PaymentInfoScreen({ route, navigation }) {
         <Text style={styles.importantText}>
           Importante: Si tu pago no es validado correctamente, tu inscripción no será procesada.
         </Text>
-
-        <TouchableOpacity style={styles.actionButton} onPress={() => 
-          navigation.navigate('PendingEnrollments')
-        }>
-          <Text style={styles.itemText}>Ir A Inscripciones Pendientes</Text>
-        </TouchableOpacity>
       </View>
+
+      {isRegistration && (
+        <View>
+          <TouchableOpacity style={styles.actionButton} onPress={() =>
+            navigation.navigate('PendingEnrollments')
+          }>
+            <Text style={styles.itemText}>Ir A Inscripciones Pendientes</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 }
@@ -268,6 +277,10 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     paddingHorizontal: 12,
     borderRadius: 4,
+  },
+  itemText: {
+    fontSize: 16,
+    color: '#333',
   },
   errorContainer: {
     backgroundColor: '#ffebee',

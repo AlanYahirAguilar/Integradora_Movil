@@ -267,7 +267,8 @@ export default function CourseDetailScreen({ route, navigation }) {
                     paymentId: `payment_${Date.now()}`,
                     courseTitle: course.title,
                     amount: course.price,
-                    courseId: course.id || course.courseId
+                    courseId: course.id || course.courseId,
+                    isRegistration: true
                   });
                 }}
               >
