@@ -216,12 +216,6 @@ const Sidebar = ({ isOpen, toggleSidebar, navigation }) => {
               <Text style={styles.itemText}>Información de Pago</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.sidebarItem} onPress={() => {
-              navigation.navigate('busquedaAvanzada');
-              toggleSidebar();
-            }}>
-              <Text style={styles.itemText}>Búsqueda Avanzada</Text>
-            </TouchableOpacity>
           </ScrollView>
 
           {/* Footer */}

@@ -40,7 +40,6 @@ const Courses = () => {
         numRating: 4.2, // Valor por defecto ya que no viene en la respuesta
         rating: 4, // Valor por defecto ya que no viene en la respuesta
         precio: course.price ? `MX$ ${parseFloat(course.price).toFixed(2)}` : 'MX$ 0.00',
-        // Datos originales de la API para la pantalla de detalle
         price: course.price || 0,
         courseId: course.courseId,
         bannerPath: course.bannerPath,
@@ -79,17 +78,14 @@ const Courses = () => {
       onPress={() => navigation.navigate('CourseDetail', {
         course: {
           ...course,
-          // Aseguramos que todos los datos necesarios estén presentes y formateados correctamente
           id: course.id || course.courseId,
           courseId: course.id || course.courseId,
           instructor: course.instructor?.name || course.autor || 'Instructor',
           description: course.description || '',
           price: course.price || 0,
           precio: course.precio || (course.price ? `MX$ ${parseFloat(course.price).toFixed(2)}` : 'MX$ 0.00'),
-          // Mantener la referencia a la imagen original para que funcione en CourseDetailScreen
           image: course.image,
           bannerPath: course.bannerPath,
-          // Asegurarnos de que tenemos los campos del API
           startDate: course.startDate || null,
           endDate: course.endDate || null,
           categories: course.categories || [],
@@ -116,6 +112,12 @@ const Courses = () => {
     </TouchableOpacity>
   );
 
+  // Dividir los cursos en grupos de 5 para cada fila
+  const chunkedCourses = [];
+  for (let i = 0; i < courses.length; i += 5) {
+    chunkedCourses.push(courses.slice(i, i + 5));
+  }
+
   // Si está cargando, mostrar indicador
   if (loading) {
     return (
@@ -138,20 +140,14 @@ const Courses = () => {
     );
   }
 
-  // Dividir cursos en dos filas
-  const firstHalf = courses.slice(0, Math.ceil(courses.length / 2));
-  const secondHalf = courses.slice(Math.ceil(courses.length / 2));
-
   return (
-    <View style={styles.container}>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.scrollView}>
-        {firstHalf.map(renderCourse)}
-      </ScrollView>
-
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.scrollView}>
-        {secondHalf.map(renderCourse)}
-      </ScrollView>
-    </View>
+    <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
+      {chunkedCourses.map((row, rowIndex) => (
+        <View key={rowIndex} style={styles.row}>
+          {row.map(renderCourse)}
+        </View>
+      ))}
+    </ScrollView>
   );
 };
 
@@ -198,17 +194,18 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     marginTop: 16,
   },
-  scrollView: {
-    paddingVertical: 10,
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 16,
   },
   card: {
     backgroundColor: '#fff',
     padding: 10,
     borderRadius: 18,
-    marginRight: 10,
     borderWidth: 1,
     borderColor: '#ddd',
-    width: 170,
+    width: '23%', // Ajuste para que entren 4 tarjetas por fila
     alignItems: 'left',
   },
   cardImage: {
