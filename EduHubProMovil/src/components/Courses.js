@@ -37,8 +37,8 @@ const Courses = () => {
         autor: course.instructor ? course.instructor.name : 'Profesor',
         description: course.description || 'Sin descripción',
         image: course.bannerPath || 'https://img.freepik.com/vector-gratis/concepto-diseno-web-dibujado-mano_23-2147839737.jpg',
-        numRating: 4.2, // Valor por defecto ya que no viene en la respuesta
-        rating: 4, // Valor por defecto ya que no viene en la respuesta
+        numRating: 0.0, // Valor por defecto ya que no viene en la respuesta
+        rating: 0, // Valor por defecto ya que no viene en la respuesta
         precio: course.price ? `MX$ ${parseFloat(course.price).toFixed(2)}` : 'MX$ 0.00',
         price: course.price || 0,
         courseId: course.courseId,
@@ -112,10 +112,10 @@ const Courses = () => {
     </TouchableOpacity>
   );
 
-  // Dividir los cursos en grupos de 5 para cada fila
+  // Dividir los cursos en grupos de 3 para cada fila
   const chunkedCourses = [];
-  for (let i = 0; i < courses.length; i += 5) {
-    chunkedCourses.push(courses.slice(i, i + 5));
+  for (let i = 0; i < courses.length; i += 3) {
+    chunkedCourses.push(courses.slice(i, i + 3));
   }
 
   // Si está cargando, mostrar indicador
@@ -144,7 +144,14 @@ const Courses = () => {
     <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
       {chunkedCourses.map((row, rowIndex) => (
         <View key={rowIndex} style={styles.row}>
-          {row.map(renderCourse)}
+          {/* Agregar scroll horizontal */}
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.scrollContent}
+          >
+            {row.map(renderCourse)}
+          </ScrollView>
         </View>
       ))}
     </ScrollView>
@@ -188,16 +195,13 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontWeight: 'bold',
   },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 8,
-    marginTop: 16,
-  },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 16,
+  },
+  scrollContent: {
+    paddingHorizontal: 8, // Espacio entre cards
   },
   card: {
     backgroundColor: '#fff',
@@ -205,12 +209,13 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     borderWidth: 1,
     borderColor: '#ddd',
-    width: '23%', // Ajuste para que entren 4 tarjetas por fila
+    width: 190, // Ancho fijo para que entren 3 cards por fila
+    marginRight: 16, // Espaciado entre cards
     alignItems: 'left',
   },
   cardImage: {
     width: '100%',
-    height: 100,
+    height: 120,
     borderRadius: 8,
     marginBottom: 8,
   },

@@ -1,24 +1,19 @@
-// PaymentInfoScreen.js
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
 import Sidebar from './SideBar';
 import React, { useState, useEffect } from 'react';
 import { API_BASE_URL } from '../constants';
 import UserService from '../services/UserService';
 
 export default function PaymentInfoScreen({ route, navigation }) {
-
   const isRegistration = route.params?.isRegistration;
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [banks, setBanks] = useState([]);
-
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
   // Función para mostrar mensajes de error o éxito
   const showMessage = (message, isError = false) => {
-    /* console.log(message); */
-
     if (Platform.OS === 'android' || Platform.OS === 'ios') {
       ToastAndroid.showWithGravity(
         message,
@@ -63,7 +58,8 @@ export default function PaymentInfoScreen({ route, navigation }) {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`
       },
-    }).then((res) => res.json())
+    })
+      .then((res) => res.json())
       .then((data) => {
         if (data.type === 'SUCCESS') {
           setBanks(data.result);
@@ -71,11 +67,12 @@ export default function PaymentInfoScreen({ route, navigation }) {
         } else {
           showMessage(data.message || 'Error al obtener las cuentas bancarias', true);
         }
-      }).catch((err) => {
+      })
+      .catch((err) => {
         showMessage('Fallo la conexión al servidor de cuentas', true);
         console.log(err);
       });
-  }
+  };
 
   // Fetch de cuentas bancarias al montar
   useEffect(() => {
@@ -83,93 +80,97 @@ export default function PaymentInfoScreen({ route, navigation }) {
     const interval = setInterval(getAccounts, 30000);
     // Limpiar el intervalo cuando el componente se desmonte
     return () => clearInterval(interval);
-
   }, []);
 
   return (
     <View style={styles.container}>
-      {/* Mensajes de error o éxito */}
-      {errorMessage ? (
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>{errorMessage}</Text>
-        </View>
-      ) : null}
-
-      {successMessage ? (
-        <View style={styles.successContainer}>
-          <Text style={styles.successText}>{successMessage}</Text>
-        </View>
-      ) : null}
+      {/* Sidebar */}
       <Sidebar
         isOpen={isSidebarOpen}
         toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
         navigation={navigation}
       />
 
-      {/* Título */}
-      <Text style={styles.title}>Información de Pago:</Text>
-
-      {/* Realiza tu pago a cualquiera de las siguientes cuentas */}
-      <Text style={styles.subtitle}>Realiza tu pago a cualquiera de las siguientes cuentas:</Text>
-
-
-      {/* Cuentas Bancarias */}
-      {banks.map((bank, index) => (
-        <View key={index} style={styles.bankContainer}>
-          <View style={styles.row}>
-            <Image source={require('../../assets/Bank.png')} style={styles.icon} />
-            <Text style={styles.bankName}>{`Banco: ${bank.bankName}`}</Text>
+      {/* Contenido principal */}
+      <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.contentContainer}>
+        {/* Mensajes de error o éxito */}
+        {errorMessage ? (
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>{errorMessage}</Text>
           </View>
-          <View style={styles.row}>
-            <Image source={require('../../assets/Alfiler.png')} style={styles.icon} />
-            <Text style={styles.accountInfo}>{`Número de cuenta: ${bank.accountNumber}`}</Text>
-          </View>
-          <View style={styles.row}>
-            <Image source={require('../../assets/Clave.png')} style={styles.icon} />
-            <Text style={styles.accountInfo}>{`CLABE: ${bank.key}`}</Text>
-          </View>
-          <View style={styles.row}>
-            <Image source={require('../../assets/User.png')} style={styles.icon} />
-            <Text style={styles.accountInfo}>{`Titular: ${bank?.admin.name}`}</Text>
-          </View>
-        </View>
-      ))}
+        ) : null}
 
-      {/* Instrucciones de Pago */}
-      <View style={styles.instructionsTitleContainer}>
-        <Image source={require('../../assets/Alfiler.png')} style={styles.icon} />
-        <Text style={styles.instructionsTitle}>Instrucciones de Pago:</Text>
-      </View>
-      <View style={styles.instructionsContainer}>
-        {[
-          'Realiza la transferencia o depósito en cualquiera de las cuentas mencionadas.',
-          'Asegúrate de dejar como referencia tu nombre completo y el nombre del curso.',
-          'Guarda el comprobante de pago en formato de imagen, ésta debe ser clara.',
-          'Regresa a la plataforma y sube tu voucher para validación.',
-        ].map((instruction, index) => (
-          <View key={index} style={styles.row}>
-            <Text style={styles.instruction}>{instruction}</Text>
+        {successMessage ? (
+          <View style={styles.successContainer}>
+            <Text style={styles.successText}>{successMessage}</Text>
+          </View>
+        ) : null}
+
+        {/* Título */}
+        <Text style={styles.title}>Información de Pago:</Text>
+
+        {/* Realiza tu pago a cualquiera de las siguientes cuentas */}
+        <Text style={styles.subtitle}>Realiza tu pago a cualquiera de las siguientes cuentas:</Text>
+
+        {/* Cuentas Bancarias */}
+        {banks.map((bank, index) => (
+          <View key={index} style={styles.bankContainer}>
+            <View style={styles.row}>
+              <Image source={require('../../assets/Bank.png')} style={styles.icon} />
+              <Text style={styles.bankName}>{`Banco: ${bank.bankName}`}</Text>
+            </View>
+            <View style={styles.row}>
+              <Image source={require('../../assets/Alfiler.png')} style={styles.icon} />
+              <Text style={styles.accountInfo}>{`Número de cuenta: ${bank.accountNumber}`}</Text>
+            </View>
+            <View style={styles.row}>
+              <Image source={require('../../assets/Clave.png')} style={styles.icon} />
+              <Text style={styles.accountInfo}>{`CLABE: ${bank.key}`}</Text>
+            </View>
+            <View style={styles.row}>
+              <Image source={require('../../assets/User.png')} style={styles.icon} />
+              <Text style={styles.accountInfo}>{`Titular: ${bank?.admin.name}`}</Text>
+            </View>
           </View>
         ))}
-      </View>
 
-      {/* Importante */}
-      <View style={styles.importantContainer}>
-        <Image source={require('../../assets/Warning.png')} style={styles.warningIcon} />
-        <Text style={styles.importantText}>
-          Importante: Si tu pago no es validado correctamente, tu inscripción no será procesada.
-        </Text>
-      </View>
-
-      {isRegistration && (
-        <View>
-          <TouchableOpacity style={styles.actionButton} onPress={() =>
-            navigation.navigate('PendingEnrollments')
-          }>
-            <Text style={styles.itemText}>Ir A Inscripciones Pendientes</Text>
-          </TouchableOpacity>
+        {/* Instrucciones de Pago */}
+        <View style={styles.instructionsTitleContainer}>
+          <Image source={require('../../assets/Alfiler.png')} style={styles.icon} />
+          <Text style={styles.instructionsTitle}>Instrucciones de Pago:</Text>
         </View>
-      )}
+        <View style={styles.instructionsContainer}>
+          {[
+            'Realiza la transferencia o depósito en cualquiera de las cuentas mencionadas.',
+            'Asegúrate de dejar como referencia tu nombre completo y el nombre del curso.',
+            'Guarda el comprobante de pago en formato de imagen, ésta debe ser clara.',
+            'Regresa a la plataforma y sube tu voucher para validación.',
+          ].map((instruction, index) => (
+            <View key={index} style={styles.row}>
+              <Text style={styles.instruction}>{instruction}</Text>
+            </View>
+          ))}
+        </View>
+
+        {/* Importante */}
+        <View style={styles.importantContainer}>
+          <Image source={require('../../assets/Warning.png')} style={styles.warningIcon} />
+          <Text style={styles.importantText}>
+            Importante: Si tu pago no es validado correctamente, tu inscripción no será procesada.
+          </Text>
+        </View>
+
+        {isRegistration && (
+          <View>
+            <TouchableOpacity
+              style={styles.actionButton}
+              onPress={() => navigation.navigate('PendingEnrollments')}
+            >
+              <Text style={styles.itemText}>Ir A Inscripciones Pendientes</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      </ScrollView>
     </View>
   );
 }
@@ -178,30 +179,20 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+  },
+  scrollContainer: {
+    flex: 1,
+  },
+  contentContainer: {
     padding: 16,
+    paddingBottom: 20, // Espacio adicional al final para evitar recortes
   },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
     marginTop: 2,
     marginBottom: 8,
-    color: '#604274'
-  },
-  instructionsTitleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 6,
-    marginBottom: 8,
-  },
-  icon: {
-    width: 20,
-    height: 20,
-    marginRight: 6,
-  },
-  smallIcon: {
-    width: 16,
-    height: 16,
-    marginRight: 8,
+    color: '#604274',
   },
   subtitle: {
     fontSize: 16,
@@ -223,6 +214,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 4,
   },
+  icon: {
+    width: 20,
+    height: 20,
+    marginRight: 6,
+  },
+  smallIcon: {
+    width: 16,
+    height: 16,
+    marginRight: 8,
+  },
   bankName: {
     fontSize: 16,
     fontWeight: 'bold',
@@ -230,6 +231,12 @@ const styles = StyleSheet.create({
   accountInfo: {
     fontSize: 14,
     color: '#333',
+  },
+  instructionsTitleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 6,
+    marginBottom: 8,
   },
   instructionsTitle: {
     fontSize: 16,
@@ -274,13 +281,18 @@ const styles = StyleSheet.create({
   },
   actionButton: {
     backgroundColor: '#604274',
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 4,
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderRadius: 10,
+    marginTop: 3,
+    marginBottom: 10,
   },
   itemText: {
     fontSize: 16,
-    color: '#333',
+    color: '#fff',
   },
   errorContainer: {
     backgroundColor: '#ffebee',
@@ -290,11 +302,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
     borderLeftWidth: 4,
     borderLeftColor: '#f44336',
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 999,
   },
   errorText: {
     color: '#d32f2f',
@@ -308,11 +315,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
     borderLeftWidth: 4,
     borderLeftColor: '#4caf50',
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 999,
   },
   successText: {
     color: '#2e7d32',
