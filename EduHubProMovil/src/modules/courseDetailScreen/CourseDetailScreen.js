@@ -22,8 +22,7 @@ export default function CourseDetailScreen({ route, navigation }) {
     }
   }, [route.params?.toggleSidebar]);
 
-  // Función para manejar la inscripción
-  // Función para manejar la inscripción
+  
   // Función para manejar la inscripción
   const handleEnroll = async () => {
     try {
@@ -361,23 +360,26 @@ export default function CourseDetailScreen({ route, navigation }) {
         </View>
       </Modal>
 
-      {/* Modal de Ya estas inscrito */}
-      <Modal visible={isAlreadyEnrolledModalVisible} transparent animationType="fade">
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>¡Ya estás inscrito!</Text>
-            <Text style={styles.modalMessage}>
-              Ya te encuentras registrado en este curso.
-            </Text>
-            <TouchableOpacity
-              style={[styles.modalButton, styles.modalSuccessButton]}
-              onPress={() => { setIsAlreadyEnrolledModalVisible(false); navigation.navigate('Inscritos') }}
-            >
-              <Text style={styles.modalButtonText}>Ir a "Mis Cursos"</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
+     {/* Modal de Ya estás inscrito */}
+<Modal visible={isAlreadyEnrolledModalVisible} transparent animationType="fade">
+  <View style={styles.modalOverlay}>
+    <View style={styles.modalContent}>
+      <Text style={styles.modalTitle}>¡Ya estás inscrito!</Text>
+      <Text style={styles.modalMessage}>
+        Ya te encuentras registrado en este curso.
+      </Text>
+      <TouchableOpacity
+        style={[styles.modalButton, styles.modalSuccessButton]}
+        onPress={() => { 
+          setIsAlreadyEnrolledModalVisible(false); 
+          navigation.navigate('Inscritos');
+        }}
+      >
+        <Text style={styles.modalButtonText}>Ir a "Mis Cursos"</Text>
+      </TouchableOpacity>
+    </View>
+  </View>
+</Modal>
 
       {/* Modal de Ayuda y Soporte */}
       <Modal visible={isSupportModalVisible} transparent animationType="fade">
@@ -553,33 +555,47 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   modalOverlay: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    backgroundColor: '#fff',
-    padding: 24,
-    borderRadius: 8,
-    width: '80%',
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 16,
-    textAlign: 'center',
-  },
-  modalMessage: {
-    fontSize: 16,
-    color: '#333',
-    marginBottom: 16,
-    textAlign: 'center',
-  },
-  modalButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modalContent: {
+      backgroundColor: '#fff',
+      padding: 24,
+      borderRadius: 8,
+      width: '80%',
+      alignItems: 'center',
+    },
+    modalTitle: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      marginBottom: 16,
+      textAlign: 'center',
+    },
+    modalMessage: {
+      fontSize: 16,
+      color: '#333',
+      marginBottom: 16,
+      textAlign: 'center',
+    },
+    modalButton: {
+      backgroundColor: '#604274',
+      paddingVertical: 12,
+      paddingHorizontal: 24,
+      borderRadius: 8,
+      alignItems: 'center',
+      marginTop: 16,
+    },
+    modalSuccessButton: {
+      backgroundColor: '#800080',
+    },
+    modalButtonText: {
+      color: '#fff',
+      fontSize: 16,
+      fontWeight: 'bold',
+      textAlign: 'center',
+    },
   modalButton: {
     backgroundColor: '#604274',
     paddingVertical: 12,
@@ -587,12 +603,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
     marginHorizontal: 8,
-  },
-  modalButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-    textAlign: 'center',
   },
   modalCancelButton: {
     backgroundColor: '#65739F',
