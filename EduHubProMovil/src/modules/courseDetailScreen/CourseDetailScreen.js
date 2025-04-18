@@ -16,7 +16,7 @@ export default function CourseDetailScreen({ route, navigation }) {
   const [isLoading, setIsLoading] = useState(false);
 
   console.log(course);
-  
+
   useEffect(() => {
     if (route.params?.toggleSidebar) {
       setIsSidebarOpen((prev) => !prev);
@@ -74,47 +74,28 @@ export default function CourseDetailScreen({ route, navigation }) {
     Alert.alert('Correo copiado', `Envíanos un correo a ${supportEmail}, te ayudaremos a resolver tu problema`);
   };
 
-  // Calcular la duración en horas basado en fechas si está disponible
-  /*  const calculateDuration = () => {
-     if (!course.startDate || !course.endDate) return '40';
- 
-     try {
-       const start = new Date(course.startDate);
-       const end = new Date(course.endDate);
-       const diffTime = Math.abs(end - start);
-       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
- 
-       // Asumimos 8 horas de estudio por día
-       return (diffDays * 8).toString();
-     } catch (error) {
-       //   console.error('Error al calcular duración:', error);
-       return '40'; // Valor por defecto
-     }
-   };
-  */
-
   const formatDate = (dateString) => {
     const [year, month, day] = dateString.split('-');
     return new Date(year, month - 1, day).toLocaleDateString(); // ⚠️ month - 1 porque Date usa 0-11
   };
 
-    const courseData = [
-      {
-        id: '1',
-        title: 'Módulo 1: Introducción al curso',
-        lessons: ['Lección 1.1: Bienvenida', 'Lección 1.2: Objetivos del curso'],
-      },
-      {
-        id: '2',
-        title: 'Módulo 2: Fundamentos básicos',
-        lessons: ['Lección 2.1: Conceptos clave', 'Lección 2.2: Herramientas necesarias'],
-      },
-      {
-        id: '3',
-        title: 'Módulo 3: Proyectos prácticos',
-        lessons: ['Lección 3.1: Proyecto inicial', 'Lección 3.2: Evaluación final'],
-      },
-    ];
+  const courseData = [
+    {
+      id: '1',
+      title: 'Módulo 1: Introducción al curso',
+      lessons: ['Lección 1.1: Bienvenida', 'Lección 1.2: Objetivos del curso'],
+    },
+    {
+      id: '2',
+      title: 'Módulo 2: Fundamentos básicos',
+      lessons: ['Lección 2.1: Conceptos clave', 'Lección 2.2: Herramientas necesarias'],
+    },
+    {
+      id: '3',
+      title: 'Módulo 3: Proyectos prácticos',
+      lessons: ['Lección 3.1: Proyecto inicial', 'Lección 3.2: Evaluación final'],
+    },
+  ];
 
   return (
     <ScrollView style={styles.container}>
@@ -165,23 +146,21 @@ export default function CourseDetailScreen({ route, navigation }) {
       </View>
 
       {/* Lista de módulos y lecciones */}
-      <FlatList
-        data={courseData}
-        keyExtractor={(item) => item.id}
-        nestedScrollEnabled={true} // Habilita el scroll anidado
-        renderItem={({ item }) => (
-          <View style={styles.moduleContainer}>
-            <Text style={styles.moduleTitle}>{item.title}</Text>
-            <View style={styles.lessonContainer}>
-              {item.lessons.map((lesson, index) => (
-                <Text key={index} style={styles.lessonText}>
-                  - {lesson}
-                </Text>
-              ))}
-            </View>
+      {course.modules?.map((module) => (
+        <View key={module.moduleId} style={styles.moduleContainer}>
+          <View style={styles.moduleHeader}>
+            <Image source={require('../../../assets/GreenCheck.png')} style={styles.checkIcon} />
+            <Text style={styles.moduleTitle}>{module.name}</Text>
           </View>
-        )}
-      />
+          <View style={styles.lessonContainer}>
+            {(module.sections || []).map((lesson, index) => (
+              <Text key={lesson.sectionId || index} style={styles.lessonText}>
+                - {lesson.name}
+              </Text>
+            ))}
+          </View>
+        </View>
+      ))}
 
       {/* Información del curso */}
       <View style={styles.infoContainer}>
@@ -637,6 +616,7 @@ const fullCourseStyles = {
     justifyContent: 'center',
     alignItems: 'center'
   },
+<<<<<<< HEAD
   modalContent: {
     backgroundColor: 'white',
     padding: 20,
@@ -833,3 +813,18 @@ const alreadyEnrolledStyles = {
     fontSize: 16
   }
 };
+=======
+  moduleHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+
+  checkIcon: {
+    width: 16,
+    height: 16,
+    marginRight: 8,
+  },
+
+});
+>>>>>>> e36ae69698f5d78cd0c71e467a610e38d99cd487
