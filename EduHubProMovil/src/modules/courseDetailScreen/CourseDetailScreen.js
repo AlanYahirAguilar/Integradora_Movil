@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Sidebar from '../../components/SideBar';
-import { View, Text, TouchableOpacity, ScrollView, Image, Modal, StyleSheet, Clipboard, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Image, Modal, StyleSheet, Clipboard, Alert, ActivityIndicator, FlatList } from 'react-native';
 import CourseService from '../../services/CourseService';
 
 export default function CourseDetailScreen({ route, navigation }) {
@@ -103,6 +103,24 @@ export default function CourseDetailScreen({ route, navigation }) {
     }
   };
 
+    const courseData = [
+      {
+        id: '1',
+        title: 'Módulo 1: Introducción al curso',
+        lessons: ['Lección 1.1: Bienvenida', 'Lección 1.2: Objetivos del curso'],
+      },
+      {
+        id: '2',
+        title: 'Módulo 2: Fundamentos básicos',
+        lessons: ['Lección 2.1: Conceptos clave', 'Lección 2.2: Herramientas necesarias'],
+      },
+      {
+        id: '3',
+        title: 'Módulo 3: Proyectos prácticos',
+        lessons: ['Lección 3.1: Proyecto inicial', 'Lección 3.2: Evaluación final'],
+      },
+    ];
+
   return (
     <ScrollView style={styles.container}>
       {/* Sidebar */}
@@ -146,11 +164,29 @@ export default function CourseDetailScreen({ route, navigation }) {
       {/* Descripción */}
       <Text style={styles.description}>{course.description || 'Sin descripción disponible'}</Text>
 
-      {/* Contenido Clave */}
       <View style={styles.keyContentContainer}>
         <Image source={require('../../../assets/Alfiler.png')} style={styles.checkIcon} />
         <Text style={styles.keyContentTitle}>Contenido clave:</Text>
       </View>
+
+      {/* Lista de módulos y lecciones */}
+      <FlatList
+        data={courseData}
+        keyExtractor={(item) => item.id}
+        nestedScrollEnabled={true} // Habilita el scroll anidado
+        renderItem={({ item }) => (
+          <View style={styles.moduleContainer}>
+            <Text style={styles.moduleTitle}>{item.title}</Text>
+            <View style={styles.lessonContainer}>
+              {item.lessons.map((lesson, index) => (
+                <Text key={index} style={styles.lessonText}>
+                  - {lesson}
+                </Text>
+              ))}
+            </View>
+          </View>
+        )}
+      />
 
       {/* Información del curso */}
       <View style={styles.infoContainer}>
