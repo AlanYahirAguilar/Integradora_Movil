@@ -127,7 +127,7 @@ export default function MyCoursesScreen({route}) {
           {/* Mensaje cuando no hay cursos */}
           {!isLoading && !error && courses.length === 0 && (
             <View style={styles.emptyContainer}>
-              <Text style={styles.emptyText}>Aún no estás inscrito en ningún curso.</Text>
+              <Text style={styles.emptyText}>Aún no hay cursos en progreso en este momento.</Text>
               <TouchableOpacity 
                 style={styles.exploreCourseButton} 
                 onPress={() => navigation.navigate('Home')}

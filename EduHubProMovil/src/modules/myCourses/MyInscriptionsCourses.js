@@ -3,6 +3,8 @@ import Sidebar from '../../components/SideBar';
 import { View, Text, TouchableOpacity, StyleSheet, Image, ActivityIndicator, ScrollView, RefreshControl } from 'react-native';
 import ProgressBar from 'react-native-progress/Bar'; // Importar Progress.Bar
 import { useNavigation } from '@react-navigation/native';
+import UserService from '../../services/UserService';
+import CourseService from '../../services/CourseService';
 
 export default function MyInscriptionsCourses({ route }) {
   const navigation = useNavigation();
@@ -32,34 +34,31 @@ export default function MyInscriptionsCourses({ route }) {
       setError(null);
 
       // Simular respuesta del backend
-      const studentCourses = [
-        {
-          courseId: 1,
-          title: 'Introducción a la Programación',
-          image: 'https://via.placeholder.com/150',
-          progress: 0,
-          instructor: 'Dr. Juan Pérez',
-        },
-        {
-          courseId: 2,
-          title: 'Bases de Datos en la nube',
-          image: 'https://via.placeholder.com/150',
-          progress: 0,
-          instructor: 'Dr. Carlos Ramírez',
-        },
-      ];
+      const response = await CourseService.fetchRegistrationByStudent();
+
+      if (!response.success) {
+        setError(studentCourses.error || "Error al cargar los cursos.");
+        return;
+      }
+
+      const studentCourses = response.data;
+
+      console.log("\nRESPONSE\n");
+      console.log(studentCourses);
 
       // Transformar los datos para adaptarlos al formato esperado por el componente
       const formattedCourses = studentCourses.map(course => ({
         id: course.courseId,
         title: course.title,
-        image: course.image || 'https://via.placeholder.com/150',
-        progress: course.progress,
-        instructor: course.instructor || 'Instructor',
+        image: course.bannerPath || 'https://via.placeholder.com/150',
+        progress: course.progress || 0,
+        instructor: course.instructor.name || 'Instructor',
       }));
 
       setCourses(formattedCourses);
     } catch (err) {
+      console.log(err);
+
       setError('No se pudieron cargar tus cursos. Intenta de nuevo más tarde.');
     } finally {
       setIsLoading(false);

@@ -28,7 +28,7 @@ export const STORAGE_KEYS = {
 export const MESSAGES = {
   LOGIN_SUCCESS: 'Inicio de sesión exitoso',
   LOGIN_ERROR: 'Error al iniciar sesión. Verifica tus credenciales.',
-  NETWORK_ERROR: 'Error al iniciar sesión. Verifica tus credenciales.',
+  NETWORK_ERROR: 'Hubo un error de red. Intenta nuevamente.',
   SERVER_ERROR: 'Error del servidor. Intenta más tarde.',
   REGISTER_SUCCESS: 'Usuario registrado correctamente',
   REGISTER_ERROR: 'Error al registrar usuario. Intenta nuevamente.',
