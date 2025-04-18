@@ -107,7 +107,7 @@ export default function MyInscriptionsCourses({ route }) {
           {!isLoading && !error && courses.length > 0 && (
             <View style={styles.coursesContainer}>
               {courses.map((course) => (
-                <TouchableOpacity key={course.id} style={styles.courseCard}>
+                <TouchableOpacity key={course.id} style={styles.courseCard} onPress={() => navigation.navigate('course-module-details')}>
                   <Image source={{ uri: course.image }} style={styles.courseImage} />
                   <View style={styles.courseInfo}>
                     <Text style={styles.courseTitle}>{course.title}</Text>
