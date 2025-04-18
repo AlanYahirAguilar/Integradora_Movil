@@ -15,6 +15,8 @@ export default function CourseDetailScreen({ route, navigation }) {
   const [enrollmentErrorMessage, setEnrollmentErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
+  console.log(course);
+  
   useEffect(() => {
     if (route.params?.toggleSidebar) {
       setIsSidebarOpen((prev) => !prev);
@@ -22,7 +24,7 @@ export default function CourseDetailScreen({ route, navigation }) {
     }
   }, [route.params?.toggleSidebar]);
 
-  
+
   // Función para manejar la inscripción
   const handleEnroll = async () => {
     try {
@@ -86,21 +88,27 @@ export default function CourseDetailScreen({ route, navigation }) {
   };
 
   // Calcular la duración en horas basado en fechas si está disponible
-  const calculateDuration = () => {
-    if (!course.startDate || !course.endDate) return '40';
+  /*  const calculateDuration = () => {
+     if (!course.startDate || !course.endDate) return '40';
+ 
+     try {
+       const start = new Date(course.startDate);
+       const end = new Date(course.endDate);
+       const diffTime = Math.abs(end - start);
+       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+ 
+       // Asumimos 8 horas de estudio por día
+       return (diffDays * 8).toString();
+     } catch (error) {
+       //   console.error('Error al calcular duración:', error);
+       return '40'; // Valor por defecto
+     }
+   };
+  */
 
-    try {
-      const start = new Date(course.startDate);
-      const end = new Date(course.endDate);
-      const diffTime = Math.abs(end - start);
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-      // Asumimos 8 horas de estudio por día
-      return (diffDays * 8).toString();
-    } catch (error) {
-      //   console.error('Error al calcular duración:', error);
-      return '40'; // Valor por defecto
-    }
+  const formatDate = (dateString) => {
+    const [year, month, day] = dateString.split('-');
+    return new Date(year, month - 1, day).toLocaleDateString(); // ⚠️ month - 1 porque Date usa 0-11
   };
 
     const courseData = [
@@ -192,13 +200,13 @@ export default function CourseDetailScreen({ route, navigation }) {
       <View style={styles.infoContainer}>
         <View style={styles.durationContainer}>
           <Image source={require('../../../assets/RelojArena.png')} style={styles.icon} />
-          <Text style={styles.infoText}>Duración: {course.duration || calculateDuration()} Hrs</Text>
+          <Text style={styles.infoText}>Duración: {course.duration || 0} Hrs</Text>
         </View>
         <View style={styles.prerequisitesContainer}>
           <Image source={require('../../../assets/Book.png')} style={styles.icon} />
           {course.startDate && course.endDate ? (
             <Text style={styles.infoText}>
-              Fechas: {new Date(course.startDate).toLocaleDateString()} - {new Date(course.endDate).toLocaleDateString()}
+              Fechas: {formatDate(course.startDate)} - {formatDate(course.endDate)}
             </Text>
           ) : (
             <Text style={styles.infoText}>Requisitos: {course.prerequisites || 'Ninguno'}</Text>
@@ -249,7 +257,7 @@ export default function CourseDetailScreen({ route, navigation }) {
         )}
       </TouchableOpacity>
 
-       {/* Modal de Curso Lleno */}
+      {/* Modal de Curso Lleno */}
       <Modal visible={isFullCourseModalVisible} transparent animationType="fade">
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
@@ -558,7 +566,7 @@ const styles = StyleSheet.create({
   comments: {
     fontSize: 14,
   },
-  inscribirseButton:{
+  inscribirseButton: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 12,

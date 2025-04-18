@@ -20,17 +20,24 @@ export default function PendingEnrollmentsScreen({ navigation, route }) {
 
   // Cargar los pagos al montar el componente
   useEffect(() => {
-    loadStudentPayments();
+    loadStudentPayments(); // tu función para cargar los cursos
+
+    const timer = setTimeout(() => {
+      loadStudentPayments(); // recarga después de 30s
+    }, 30000); // 30,000 ms = 30 segundos
+
+    return () => clearTimeout(timer); // limpieza del timer
   }, []);
+
 
   // Función para cargar los pagos del estudiante
   const loadStudentPayments = async () => {
     try {
       setIsLoading(true);
       setError(null);
-      
+
       const studentPayments = await PaymentService.getStudentPayments();
- 
+
       // Transformar los datos para adaptarlos al formato de la tabla
       const formattedPayments = studentPayments.map(payment => ({
         id: payment.paymentId,
@@ -44,7 +51,7 @@ export default function PendingEnrollmentsScreen({ navigation, route }) {
         // Guardar el objeto completo para tener todos los datos disponibles
         originalData: payment
       }));
-      
+
       setPayments(formattedPayments);
       setFilteredPayments(formattedPayments);
     } catch (err) {
@@ -93,7 +100,7 @@ export default function PendingEnrollmentsScreen({ navigation, route }) {
       setFilteredPayments(payments);
       return;
     }
-    
+
     const filtered = payments.filter((payment) =>
       payment.title.toLowerCase().includes(searchQuery.toLowerCase())
     );
@@ -102,13 +109,13 @@ export default function PendingEnrollmentsScreen({ navigation, route }) {
 
   // Función para manejar la acción de subir voucher
   const handleUploadVoucher = (payment) => {
-  /*   console.log('[PendingEnrollmentsScreen] Navegando a voucher-verification con datos:', {
-      paymentId: payment.id,
-      courseTitle: payment.title,
-      amount: payment.amount
-    }); */
-    
-    navigation.navigate('voucher-verification', { 
+    /*   console.log('[PendingEnrollmentsScreen] Navegando a voucher-verification con datos:', {
+        paymentId: payment.id,
+        courseTitle: payment.title,
+        amount: payment.amount
+      }); */
+
+    navigation.navigate('voucher-verification', {
       paymentId: payment.id,
       courseTitle: payment.title,
       amount: payment.amount
