@@ -134,6 +134,7 @@ const Sidebar = ({ isOpen, toggleSidebar, navigation }) => {
           {/* Contenido con scroll */}
           <ScrollView
             style={styles.scrollContent}
+            nestedScrollEnabled={true} // Habilita el scroll anidado
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.scrollContentContainer}
           >

@@ -11,7 +11,7 @@ const staticCourses = [
   { id: 3, title: 'Node.js', isFull: false, autor: 'Ing. Tessa Cachewood', description: 'Backend con Node.js.', image: 'https://img.freepik.com/vector-gratis/concepto-diseno-web-dibujado-mano_23-2147839737.jpg', numRating: 4.2, rating: 4, precio: 'MX$ 567' },
 ];
 
-const Courses = () => {
+const CoursesFinal = () => {
   const navigation = useNavigation();
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -44,6 +44,8 @@ const Courses = () => {
         autor: course.instructor ? course.instructor.name : 'Profesor',
         description: course.description || 'Sin descripción',
         image: course.bannerPath || 'https://img.freepik.com/vector-gratis/concepto-diseno-web-dibujado-mano_23-2147839737.jpg',
+        numRating: 0.0, // Valor por defecto ya que no viene en la respuesta
+        rating: 0, // Valor por defecto ya que no viene en la respuesta
         precio: course.price ? `MX$ ${parseFloat(course.price).toFixed(2)}` : 'MX$ 0.00',
         price: course.price || 0,
         courseId: course.courseId,
@@ -69,6 +71,13 @@ const Courses = () => {
     }
   };
 
+  const renderStars = (rating) => (
+    <View style={styles.starsContainer}>
+      {[...Array(5)].map((_, index) => (
+        <Icon key={index} name="star" size={16} color={index < rating ? '#FFD700' : '#ccc'} />
+      ))}
+    </View>
+  );
 
   const renderCourse = (course) => (
     <TouchableOpacity
@@ -105,6 +114,9 @@ const Courses = () => {
         {course.description.length > 46 ?
           course.description.substring(0, 25) + '...'
           : course.description}</Text>
+      <Text>
+        <Text style={styles.rank}>{course.numRating}</Text> {renderStars(course.rating)}
+      </Text>
       <Text style={styles.textPrice}>{course.precio}</Text>
     </TouchableOpacity>
   );
@@ -246,4 +258,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Courses;
+export default CoursesFinal;

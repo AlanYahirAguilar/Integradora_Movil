@@ -72,26 +72,25 @@ const CategoryScreen = ({ route, navigation }) => {
         startDate: course.courseData.startDate,
         endDate: course.courseData.endDate,
         categories: course.courseData.categories,
-        size: course.courseData.size,
-        rating: 4.5, // Valor por defecto
+        size: course.courseData.size, 
         comments: '0'
       }
     });
   };
 
   // Función para renderizar las estrellas
-  const renderStars = (rating) => (
-    <View style={styles.starsContainer}>
-      {[...Array(5)].map((_, index) => (
-        <Icon
-          key={index}
-          name="star"
-          size={14}
-          color={index < Math.floor(rating) ? '#FFD700' : '#ccc'}
-        />
-      ))}
-    </View>
-  );
+  // const renderStars = (rating) => (
+  //   <View style={styles.starsContainer}>
+  //     {[...Array(5)].map((_, index) => (
+  //       <Icon
+  //         key={index}
+  //         name="star"
+  //         size={14}
+  //         color={index < Math.floor(rating) ? '#FFD700' : '#ccc'}
+  //       />
+  //     ))}
+  //   </View>
+  // );
 
   if (loading) {
     return (
@@ -141,10 +140,10 @@ const CategoryScreen = ({ route, navigation }) => {
               <Text style={styles.courseTitle}>{course.title}</Text>
               <Text style={styles.courseSubtitle}>{course.subtitle}</Text>
               <Text style={styles.coursePrice}>{course.price}</Text>
-              <View style={styles.ratingContainer}>
+              {/* <View style={styles.ratingContainer}>
                 <Text style={styles.rating}>{course.rating.toFixed(1)}</Text>
                 {renderStars(course.rating)}
-              </View>
+              </View> */}
             </TouchableOpacity>
           ))}
         </View>
