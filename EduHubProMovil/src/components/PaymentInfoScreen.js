@@ -281,13 +281,12 @@ const styles = StyleSheet.create({
   },
   actionButton: {
     backgroundColor: '#604274',
-    paddingVertical: 8,
+    paddingVertical: 12,
     paddingHorizontal: 14,
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1,
-    borderRadius: 10,
-    marginTop: 3,
+    borderRadius: 16,
+    marginTop: 16,
     marginBottom: 10,
   },
   itemText: {

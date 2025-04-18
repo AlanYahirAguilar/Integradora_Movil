@@ -11,13 +11,7 @@ import PendingEnrollmentsScreen from '../components/PendingEnrollmentsScreen';
 import VoucherVerification from '../components/NUEVOOOOOS/VoucherVerification'
 import CourseModuleDetails from '../components/NUEVOOOOOS/CourseModuleDetails';
 import Profile from '../modules/profile/Profile';
-import CourseCompletionScreen from '../components/CompletionScreen';
 import LessonScreen from '../modules/lessonScreen/LessonProgressScreen';
-import CategoryInformatica from '../modules/categories/CategoryInformatica'; 
-import CategoryDesarrolloWeb from '../modules/categories/CategoryDesarrolloWeb';
-import CategoryIOT from '../modules/categories/CategoryIOT';
-import CategoryProgramacion from '../modules/categories/CategoryProgramacion';
-import CategoryComunicacion from '../modules/categories/CategoryComunicacion';
 import CategoryScreen from '../modules/categories/CategoryScreen';
 import AdvancedSearch from '../modules/advancedSearch/AdvancedSearch';
 import RecoverPassword from '../modules/recoverPassword/recoverPassword';
@@ -141,46 +135,6 @@ export const RootStack = ({ initialToken }) => {
     options={({navigation}) => ({header: () => <CustomHeader toggleSidebar={() => navigation.setParams({ toggleSidebar: true })} />,
     title: 'Detalles del Módulo',})}
     /> */}
-
-    <Stack.Screen 
-    name="informatica"
-    component={CategoryInformatica}
-    options={({ navigation }) => ({
-      header: () => <CustomHeader toggleSidebar={() => navigation.setParams({ toggleSidebar: true })} />,
-      title: 'Informatica',
-    })}/>
-
-<Stack.Screen 
-    name="desarrollo"
-    component={CategoryDesarrolloWeb}
-    options={({ navigation }) => ({
-      header: () => <CustomHeader toggleSidebar={() => navigation.setParams({ toggleSidebar: true })} />,
-      title: 'Desarrollo Web',
-    })}/>
-
-<Stack.Screen 
-    name="programacion"
-    component={CategoryProgramacion}
-    options={({ navigation }) => ({
-      header: () => <CustomHeader toggleSidebar={() => navigation.setParams({ toggleSidebar: true })} />,
-      title: 'Programacion',
-    })}/>
-
-<Stack.Screen 
-    name="iot"
-    component={CategoryIOT}
-    options={({ navigation }) => ({
-      header: () => <CustomHeader toggleSidebar={() => navigation.setParams({ toggleSidebar: true })} />,
-      title: 'IOT',
-    })}/>
-
-<Stack.Screen 
-    name="comunicacion"
-    component={CategoryComunicacion}
-    options={({ navigation }) => ({
-      header: () => <CustomHeader toggleSidebar={() => navigation.setParams({ toggleSidebar: true })} />,
-      title: 'Comunicacion',
-    })}/>
 
 <Stack.Screen 
     name="Category"
