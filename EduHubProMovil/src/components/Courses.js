@@ -18,8 +18,15 @@ const Courses = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    loadCourses();
+    loadCourses(); // tu función para cargar los cursos
+
+    const timer = setTimeout(() => {
+      loadCourses(); // recarga después de 30s
+    }, 30000); // 30,000 ms = 30 segundos
+
+    return () => clearTimeout(timer); // limpieza del timer
   }, []);
+
 
   // Función para cargar los cursos desde el backend
   const loadCourses = async () => {
@@ -49,7 +56,8 @@ const Courses = () => {
         courseStatus: course.courseStatus,
         categories: course.categories || [],
         modules: course.modules || [],
-        instructor: course.instructor
+        instructor: course.instructor,
+        duration: course.duration || 0,
       }));
 
       setCourses(formattedCourses);
@@ -90,7 +98,8 @@ const Courses = () => {
           endDate: course.endDate || null,
           categories: course.categories || [],
           size: course.size || 0,
-          courseStatus: course.courseStatus || 'PUBLISHED'
+          courseStatus: course.courseStatus || 'PUBLISHED',
+          duration: course.duration || 0,
         }
       })}
     >
