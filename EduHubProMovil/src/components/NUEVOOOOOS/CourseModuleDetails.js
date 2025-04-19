@@ -51,7 +51,8 @@ const CourseModuleDetails = ({ navigation, route }) => {
     let icon, buttonText, buttonStyle, isDisabled;
     
     if (item.status === 'UNLOCKED' || item.status === 'COMPLETED') {
-      icon = <Ionicons name="unlock" size={24} color="#673AB7" />;
+      // Usamos 'lock-open' en lugar de 'unlock' que no existe en Ionicons
+      icon = <Ionicons name="lock-open" size={24} color="#673AB7" />;
       buttonText = "Ver Módulo";
       buttonStyle = styles.viewButton;
       isDisabled = false;
@@ -116,13 +117,28 @@ const CourseModuleDetails = ({ navigation, route }) => {
 
   // Función para manejar el clic en una sección
   const handleSectionPress = (section) => {
+    // Detectar el tipo de contenido basado en la URL
+    let contentType = section.contentType || 'image'; // Por defecto, asumir imagen
+    
+    // Si no se especifica contentType, intentar determinarlo por la extensión del archivo
+    if (!section.contentType && section.contentUrl) {
+      const url = section.contentUrl.toLowerCase();
+      if (url.endsWith('.mp4') || url.endsWith('.mov') || url.endsWith('.avi')) {
+        contentType = 'video';
+      } else if (url.endsWith('.jpg') || url.endsWith('.jpeg') || url.endsWith('.png') || url.endsWith('.gif')) {
+        contentType = 'image';
+      } else if (url.endsWith('.pdf')) {
+        contentType = 'pdf';
+      }
+    }
+    
     // Navegar a la vista de detalle de la sección
     navigation.navigate('LessonDetail', { 
       sectionId: section.sectionId,
       sectionName: section.name,
       sectionDescription: section.description,
       contentUrl: section.contentUrl,
-      contentType: section.contentType || 'image' // Por defecto, asumir imagen
+      contentType: contentType
     });
   };
 
@@ -163,78 +179,82 @@ const CourseModuleDetails = ({ navigation, route }) => {
         navigation={navigation} 
       />
       
-      <ScrollView style={styles.contentContainer}>
-        {/* Información del curso */}
-        <Text style={styles.title}>{courseData.title}</Text>
-        
-        {/* Imagen del curso */}
-        {courseData.bannerPath && (
-          <Image 
-            source={{ uri: courseData.bannerPath }} 
-            style={styles.courseBanner}
-            resizeMode="cover"
-          />
-        )}
-        
-        {/* Descripción del curso */}
-        <View style={styles.descriptionContainer}>
-          <Text style={styles.descriptionTitle}>Descripción</Text>
-          <Text style={styles.descriptionText}>{courseData.description || 'Sin descripción disponible'}</Text>
-        </View>
-        
-        {/* Información del instructor */}
-        {courseData.instructor && (
-          <View style={styles.instructorContainer}>
-            <Text style={styles.instructorTitle}>Instructor</Text>
-            <Text style={styles.instructorName}>{courseData.instructor.name}</Text>
-          </View>
-        )}
-        
-        {/* Fechas del curso */}
-        <View style={styles.datesContainer}>
-          <Text style={styles.datesTitle}>Periodo del curso</Text>
-          <Text style={styles.datesText}>
-            {new Date(courseData.startDate).toLocaleDateString()} - {new Date(courseData.endDate).toLocaleDateString()}
-          </Text>
-        </View>
-        
-        {/* Módulos del curso */}
-        <View style={styles.modulesContainer}>
-          <Text style={styles.modulesTitle}>Módulos del Curso</Text>
+      {/* Dividimos el contenido para evitar anidación de listas */}
+      <View style={styles.contentContainer}>
+        {/* Información del curso - Esta parte usa solo View y ScrollView */}
+        <ScrollView style={styles.infoScrollView}>
+          <Text style={styles.title}>{courseData.title}</Text>
           
-          <FlatList
-            data={courseData.modules}
-            renderItem={renderModuleItem}
-            keyExtractor={item => item.moduleId}
-            scrollEnabled={true}
-            nestedScrollEnabled={true}
-            ItemSeparatorComponent={() => <View style={styles.separator} />}
-          />
-        </View>
+          {/* Imagen del curso */}
+          {courseData.bannerPath && (
+            <Image 
+              source={{ uri: courseData.bannerPath }} 
+              style={styles.courseBanner}
+              resizeMode="cover"
+            />
+          )}
+          
+          {/* Descripción del curso */}
+          <View style={styles.descriptionContainer}>
+            <Text style={styles.descriptionTitle}>Descripción</Text>
+            <Text style={styles.descriptionText}>{courseData.description || 'Sin descripción disponible'}</Text>
+          </View>
+          
+          {/* Información del instructor */}
+          {courseData.instructor && (
+            <View style={styles.instructorContainer}>
+              <Text style={styles.instructorTitle}>Instructor</Text>
+              <Text style={styles.instructorName}>{courseData.instructor.name}</Text>
+            </View>
+          )}
+          
+          {/* Fechas del curso */}
+          <View style={styles.datesContainer}>
+            <Text style={styles.datesTitle}>Periodo del curso</Text>
+            <Text style={styles.datesText}>
+              {new Date(courseData.startDate).toLocaleDateString()} - {new Date(courseData.endDate).toLocaleDateString()}
+            </Text>
+          </View>
+        </ScrollView>
         
-        {/* Secciones del módulo desbloqueado */}
-        {unlockedModule && unlockedModule.sections && unlockedModule.sections.length > 0 && (
-          <View style={styles.sectionsContainer}>
-            <Text style={styles.sectionsTitle}>Contenido disponible - Módulo {unlockedModule.name}</Text>
+        {/* Módulos y secciones - Esta parte usa FlatList */}
+        <View style={styles.listsContainer}>
+          {/* Módulos del curso */}
+          <View style={styles.modulesContainer}>
+            <Text style={styles.modulesTitle}>Módulos del Curso</Text>
             
             <FlatList
-              data={unlockedModule.sections}
-              renderItem={renderSectionItem}
-              keyExtractor={item => item.sectionId}
+              data={courseData.modules}
+              renderItem={renderModuleItem}
+              keyExtractor={item => item.moduleId}
               scrollEnabled={true}
-              nestedScrollEnabled={true}
               ItemSeparatorComponent={() => <View style={styles.separator} />}
             />
           </View>
-        )}
-        
-        <TouchableOpacity 
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}
-        >
-          <Text style={styles.backButtonText}>Volver a Mis Cursos</Text>
-        </TouchableOpacity>
-      </ScrollView>
+          
+          {/* Secciones del módulo desbloqueado */}
+          {unlockedModule && unlockedModule.sections && unlockedModule.sections.length > 0 && (
+            <View style={styles.sectionsContainer}>
+              <Text style={styles.sectionsTitle}>Contenido disponible - Módulo {unlockedModule.name}</Text>
+              
+              <FlatList
+                data={unlockedModule.sections}
+                renderItem={renderSectionItem}
+                keyExtractor={item => item.sectionId}
+                scrollEnabled={true}
+                ItemSeparatorComponent={() => <View style={styles.separator} />}
+              />
+            </View>
+          )}
+          
+          <TouchableOpacity 
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}
+          >
+            <Text style={styles.backButtonText}>Volver a Mis Cursos</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     </SafeAreaView>
   );
 };
@@ -269,7 +289,15 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1,
+  },
+  infoScrollView: {
     padding: 20,
+    maxHeight: 300, // Limita la altura para dejar espacio para las listas
+  },
+  listsContainer: {
+    flex: 1,
+    padding: 20,
+    paddingTop: 0,
   },
   title: {
     fontSize: 24,
@@ -280,7 +308,7 @@ const styles = StyleSheet.create({
   },
   courseBanner: {
     width: '100%',
-    height: 200,
+    height: 150,
     borderRadius: 10,
     marginBottom: 20,
   },
