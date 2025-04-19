@@ -13,7 +13,7 @@ const CompletionScreen = ({ navigation }) => {
   // Función para manejar el envío de la evaluación
   const handleSubmitEvaluation = () => {
     if (rating === 0) {
-      Alert.alert('Error', 'Por favor, selecciona una calificación.');
+      Alert.alert('Error', 'Por favor califica el curso, de no ser asi no podremos enviarte tu constancia.');
       return;
     }
 
@@ -21,6 +21,7 @@ const CompletionScreen = ({ navigation }) => {
     Alert.alert(
       'Éxito',
       'Tu evaluación ha sido enviada. ¡Gracias por tu retroalimentación!',
+      'Te enviaremos tu constancia al finalizar el curso.',
       [{ text: 'OK', onPress: () => navigation.navigate('Home') }] // Regresar a Home
     );
   };

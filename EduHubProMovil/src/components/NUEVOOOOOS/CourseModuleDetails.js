@@ -19,7 +19,6 @@ const CourseModuleDetails = ({ navigation, route }) => {
   // Estado para almacenar los datos del curso
   const [courseData, setCourseData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-
   // Estado para la barra lateral
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -34,15 +33,12 @@ const CourseModuleDetails = ({ navigation, route }) => {
   // Cargar los datos del curso cuando el componente se monta
   useEffect(() => {
     if (route.params?.course) {
-
       // Limpiar módulos antes de hacer la petición
       const { modules, ...courseWithoutModules } = route.params.course;
-
       setCourseData({
         ...courseWithoutModules,
         modules: [] // aseguramos que esté limpio
       });
-
       loadModulesWithSections(route.params.course.courseId);
       setIsLoading(false);
     } else if (route.params?.courseId) {
@@ -69,9 +65,7 @@ const CourseModuleDetails = ({ navigation, route }) => {
   const renderModuleItem = ({ item }) => {
     // Determinar el estado del módulo
     let icon, buttonText, buttonStyle, isDisabled;
-
     if (item.status === 'UNLOCKED' || item.status === 'COMPLETED') {
-      // Usamos 'lock-open' en lugar de 'unlock' que no existe en Ionicons
       icon = <Ionicons name="lock-open" size={24} color="#673AB7" />;
       buttonText = "Ver Módulo";
       buttonStyle = styles.viewButton;
@@ -100,18 +94,6 @@ const CourseModuleDetails = ({ navigation, route }) => {
     );
   };
 
-  const getIconByContentType = (type) => {
-    switch (type) {
-      case 'video':
-        return 'play-circle';
-      case 'pdf':
-        return 'document-text';
-      case 'image':
-      default:
-        return 'image';
-    }
-  };
-
   // Función para renderizar cada sección dentro de un módulo
   const renderSectionItem = ({ item }) => {
     return (
@@ -134,9 +116,7 @@ const CourseModuleDetails = ({ navigation, route }) => {
 
   // Función para manejar el clic en un módulo
   const handleModulePress = (module) => {
-    // Si el módulo tiene secciones, expandirlo
     if (module.sections && module.sections.length > 0) {
-      // Navegar a una vista de detalles del módulo o expandir in-place
       navigation.navigate('ModuleSections', {
         moduleId: module.moduleId,
         moduleName: module.name,
@@ -149,10 +129,7 @@ const CourseModuleDetails = ({ navigation, route }) => {
 
   // Función para manejar el clic en una sección
   const handleSectionPress = (section) => {
-    // Detectar el tipo de contenido basado en la URL
-    let contentType = section.contentType || 'image'; // Por defecto, asumir imagen
-
-    // Si no se especifica contentType, intentar determinarlo por la extensión del archivo
+    let contentType = section.contentType || 'image';
     if (!section.contentType && section.contentUrl) {
       const url = section.contentUrl.toLowerCase();
       if (url.endsWith('.mp4') || url.endsWith('.mov') || url.endsWith('.avi')) {
@@ -163,8 +140,6 @@ const CourseModuleDetails = ({ navigation, route }) => {
         contentType = 'pdf';
       }
     }
-
-    // Navegar a la vista de detalle de la sección
     navigation.navigate('LessonDetail', {
       sectionId: section.sectionId,
       sectionName: section.name,
@@ -211,12 +186,10 @@ const CourseModuleDetails = ({ navigation, route }) => {
         navigation={navigation}
       />
 
-      {/* Dividimos el contenido para evitar anidación de listas */}
-      <View style={styles.contentContainer}>
-        {/* Información del curso - Esta parte usa solo View y ScrollView */}
-        <ScrollView style={styles.infoScrollView}>
-          <Text style={styles.title}>{courseData.title}</Text>
-
+      {/* Contenido principal */}
+      <ScrollView style={styles.scrollContent}>
+        {/* Información del curso */}
+        <View style={styles.courseInfoContainer}>
           {/* Imagen del curso */}
           {courseData.bannerPath && (
             <Image
@@ -225,68 +198,33 @@ const CourseModuleDetails = ({ navigation, route }) => {
               resizeMode="cover"
             />
           )}
-
-          {/* Descripción del curso */}
+          <Text style={styles.title}>{courseData.title}</Text>
           <View style={styles.descriptionContainer}>
             <Text style={styles.descriptionTitle}>Descripción</Text>
             <Text style={styles.descriptionText}>{courseData.description || 'Sin descripción disponible'}</Text>
           </View>
-
-          {/* Información del instructor */}
-          {courseData.instructor && (
-            <View style={styles.instructorContainer}>
-              <Text style={styles.instructorTitle}>Instructor</Text>
-              <Text style={styles.instructorName}>{courseData.instructor.name}</Text>
-            </View>
-          )}
-
-          {/* Fechas del curso */}
-          <View style={styles.datesContainer}>
-            <Text style={styles.datesTitle}>Periodo del curso</Text>
-            <Text style={styles.datesText}>
-              {new Date(courseData.startDate).toLocaleDateString()} - {new Date(courseData.endDate).toLocaleDateString()}
-            </Text>
-          </View>
-        </ScrollView>
-
-        {/* Módulos y secciones - Esta parte usa FlatList */}
-        <View style={styles.listsContainer}>
-          {/* Módulos del curso */}
-          <View style={styles.modulesContainer}>
-            <Text style={styles.modulesTitle}>Módulos del Curso</Text>
-
-            <FlatList
-              data={courseData.modules}
-              renderItem={renderModuleItem}
-              keyExtractor={item => item.moduleId}
-              scrollEnabled={true}
-              ItemSeparatorComponent={() => <View style={styles.separator} />}
-            />
-          </View>
-
-          {/* Secciones del módulo desbloqueado */}
-          {unlockedModule && unlockedModule.sections && unlockedModule.sections.length > 0 && (
-            <View style={styles.sectionsContainer}>
-              <Text style={styles.sectionsTitle}>Contenido disponible - Módulo {unlockedModule.name}</Text>
-
-              <FlatList
-                data={unlockedModule.sections}
-                renderItem={renderSectionItem}
-                keyExtractor={item => item.sectionId}
-                scrollEnabled={true}
-                ItemSeparatorComponent={() => <View style={styles.separator} />}
-              />
-            </View>
-          )}
-
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => navigation.goBack()}
-          >
-            <Text style={styles.backButtonText}>Volver a Mis Cursos</Text>
-          </TouchableOpacity>
         </View>
-      </View>
+
+        {/* Módulos del curso */}
+        <View style={styles.modulesContainer}>
+          <Text style={styles.modulesTitle}>Módulos del Curso</Text>
+          <FlatList
+            data={courseData.modules}
+            renderItem={renderModuleItem}
+            keyExtractor={item => item.moduleId}
+            scrollEnabled={false} // Desactivamos el scroll interno para que el ScrollView control todo
+            ItemSeparatorComponent={() => <View style={styles.separator} />}
+          />
+        </View>
+
+        {/* Botón para volver */}
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}
+        >
+          <Text style={styles.backButtonText}>Volver a Mis Cursos</Text>
+        </TouchableOpacity>
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -295,6 +233,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+  },
+  scrollContent: {
+    flex: 1,
+    padding: 20,
   },
   loadingContainer: {
     flex: 1,
@@ -319,30 +261,21 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 20,
   },
-  contentContainer: {
-    flex: 1,
-  },
-  infoScrollView: {
-    padding: 20,
-    maxHeight: 300, // Limita la altura para dejar espacio para las listas
-  },
-  listsContainer: {
-    flex: 1,
-    padding: 20,
-    paddingTop: 0,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#673AB7',
+  courseInfoContainer: {
     marginBottom: 20,
-    textAlign: 'center',
   },
   courseBanner: {
     width: '100%',
     height: 150,
     borderRadius: 10,
-    marginBottom: 20,
+    marginBottom: 10,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#673AB7',
+    marginBottom: 10,
+    textAlign: 'center',
   },
   descriptionContainer: {
     marginBottom: 20,
@@ -356,32 +289,6 @@ const styles = StyleSheet.create({
   descriptionText: {
     fontSize: 14,
     lineHeight: 20,
-    color: '#555',
-  },
-  instructorContainer: {
-    marginBottom: 20,
-  },
-  instructorTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#673AB7',
-    marginBottom: 10,
-  },
-  instructorName: {
-    fontSize: 16,
-    color: '#555',
-  },
-  datesContainer: {
-    marginBottom: 20,
-  },
-  datesTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#673AB7',
-    marginBottom: 10,
-  },
-  datesText: {
-    fontSize: 16,
     color: '#555',
   },
   modulesContainer: {

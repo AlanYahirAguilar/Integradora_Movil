@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../../components/SideBar';
-import { View, Text, TouchableOpacity, StyleSheet, Image, ActivityIndicator, ScrollView, RefreshControl } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image, ActivityIndicator, ScrollView, RefreshControl, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import UserService from '../../services/UserService';
 import CourseService from '../../services/CourseService';
@@ -13,6 +13,23 @@ export default function MyInscriptionsCourses({ route }) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
+
+
+   // Agregar useEffect para mostrar la alerta al cargar la vista
+   useEffect(() => {
+    // Mostrar la alerta cuando el componente se monta
+    Alert.alert(
+      '¡Atención!',
+      'Si tienes cursos pendientes por calificar, hazlo antes de que el curso finalice, ya que no generaremos tu constancia por haber participado en el curso.',
+      [
+        {
+          text: 'OK',
+          onPress: () => console.log('Alerta cerrada'),
+        },
+      ],
+      { cancelable: false } // Evita que la alerta se cierre al tocar fuera
+    );
+  }, []);
 
   useEffect(() => {
     if (route.params?.toggleSidebar) {
