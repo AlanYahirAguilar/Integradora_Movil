@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../../components/SideBar';
 import { View, Text, TouchableOpacity, StyleSheet, Image, ActivityIndicator, ScrollView, RefreshControl } from 'react-native';
-import ProgressBar from 'react-native-progress/Bar'; // Importar Progress.Bar
 import { useNavigation } from '@react-navigation/native';
 import UserService from '../../services/UserService';
 import CourseService from '../../services/CourseService';
@@ -50,7 +49,6 @@ export default function MyInscriptionsCourses({ route }) {
         id: course.courseId,
         title: course.title,
         image: course.bannerPath || 'https://via.placeholder.com/150',
-        progress: course.progress || 0,
         instructor: course.instructor?.name || 'Instructor',
         originalData: course // Guardar datos originales para pasar a la pantalla de detalles
       }));
@@ -144,7 +142,7 @@ export default function MyInscriptionsCourses({ route }) {
                 <TouchableOpacity 
                   key={course.id} 
                   style={styles.courseCard} 
-                  onPress={() => navigateToCourseDetails(course)}
+                  onPress={() => {navigateToCourseDetails(course); navigate.navigation('CourseDetailInscription'); }}
                 >
                   <Image 
                     source={{ uri: course.image }} 
@@ -162,17 +160,6 @@ export default function MyInscriptionsCourses({ route }) {
                     <Text style={styles.instructor} numberOfLines={1} ellipsizeMode="tail">
                       {course.instructor}
                     </Text>
-                    <View style={styles.progressContainer}>
-                      <ProgressBar
-                        progress={course.progress / 100}
-                        width={null}
-                        color="#604274"
-                        unfilledColor="#E0E0E0"
-                        borderWidth={0}
-                        style={styles.progressBar}
-                      />
-                      <Text style={styles.progressText}>{`${course.progress}%`}</Text>
-                    </View>
                   </View>
                 </TouchableOpacity>
               ))}
@@ -283,21 +270,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#800080',
     marginBottom: 8,
-  },
-  progressContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  progressBar: {
-    flex: 1,
-    height: 8,
-    borderRadius: 4,
-  },
-  progressText: {
-    fontSize: 12,
-    color: '#604274',
-    marginLeft: 8,
-    fontWeight: 'bold',
-  },
+  }, 
 });

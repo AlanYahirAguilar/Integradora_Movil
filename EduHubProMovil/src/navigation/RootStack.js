@@ -2,6 +2,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from '../modules/homeScreen/HomeScreen';
 import SplashScreen from '../modules/splash/SplashScreen';
 import CourseDetailScreen from '../modules/courseDetailScreen/CourseDetailScreen';
+import CourseDetailScreenIns from '../modules/courseDetailScreen/CourseDetailScreenIns';
 import SignIn from '../modules/signIn/signIn';
 import SignUp from '../modules/signUp/signUp';
 import CustomHeader from '../components/CustomHeader';
@@ -53,6 +54,13 @@ export const RootStack = ({ initialToken }) => {
         options={({ navigation }) => ({
           header: () => <CustomHeader toggleSidebar={() => navigation.setParams({ toggleSidebar: true })} />,
           title: 'Detalles del Curso'
+        })} 
+      />
+      <Stack.Screen 
+        name="CourseDetailInscription" 
+        component={CourseDetailScreen} 
+        options={({ navigation }) => ({
+          header: () => <CustomHeader toggleSidebar={() => navigation.setParams({ toggleSidebar: true })} />
         })} 
       />
       <Stack.Screen name='En curso' component={MyCoursesScreen} options={({ navigation }) => ({
