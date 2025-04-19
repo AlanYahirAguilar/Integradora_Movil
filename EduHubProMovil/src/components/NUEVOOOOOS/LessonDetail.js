@@ -139,7 +139,6 @@ const LessonDetail = ({ route, navigation }) => {
         <TouchableOpacity 
           style={[styles.navigationButton, !lessonData.previousLesson && styles.disabledButton]}
           onPress={handlePreviousLesson}
-          disabled={!lessonData.previousLesson}
         >
           <Text style={styles.navigationButtonText}>Lección anterior</Text>
         </TouchableOpacity>
@@ -171,10 +170,11 @@ const styles = StyleSheet.create({
     color: '#673AB7',
   },
   scrollView: {
-    flex: 1,
+    flexGrow: 1, // Asegura que el ScrollView crezca y ocupe el espacio disponible
   },
   contentContainer: {
     padding: 20,
+    paddingBottom: 80, // Agrega espacio adicional en la parte inferior para evitar solapamientos
   },
   header: {
     flexDirection: 'row',
@@ -207,12 +207,13 @@ const styles = StyleSheet.create({
   },
   contentWrapper: {
     width: '100%',
+    height: Dimensions.get('window').height * 0.5, // Altura aumentada para contenido general
     marginBottom: 20,
     borderRadius: 10,
     overflow: 'hidden',
   },
   pdfContentWrapper: {
-    height: Dimensions.get('window').height * 0.6, // Mayor altura para PDFs
+    height: Dimensions.get('window').height * 0.7, // Altura aumentada para PDFs
   },
   noContentContainer: {
     height: 200,
