@@ -26,7 +26,9 @@ const LessonDetail = ({ route, navigation }) => {
         name: route.params.sectionName,
         description: route.params.sectionDescription,
         contentUrl: route.params.contentUrl,
-        contentType: route.params.contentType
+        contentType: route.params.contentType,
+        previousLesson: route.params.previousLesson, // Agregamos la lección anterior
+        nextLesson: route.params.nextLesson, // Agregamos la siguiente lección
       });
       setIsLoading(false);
     }
@@ -50,6 +52,18 @@ const LessonDetail = ({ route, navigation }) => {
         return <Ionicons name="document-text" size={24} color="#673AB7" />;
       default:
         return <Ionicons name="document" size={24} color="#673AB7" />;
+    }
+  };
+
+  const handlePreviousLesson = () => {
+    if (lessonData.previousLesson) {
+      navigation.navigate('LessonDetail', lessonData.previousLesson);
+    }
+  };
+
+  const handleNextLesson = () => {
+    if (lessonData.nextLesson) {
+      navigation.navigate('LessonDetail', lessonData.nextLesson);
     }
   };
 
@@ -119,6 +133,24 @@ const LessonDetail = ({ route, navigation }) => {
           </View>
         )}
       </ScrollView>
+
+      {/* Botones de navegación entre lecciones */}
+      <View style={styles.navigationButtonsContainer}>
+        <TouchableOpacity 
+          style={[styles.navigationButton, !lessonData.previousLesson && styles.disabledButton]}
+          onPress={handlePreviousLesson}
+          disabled={!lessonData.previousLesson}
+        >
+          <Text style={styles.navigationButtonText}>Lección anterior</Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={[styles.navigationButton, !lessonData.nextLesson && styles.disabledButton]}
+          onPress={handleNextLesson}
+          disabled={!lessonData.nextLesson}
+        >
+          <Text style={styles.navigationButtonText}>Lección siguiente</Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };
@@ -212,6 +244,31 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 24,
     color: '#555',
+  },
+  navigationButtonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    borderTopWidth: 1,
+    borderTopColor: '#E0E0E0',
+    backgroundColor: '#fff',
+  },
+  navigationButton: {
+    flex: 1,
+    paddingVertical: 10,
+    marginHorizontal: 5,
+    borderRadius: 8,
+    backgroundColor: '#673AB7',
+    alignItems: 'center',
+  },
+  disabledButton: {
+    backgroundColor: '#D1C4E9',
+  },
+  navigationButtonText: {
+    fontSize: 16,
+    color: '#fff',
+    fontWeight: 'bold',
   },
 });
 
