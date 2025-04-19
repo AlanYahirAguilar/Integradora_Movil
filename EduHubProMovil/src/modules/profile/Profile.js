@@ -129,18 +129,21 @@ export default function Profile({ route, navigation }) {
     return null; // No hay error
   };
 
-  // Validar nombre
-  const validateName = (name) => {
-    if (!name || name.trim() === '') {
-      return 'El nombre no puede estar vacío';
-    }
-    
-    if (name.length > 100) {
-      return 'El nombre no puede exceder los 100 caracteres';
-    }
-    
-    return null; // No hay error
-  };
+ // Validar nombre
+const validateName = (name) => {
+  if (!name || name.trim() === '') {
+    return 'El nombre no puede estar vacío';
+  }
+  if (name.length > 100) {
+    return 'El nombre no puede exceder los 100 caracteres';
+  }
+  // Verificar si el nombre contiene números
+  const hasNumbers = /\d/.test(name);
+  if (hasNumbers) {
+    return 'El nombre no puede contener números';
+  }
+  return null; // No hay error
+};
 
   // Función para actualizar el perfil
   const updateProfile = async () => {
