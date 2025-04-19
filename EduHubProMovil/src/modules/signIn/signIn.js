@@ -140,7 +140,7 @@ const SignIn = ({ navigation }) => {
       }
     } catch (error) {
       //   console.error('Error en inicio de sesión:', error);
-      showMessage(MESSAGES.NETWORK_ERROR, true);
+      showMessage(MESSAGES.LOGIN_ERROR, true);
     } finally {
       setIsLoading(false);
     }
