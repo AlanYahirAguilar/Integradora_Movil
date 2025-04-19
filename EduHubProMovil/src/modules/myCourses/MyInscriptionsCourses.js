@@ -27,24 +27,23 @@ export default function MyInscriptionsCourses({ route }) {
     loadStudentCourses();
   }, []);
 
-  // Simulación de carga de datos
+  // Cargar los cursos del estudiante
   const loadStudentCourses = async () => {
     try {
       setIsLoading(true);
       setError(null);
 
-      // Simular respuesta del backend
+      // Obtener inscripciones desde el backend
       const response = await CourseService.fetchRegistrationByStudent();
-
+      
       if (!response.success) {
-        setError(studentCourses.error || "Error al cargar los cursos.");
+        setError(response.error || "Error al cargar los cursos.");
+        console.error("Error al cargar cursos:", response.error);
         return;
       }
 
       const studentCourses = response.data;
-
-      console.log("\nRESPONSE\n");
-      console.log(studentCourses);
+      console.log("Cursos del estudiante cargados:", studentCourses.length);
 
       // Transformar los datos para adaptarlos al formato esperado por el componente
       const formattedCourses = studentCourses.map(course => ({
@@ -52,17 +51,45 @@ export default function MyInscriptionsCourses({ route }) {
         title: course.title,
         image: course.bannerPath || 'https://via.placeholder.com/150',
         progress: course.progress || 0,
-        instructor: course.instructor.name || 'Instructor',
+        instructor: course.instructor?.name || 'Instructor',
+        originalData: course // Guardar datos originales para pasar a la pantalla de detalles
       }));
 
       setCourses(formattedCourses);
     } catch (err) {
-      console.log(err);
-
+      console.error("Error al cargar inscripciones:", err);
       setError('No se pudieron cargar tus cursos. Intenta de nuevo más tarde.');
     } finally {
       setIsLoading(false);
       setRefreshing(false);
+    }
+  };
+
+  // Función para navegar a los detalles del curso
+  const navigateToCourseDetails = (course) => {
+    try {
+      console.log("Navegando a detalles de curso:", course.id);
+      
+      // Asegurarse de que los datos del curso incluyan todos los campos necesarios
+      const courseData = {
+        courseId: course.id,
+        title: course.title,
+        bannerPath: course.image,
+        instructor: course.originalData?.instructor || { name: "Instructor" },
+        modules: course.originalData?.modules || [],
+        // Agregar otros campos que puedan ser necesarios
+        description: course.originalData?.description || "",
+        price: course.originalData?.price || 0,
+        duration: course.originalData?.duration || 0,
+        courseStatus: course.originalData?.courseStatus || "PUBLISHED",
+      };
+      
+      // Navegar a la pantalla de detalles pasando el curso completo
+      navigation.navigate('CourseDetail', { course: courseData });
+    } catch (error) {
+      console.error("Error al navegar:", error);
+      // Mostrar un mensaje al usuario
+      alert("No se pudo cargar los detalles del curso. Inténtalo de nuevo.");
     }
   };
 
@@ -103,15 +130,38 @@ export default function MyInscriptionsCourses({ route }) {
             </View>
           )}
 
+          {/* No hay cursos */}
+          {!isLoading && !error && courses.length === 0 && (
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyText}>No estás inscrito en ningún curso actualmente.</Text>
+            </View>
+          )}
+
           {/* Tarjetas de Cursos */}
           {!isLoading && !error && courses.length > 0 && (
             <View style={styles.coursesContainer}>
               {courses.map((course) => (
-                <TouchableOpacity key={course.id} style={styles.courseCard} onPress={() => navigation.navigate('course-module-details')}>
-                  <Image source={{ uri: course.image }} style={styles.courseImage} />
+                <TouchableOpacity 
+                  key={course.id} 
+                  style={styles.courseCard} 
+                  onPress={() => navigateToCourseDetails(course)}
+                >
+                  <Image 
+                    source={{ uri: course.image }} 
+                    style={styles.courseImage}
+                    onError={(e) => {
+                      console.log("Error al cargar imagen, usando imagen por defecto");
+                      // En React Native Web, el manejo de error es diferente
+                      // Aquí simplemente registramos el error
+                    }}
+                  />
                   <View style={styles.courseInfo}>
-                    <Text style={styles.courseTitle}>{course.title}</Text>
-                    <Text style={styles.instructor}>{course.instructor}</Text>
+                    <Text style={styles.courseTitle} numberOfLines={2} ellipsizeMode="tail">
+                      {course.title}
+                    </Text>
+                    <Text style={styles.instructor} numberOfLines={1} ellipsizeMode="tail">
+                      {course.instructor}
+                    </Text>
                     <View style={styles.progressContainer}>
                       <ProgressBar
                         progress={course.progress / 100}
@@ -175,6 +225,17 @@ const styles = StyleSheet.create({
     color: '#FF6B6B',
     textAlign: 'center',
     marginBottom: 16,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 50,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: '#555',
+    textAlign: 'center',
   },
   retryButton: {
     backgroundColor: '#604274',

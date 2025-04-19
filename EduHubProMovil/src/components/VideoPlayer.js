@@ -1,16 +1,19 @@
 // VideoPlayer.js
 import { Video } from 'expo-av';
-import React, { useState } from 'react';
-import { StyleSheet, View, Image, ActivityIndicator, Text } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { StyleSheet, View, Image, ActivityIndicator, Text, Linking, TouchableOpacity, Alert, Dimensions } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import * as FileSystem from 'expo-file-system';
+import * as WebBrowser from 'expo-web-browser';
 
 const VideoPlayer = ({ source, contentType /* = 'video'  */}) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [downloadingPdf, setDownloadingPdf] = useState(false);
+  const [downloadProgress, setDownloadProgress] = useState(0);
 
   // Manejar carga de contenido
   const handleLoadStart = () => {
-   // console.log(contentType);
-    
     setIsLoading(true);
     setError(false);
   };
@@ -19,10 +22,38 @@ const VideoPlayer = ({ source, contentType /* = 'video'  */}) => {
     setIsLoading(false);
   };
 
-  const handleError = () => {
+  const handleError = (err) => {
+    console.error('Error al cargar el contenido:', err);
     setIsLoading(false);
     setError(true);
   };
+
+  // Función para abrir PDF usando WebBrowser
+  const openPDF = useCallback(async () => {
+    try {
+      setDownloadingPdf(true);
+      setDownloadProgress(0);
+      setError(false);
+
+      // Intenta abrir el PDF directamente primero
+      const result = await WebBrowser.openBrowserAsync(source);
+      setDownloadingPdf(false);
+      
+      if (result.type === 'cancel' || result.type === 'dismiss') {
+        console.log('Usuario cerró el navegador web');
+      }
+    } catch (error) {
+      console.error('Error al abrir el PDF:', error);
+      setError(true);
+      setDownloadingPdf(false);
+      
+      Alert.alert(
+        "Error",
+        "No se pudo abrir el PDF. Verifica tu conexión a internet.",
+        [{ text: "OK" }]
+      );
+    }
+  }, [source]);
 
   // Renderizar contenido según el tipo
   if (contentType === 'video') {
@@ -76,13 +107,51 @@ const VideoPlayer = ({ source, contentType /* = 'video'  */}) => {
         />
       </View>
     );
+  } else if (contentType === 'pdf') {
+    return (
+      <View style={styles.pdfContainer}>
+        {downloadingPdf ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#673AB7" />
+            <Text style={styles.loadingText}>
+              {downloadProgress < 100 
+                ? `Preparando PDF... ${Math.round(downloadProgress)}%` 
+                : "Abriendo PDF..."}
+            </Text>
+          </View>
+        ) : error ? (
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>No se pudo cargar el documento PDF</Text>
+            <Text style={styles.errorDescription}>Por favor verifica tu conexión a internet</Text>
+            <TouchableOpacity
+              style={styles.retryButton}
+              onPress={openPDF}
+            >
+              <Text style={styles.retryButtonText}>Reintentar</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <View style={styles.pdfViewerContainer}>
+            <Ionicons name="document-text" size={64} color="#673AB7" />
+            <Text style={styles.pdfTitle}>Documento PDF</Text>
+            <Text style={styles.pdfDescription}>
+              Toca el botón para ver el documento PDF
+            </Text>
+            <TouchableOpacity
+              style={styles.openPdfButton}
+              onPress={openPDF}
+            >
+              <Text style={styles.openPdfButtonText}>Ver PDF</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      </View>
+    );
   } else {
-    // console.log(contentType);
-    
     // Tipo de contenido no soportado
     return (
       <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>Tipo de contenido no soportado</Text>
+        <Text style={styles.errorText}>Tipo de contenido no soportado: {contentType}</Text>
       </View>
     );
   }
@@ -134,6 +203,75 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: 'center',
     padding: 20,
+  },
+  errorDescription: {
+    color: '#666',
+    fontSize: 14,
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  pdfContainer: {
+    width: '100%',
+    height: 400,
+    borderRadius: 8,
+    backgroundColor: '#f0f0f0',
+    overflow: 'hidden',
+  },
+  pdfViewerContainer: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  pdfTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#673AB7',
+    marginTop: 10,
+  },
+  pdfDescription: {
+    fontSize: 14,
+    color: '#555',
+    textAlign: 'center',
+    marginTop: 10,
+    marginBottom: 20,
+  },
+  openPdfButton: {
+    backgroundColor: '#673AB7',
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    borderRadius: 25,
+    marginTop: 10,
+  },
+  openPdfButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  progressContainer: {
+    width: '80%',
+    height: 10,
+    backgroundColor: '#E0E0E0',
+    borderRadius: 5,
+    marginTop: 10,
+    overflow: 'hidden',
+  },
+  progressBar: {
+    height: '100%',
+    backgroundColor: '#673AB7',
+  },
+  retryButton: {
+    backgroundColor: '#673AB7',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 25,
+    marginTop: 10,
+  },
+  retryButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 
