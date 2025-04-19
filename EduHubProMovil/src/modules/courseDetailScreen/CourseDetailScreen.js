@@ -616,7 +616,6 @@ const fullCourseStyles = {
     justifyContent: 'center',
     alignItems: 'center'
   },
-<<<<<<< HEAD
   modalContent: {
     backgroundColor: 'white',
     padding: 20,
@@ -742,10 +741,10 @@ const successStyles = {
     width: '45%'
   },
   modalSuccessButton: {
-    backgroundColor: '#65739F'
+    backgroundColor: '#28a745'
   },
   modalCancelButton: {
-    backgroundColor: '#3D1779'
+    backgroundColor: '#6c757d'
   },
   modalButtonText: {
     color: 'white',
@@ -753,17 +752,51 @@ const successStyles = {
   }
 };
 
-
 const errorStyles = {
-  modalOverlay: { flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.5)', justifyContent: 'center', alignItems: 'center' },
-  modalContent: { backgroundColor: 'white', padding: 20, borderRadius: 10, width: '80%' },
-  modalTitle: { fontSize: 18, fontWeight: 'bold', marginBottom: 10 },
-  modalMessage: { marginBottom: 20 },
-  modalButtons: { flexDirection: 'row', justifyContent: 'space-between' },
-  modalButton: { padding: 10, borderRadius: 5, width: '45%' },
-  modalCancelButton: { backgroundColor: '#65739F' },
-  modalContactButton: { backgroundColor: '#3D1779' },
-  modalButtonText: { color: 'white', textAlign: 'center' }
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    width: '80%',
+    alignItems: 'center' // Asegura que el contenido esté centrado horizontalmente
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    textAlign: 'center' // Asegura que el título esté centrado
+  },
+  modalMessage: {
+    marginBottom: 20,
+    textAlign: 'center' // Asegura que el mensaje esté centrado
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%', // Asegura que los botones ocupen todo el ancho disponible
+    marginTop: 10 // Espacio adicional entre el mensaje y los botones
+  },
+  modalButton: {
+    padding: 10,
+    borderRadius: 5,
+    width: '45%'
+  },
+  modalCancelButton: {
+    backgroundColor: '#65739F'
+  },
+  modalContactButton: {
+    backgroundColor: '#3D1779'
+  },
+  modalButtonText: {
+    color: 'white',
+    textAlign: 'center'
+  }
 };
 
 const alreadyEnrolledStyles = {
@@ -802,9 +835,9 @@ const alreadyEnrolledStyles = {
     textAlign: 'center'
   },
   actionButton: {
-    backgroundColor: '#65739F',
+    backgroundColor: '#007BFF',
     padding: 10,
-    borderRadius: 10,
+    borderRadius: 5,
     width: '100%',
     alignItems: 'center'
   },
@@ -813,18 +846,4 @@ const alreadyEnrolledStyles = {
     fontSize: 16
   }
 };
-=======
-  moduleHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 4,
-  },
 
-  checkIcon: {
-    width: 16,
-    height: 16,
-    marginRight: 8,
-  },
-
-});
->>>>>>> e36ae69698f5d78cd0c71e467a610e38d99cd487
