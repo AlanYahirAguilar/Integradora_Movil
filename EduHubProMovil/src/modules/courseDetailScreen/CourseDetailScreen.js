@@ -15,8 +15,6 @@ export default function CourseDetailScreen({ route, navigation }) {
   const [enrollmentErrorMessage, setEnrollmentErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  console.log(course);
-
   useEffect(() => {
     if (route.params?.toggleSidebar) {
       setIsSidebarOpen((prev) => !prev);
@@ -78,24 +76,6 @@ export default function CourseDetailScreen({ route, navigation }) {
     const [year, month, day] = dateString.split('-');
     return new Date(year, month - 1, day).toLocaleDateString(); // ⚠️ month - 1 porque Date usa 0-11
   };
-
-  const courseData = [
-    {
-      id: '1',
-      title: 'Módulo 1: Introducción al curso',
-      lessons: ['Lección 1.1: Bienvenida', 'Lección 1.2: Objetivos del curso'],
-    },
-    {
-      id: '2',
-      title: 'Módulo 2: Fundamentos básicos',
-      lessons: ['Lección 2.1: Conceptos clave', 'Lección 2.2: Herramientas necesarias'],
-    },
-    {
-      id: '3',
-      title: 'Módulo 3: Proyectos prácticos',
-      lessons: ['Lección 3.1: Proyecto inicial', 'Lección 3.2: Evaluación final'],
-    },
-  ];
 
   return (
     <ScrollView style={styles.container}>

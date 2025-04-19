@@ -23,6 +23,8 @@ export default function MyInscriptionsCourses({ route }) {
 
   // Función para cargar los cursos del estudiante al montar el componente
   useEffect(() => {
+    console.log(courses);
+
     loadStudentCourses();
   }, []);
 
@@ -34,10 +36,10 @@ export default function MyInscriptionsCourses({ route }) {
 
       // Obtener inscripciones desde el backend
       const response = await CourseService.fetchRegistrationByStudent();
-      
+
       if (!response.success) {
         setError(response.error || "Error al cargar los cursos.");
-        console.error("Error al cargar cursos:", response.error);
+       // console.error("Error al cargar cursos:", response.error);
         return;
       }
 
@@ -50,12 +52,15 @@ export default function MyInscriptionsCourses({ route }) {
         title: course.title,
         image: course.bannerPath || 'https://via.placeholder.com/150',
         instructor: course.instructor?.name || 'Instructor',
+        description: course.description.length > 46 ?
+          course.description.substring(0, 25) + '...'
+          : course.description || 'Sin descripción disponible',
         originalData: course // Guardar datos originales para pasar a la pantalla de detalles
       }));
 
       setCourses(formattedCourses);
     } catch (err) {
-      console.error("Error al cargar inscripciones:", err);
+     // console.error("Error al cargar inscripciones:", err);
       setError('No se pudieron cargar tus cursos. Intenta de nuevo más tarde.');
     } finally {
       setIsLoading(false);
@@ -67,13 +72,13 @@ export default function MyInscriptionsCourses({ route }) {
   const navigateToCourseDetails = (course) => {
     try {
       console.log("Navegando a detalles de curso:", course.id);
-      
+
       // Asegurarse de que los datos del curso incluyan todos los campos necesarios
       const courseData = {
         courseId: course.id,
         title: course.title,
         bannerPath: course.image,
-        instructor: course.originalData?.instructor || { name: "Instructor" },
+        instructor: course.originalData?.instructor.name || { name: "Instructor" },
         modules: course.originalData?.modules || [],
         // Agregar otros campos que puedan ser necesarios
         description: course.originalData?.description || "",
@@ -81,11 +86,11 @@ export default function MyInscriptionsCourses({ route }) {
         duration: course.originalData?.duration || 0,
         courseStatus: course.originalData?.courseStatus || "PUBLISHED",
       };
-      
+
       // Navegar a la pantalla de detalles pasando el curso completo
-      navigation.navigate('CourseDetail', { course: courseData });
+      navigation.navigate('CourseDetailInscription', { course: courseData });
     } catch (error) {
-      console.error("Error al navegar:", error);
+      //console.error("Error al navegar:", error);
       // Mostrar un mensaje al usuario
       alert("No se pudo cargar los detalles del curso. Inténtalo de nuevo.");
     }
@@ -139,13 +144,13 @@ export default function MyInscriptionsCourses({ route }) {
           {!isLoading && !error && courses.length > 0 && (
             <View style={styles.coursesContainer}>
               {courses.map((course) => (
-                <TouchableOpacity 
-                  key={course.id} 
-                  style={styles.courseCard} 
-                  onPress={() => {navigateToCourseDetails(course); navigate.navigation('CourseDetailInscription'); }}
+                <TouchableOpacity
+                  key={course.id}
+                  style={styles.courseCard}
+                  onPress={() => { navigateToCourseDetails(course); }}
                 >
-                  <Image 
-                    source={{ uri: course.image }} 
+                  <Image
+                    source={{ uri: course.image }}
                     style={styles.courseImage}
                     onError={(e) => {
                       console.log("Error al cargar imagen, usando imagen por defecto");
@@ -160,6 +165,7 @@ export default function MyInscriptionsCourses({ route }) {
                     <Text style={styles.instructor} numberOfLines={1} ellipsizeMode="tail">
                       {course.instructor}
                     </Text>
+                    <Text style={styles.description}>{course.description}</Text>
                   </View>
                 </TouchableOpacity>
               ))}
@@ -270,5 +276,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#800080',
     marginBottom: 8,
-  }, 
+  },
+  description: {
+    fontSize: 16,
+    color: '#333',
+    marginBottom: 16,
+  },
 });

@@ -23,7 +23,7 @@ const VideoPlayer = ({ source, contentType /* = 'video'  */}) => {
   };
 
   const handleError = (err) => {
-    console.error('Error al cargar el contenido:', err);
+    //console.error('Error al cargar el contenido:', err);
     setIsLoading(false);
     setError(true);
   };
@@ -43,7 +43,7 @@ const VideoPlayer = ({ source, contentType /* = 'video'  */}) => {
         console.log('Usuario cerró el navegador web');
       }
     } catch (error) {
-      console.error('Error al abrir el PDF:', error);
+     // console.error('Error al abrir el PDF:', error);
       setError(true);
       setDownloadingPdf(false);
       

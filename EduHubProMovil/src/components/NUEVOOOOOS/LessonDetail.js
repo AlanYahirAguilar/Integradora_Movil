@@ -20,7 +20,7 @@ const LessonDetail = ({ route, navigation }) => {
 
   // Obtener datos de la lección desde los parámetros de ruta
   useEffect(() => {
-    if (route.params) {
+    if (route.params) {      
       setLessonData({
         id: route.params.sectionId,
         name: route.params.sectionName,

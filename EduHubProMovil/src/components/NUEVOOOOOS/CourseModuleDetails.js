@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  TouchableOpacity, 
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
   ScrollView,
   SafeAreaView,
   Image,
@@ -13,12 +13,13 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Sidebar from '../SideBar';
+import CourseService from '../../services/CourseService';
 
 const CourseModuleDetails = ({ navigation, route }) => {
   // Estado para almacenar los datos del curso
   const [courseData, setCourseData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  
+
   // Estado para la barra lateral
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -33,7 +34,16 @@ const CourseModuleDetails = ({ navigation, route }) => {
   // Cargar los datos del curso cuando el componente se monta
   useEffect(() => {
     if (route.params?.course) {
-      setCourseData(route.params.course);
+
+      // Limpiar módulos antes de hacer la petición
+      const { modules, ...courseWithoutModules } = route.params.course;
+
+      setCourseData({
+        ...courseWithoutModules,
+        modules: [] // aseguramos que esté limpio
+      });
+
+      loadModulesWithSections(route.params.course.courseId);
       setIsLoading(false);
     } else if (route.params?.courseId) {
       // Aquí se podría implementar una llamada a la API para obtener los detalles del curso
@@ -45,11 +55,21 @@ const CourseModuleDetails = ({ navigation, route }) => {
     }
   }, [route.params]);
 
+  const loadModulesWithSections = async (courseId) => {
+    const result = await CourseService.fetchModulesWithSectionsByCourse(courseId);
+    if (result.success) {
+      setCourseData((prev) => ({
+        ...prev,
+        modules: result.data // lo que devuelve el backend
+      }));
+    }
+  };
+
   // Función para renderizar cada módulo
   const renderModuleItem = ({ item }) => {
     // Determinar el estado del módulo
     let icon, buttonText, buttonStyle, isDisabled;
-    
+
     if (item.status === 'UNLOCKED' || item.status === 'COMPLETED') {
       // Usamos 'lock-open' en lugar de 'unlock' que no existe en Ionicons
       icon = <Ionicons name="lock-open" size={24} color="#673AB7" />;
@@ -69,7 +89,7 @@ const CourseModuleDetails = ({ navigation, route }) => {
           {icon}
           <Text style={styles.moduleTitle}>Módulo {item.name}</Text>
         </View>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={buttonStyle}
           disabled={isDisabled}
           onPress={() => handleModulePress(item)}
@@ -80,18 +100,30 @@ const CourseModuleDetails = ({ navigation, route }) => {
     );
   };
 
+  const getIconByContentType = (type) => {
+    switch (type) {
+      case 'video':
+        return 'play-circle';
+      case 'pdf':
+        return 'document-text';
+      case 'image':
+      default:
+        return 'image';
+    }
+  };
+
   // Función para renderizar cada sección dentro de un módulo
   const renderSectionItem = ({ item }) => {
     return (
-      <TouchableOpacity 
+      <TouchableOpacity
         style={styles.sectionItem}
         onPress={() => handleSectionPress(item)}
       >
         <View style={styles.sectionInfo}>
-          <Ionicons 
-            name={item.contentType === 'video' ? "play-circle" : "image"} 
-            size={24} 
-            color="#673AB7" 
+          <Ionicons
+            name={getIconByContentType(item.contentType)}
+            size={24}
+            color="#673AB7"
           />
           <Text style={styles.sectionTitle}>{item.name}</Text>
         </View>
@@ -105,7 +137,7 @@ const CourseModuleDetails = ({ navigation, route }) => {
     // Si el módulo tiene secciones, expandirlo
     if (module.sections && module.sections.length > 0) {
       // Navegar a una vista de detalles del módulo o expandir in-place
-      navigation.navigate('ModuleSections', { 
+      navigation.navigate('ModuleSections', {
         moduleId: module.moduleId,
         moduleName: module.name,
         sections: module.sections
@@ -119,7 +151,7 @@ const CourseModuleDetails = ({ navigation, route }) => {
   const handleSectionPress = (section) => {
     // Detectar el tipo de contenido basado en la URL
     let contentType = section.contentType || 'image'; // Por defecto, asumir imagen
-    
+
     // Si no se especifica contentType, intentar determinarlo por la extensión del archivo
     if (!section.contentType && section.contentUrl) {
       const url = section.contentUrl.toLowerCase();
@@ -131,9 +163,9 @@ const CourseModuleDetails = ({ navigation, route }) => {
         contentType = 'pdf';
       }
     }
-    
+
     // Navegar a la vista de detalle de la sección
-    navigation.navigate('LessonDetail', { 
+    navigation.navigate('LessonDetail', {
       sectionId: section.sectionId,
       sectionName: section.name,
       sectionDescription: section.description,
@@ -157,7 +189,7 @@ const CourseModuleDetails = ({ navigation, route }) => {
     return (
       <View style={styles.errorContainer}>
         <Text style={styles.errorText}>No se pudieron cargar los detalles del curso</Text>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
@@ -173,33 +205,33 @@ const CourseModuleDetails = ({ navigation, route }) => {
   return (
     <SafeAreaView style={styles.container}>
       {/* Barra lateral */}
-      <Sidebar 
-        isOpen={isSidebarOpen} 
-        toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} 
-        navigation={navigation} 
+      <Sidebar
+        isOpen={isSidebarOpen}
+        toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+        navigation={navigation}
       />
-      
+
       {/* Dividimos el contenido para evitar anidación de listas */}
       <View style={styles.contentContainer}>
         {/* Información del curso - Esta parte usa solo View y ScrollView */}
         <ScrollView style={styles.infoScrollView}>
           <Text style={styles.title}>{courseData.title}</Text>
-          
+
           {/* Imagen del curso */}
           {courseData.bannerPath && (
-            <Image 
-              source={{ uri: courseData.bannerPath }} 
+            <Image
+              source={{ uri: courseData.bannerPath }}
               style={styles.courseBanner}
               resizeMode="cover"
             />
           )}
-          
+
           {/* Descripción del curso */}
           <View style={styles.descriptionContainer}>
             <Text style={styles.descriptionTitle}>Descripción</Text>
             <Text style={styles.descriptionText}>{courseData.description || 'Sin descripción disponible'}</Text>
           </View>
-          
+
           {/* Información del instructor */}
           {courseData.instructor && (
             <View style={styles.instructorContainer}>
@@ -207,7 +239,7 @@ const CourseModuleDetails = ({ navigation, route }) => {
               <Text style={styles.instructorName}>{courseData.instructor.name}</Text>
             </View>
           )}
-          
+
           {/* Fechas del curso */}
           <View style={styles.datesContainer}>
             <Text style={styles.datesTitle}>Periodo del curso</Text>
@@ -216,13 +248,13 @@ const CourseModuleDetails = ({ navigation, route }) => {
             </Text>
           </View>
         </ScrollView>
-        
+
         {/* Módulos y secciones - Esta parte usa FlatList */}
         <View style={styles.listsContainer}>
           {/* Módulos del curso */}
           <View style={styles.modulesContainer}>
             <Text style={styles.modulesTitle}>Módulos del Curso</Text>
-            
+
             <FlatList
               data={courseData.modules}
               renderItem={renderModuleItem}
@@ -231,12 +263,12 @@ const CourseModuleDetails = ({ navigation, route }) => {
               ItemSeparatorComponent={() => <View style={styles.separator} />}
             />
           </View>
-          
+
           {/* Secciones del módulo desbloqueado */}
           {unlockedModule && unlockedModule.sections && unlockedModule.sections.length > 0 && (
             <View style={styles.sectionsContainer}>
               <Text style={styles.sectionsTitle}>Contenido disponible - Módulo {unlockedModule.name}</Text>
-              
+
               <FlatList
                 data={unlockedModule.sections}
                 renderItem={renderSectionItem}
@@ -246,8 +278,8 @@ const CourseModuleDetails = ({ navigation, route }) => {
               />
             </View>
           )}
-          
-          <TouchableOpacity 
+
+          <TouchableOpacity
             style={styles.backButton}
             onPress={() => navigation.goBack()}
           >

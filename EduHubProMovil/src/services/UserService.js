@@ -220,7 +220,6 @@ class UserService {
         },
         body: JSON.stringify(payload)
       });
-      console.log(response);
 
       const responseText = await response.text();
 
@@ -237,10 +236,6 @@ class UserService {
       if (response.ok) {
         return data.result || data;
       } else {
-        console.log("\n");
-
-        console.log(data);
-
         const errorMsg = data?.text || data?.email || 'No se pudo enviar el correo de recuperación';
         throw new Error(errorMsg);
       }

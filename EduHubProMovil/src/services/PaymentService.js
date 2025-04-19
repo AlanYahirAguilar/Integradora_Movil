@@ -188,8 +188,7 @@ class PaymentService {
 
       // Obtener el texto de la respuesta
       const responseText = await response.text();
-      console.log('[PaymentService] Respuesta subida de archivo:', responseText);
-
+ 
       if (!response.ok) {
         throw new Error(`Error al subir archivo: ${response.status}`);
       }
@@ -197,7 +196,6 @@ class PaymentService {
       // La respuesta es directamente la URL como string
       return responseText;
     } catch (error) {
-      console.log('[PaymentService] Error al subir archivo:', error);
       throw error;
     }
   }
