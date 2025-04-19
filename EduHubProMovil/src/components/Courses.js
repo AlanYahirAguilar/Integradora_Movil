@@ -4,13 +4,6 @@ import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import CourseService from '../services/CourseService';
 
-// Datos estáticos como fallback en caso de error
-const staticCourses = [
-  { id: 1, title: 'React Native', isFull: false, autor: 'Prof. Clara Bitwise', description: 'Desarrolla apps móviles.', image: 'https://img.freepik.com/vector-gratis/concepto-diseno-web-dibujado-mano_23-2147839737.jpg', numRating: 4.2, rating: 4, precio: 'MX$ 780' },
-  { id: 2, title: 'JavaScript', isFull: true, autor: 'Dr. Nolan Kernel', description: 'Domina JS desde cero.', image: 'https://img.freepik.com/vector-gratis/concepto-diseno-web-dibujado-mano_23-2147839737.jpg', numRating: 4.2, rating: 5, precio: 'MX$ 980' },
-  { id: 3, title: 'Node.js', isFull: false, autor: 'Ing. Tessa Cachewood', description: 'Backend con Node.js.', image: 'https://img.freepik.com/vector-gratis/concepto-diseno-web-dibujado-mano_23-2147839737.jpg', numRating: 4.2, rating: 4, precio: 'MX$ 567' },
-];
-
 const Courses = () => {
   const navigation = useNavigation();
   const [courses, setCourses] = useState([]);
@@ -26,7 +19,6 @@ const Courses = () => {
 
     return () => clearTimeout(timer); // limpieza del timer
   }, []);
-
 
   // Función para cargar los cursos desde el backend
   const loadCourses = async () => {
@@ -60,15 +52,11 @@ const Courses = () => {
 
       setCourses(formattedCourses);
     } catch (error) {
-      /* console.error('Error al cargar cursos:', error); */
       setError('No se pudieron cargar los cursos. Por favor, intenta nuevamente.');
-      // En caso de error, usar datos estáticos como fallback
-      setCourses(staticCourses);
     } finally {
       setLoading(false);
     }
   };
-
 
   const renderCourse = (course) => (
     <TouchableOpacity
@@ -137,6 +125,14 @@ const Courses = () => {
     );
   }
 
+  // Si no hay cursos, mostrar mensaje
+  if (courses.length === 0) {
+    return (
+      <View style={[styles.container, styles.emptyContainer]}>
+        <Text style={styles.emptyText}>No hay cursos disponibles.</Text>
+      </View>
+    );
+  }
   return (
     <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
       {chunkedCourses.map((row, rowIndex) => (
@@ -243,6 +239,17 @@ const styles = StyleSheet.create({
   autor: {
     fontSize: 10,
     fontWeight: 'bold',
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 50,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: '#555',
+    textAlign: 'center',
   },
 });
 
