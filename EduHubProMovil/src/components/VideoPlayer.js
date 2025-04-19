@@ -1,12 +1,10 @@
 // VideoPlayer.js
 import { Video } from 'expo-av';
-import React, { useState, useCallback } from 'react';
-import { StyleSheet, View, Image, ActivityIndicator, Text, Linking, TouchableOpacity, Alert, Dimensions } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import * as FileSystem from 'expo-file-system';
 import * as WebBrowser from 'expo-web-browser';
+import React, { useCallback, useState } from 'react';
+import { ActivityIndicator, Alert, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-const VideoPlayer = ({ source, contentType /* = 'video'  */}) => {
+const VideoPlayer = ({ source, contentType /* = 'video'  */ }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
   const [downloadingPdf, setDownloadingPdf] = useState(false);
@@ -38,15 +36,15 @@ const VideoPlayer = ({ source, contentType /* = 'video'  */}) => {
       // Intenta abrir el PDF directamente primero
       const result = await WebBrowser.openBrowserAsync(source);
       setDownloadingPdf(false);
-      
+
       if (result.type === 'cancel' || result.type === 'dismiss') {
         console.log('Usuario cerró el navegador web');
       }
     } catch (error) {
-     // console.error('Error al abrir el PDF:', error);
+      // console.error('Error al abrir el PDF:', error);
       setError(true);
       setDownloadingPdf(false);
-      
+
       Alert.alert(
         "Error",
         "No se pudo abrir el PDF. Verifica tu conexión a internet.",
@@ -108,42 +106,41 @@ const VideoPlayer = ({ source, contentType /* = 'video'  */}) => {
       </View>
     );
   } else if (contentType === 'pdf') {
+    const WebView = require('react-native-webview').WebView;
+
     return (
       <View style={styles.pdfContainer}>
-        {downloadingPdf ? (
+        {isLoading && (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color="#673AB7" />
-            <Text style={styles.loadingText}>
-              {downloadProgress < 100 
-                ? `Preparando PDF... ${Math.round(downloadProgress)}%` 
-                : "Abriendo PDF..."}
-            </Text>
+            <Text style={styles.loadingText}>Cargando PDF...</Text>
           </View>
-        ) : error ? (
+        )}
+        {error ? (
           <View style={styles.errorContainer}>
             <Text style={styles.errorText}>No se pudo cargar el documento PDF</Text>
-            <Text style={styles.errorDescription}>Por favor verifica tu conexión a internet</Text>
             <TouchableOpacity
               style={styles.retryButton}
-              onPress={openPDF}
+              onPress={() => {
+                setError(false);
+                setIsLoading(true);
+              }}
             >
               <Text style={styles.retryButtonText}>Reintentar</Text>
             </TouchableOpacity>
           </View>
         ) : (
-          <View style={styles.pdfViewerContainer}>
-            <Ionicons name="document-text" size={64} color="#673AB7" />
-            <Text style={styles.pdfTitle}>Documento PDF</Text>
-            <Text style={styles.pdfDescription}>
-              Toca el botón para ver el documento PDF
-            </Text>
-            <TouchableOpacity
-              style={styles.openPdfButton}
-              onPress={openPDF}
-            >
-              <Text style={styles.openPdfButtonText}>Ver PDF</Text>
-            </TouchableOpacity>
-          </View>
+          <WebView
+            source={{ uri: `https://docs.google.com/gview?url=${source}&embedded=true` }}
+            onLoadStart={() => setIsLoading(true)}
+            onLoadEnd={() => setIsLoading(false)}
+            onError={(err) => {
+              console.log('WebView error:', err);
+              setIsLoading(false);
+              setError(true);
+            }}
+            style={{ flex: 1 }}
+          />
         )}
       </View>
     );
