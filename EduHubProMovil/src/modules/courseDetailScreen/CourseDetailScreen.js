@@ -29,19 +29,19 @@ export default function CourseDetailScreen({ route, navigation }) {
   const handleEnroll = async () => {
     try {
       setIsLoading(true); // Mostrar indicador de carga
-  
+
       // Validación 1: Verificar si el curso está lleno
       if (course.isFull || (course.size !== undefined && course.size <= 0)) {
         setIsLoading(false);
         setIsFullCourseModalVisible(true); // Mostrar modal de curso lleno
         return;
       }
-  
+
       // Intentar inscribirse al curso
       const enrollmentResponse = await CourseService.enrollCourse(course.id || course.courseId);
-  
+
       setIsLoading(false); // Ocultar indicador de carga
-  
+
       if (enrollmentResponse.success) {
         // Inscripción exitosa
         if (course.price > 0) {
@@ -225,183 +225,183 @@ export default function CourseDetailScreen({ route, navigation }) {
 
       {/* Modal de Curso Lleno */}
       <Modal visible={isFullCourseModalVisible} transparent animationType="fade">
-    <View style={fullCourseStyles.modalOverlay}>
-      <View style={fullCourseStyles.modalContent}>
-        <Text style={fullCourseStyles.modalTitle}>Curso Lleno</Text>
-        <Text style={fullCourseStyles.modalMessage}>
-          Lo sentimos, este curso ya ha alcanzado el número máximo de inscripciones.
-        </Text>
-        <View style={fullCourseStyles.modalButtons}>
-          <TouchableOpacity
-            style={[fullCourseStyles.modalButton, fullCourseStyles.modalCancelButton]}
-            onPress={() => navigation.navigate('Home')}
-          >
-            <Text style={fullCourseStyles.modalButtonText}>Ver otros cursos</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[fullCourseStyles.modalButton, fullCourseStyles.modalContactButton]}
-            onPress={() => {
-              setIsFullCourseModalVisible(false);
-              setIsSupportModalVisible(true);
-            }}
-          >
-            <Text style={fullCourseStyles.modalButtonText}>Contactar a soporte</Text>
-          </TouchableOpacity>
+        <View style={fullCourseStyles.modalOverlay}>
+          <View style={fullCourseStyles.modalContent}>
+            <Text style={fullCourseStyles.modalTitle}>Curso Lleno</Text>
+            <Text style={fullCourseStyles.modalMessage}>
+              Lo sentimos, este curso ya ha alcanzado el número máximo de inscripciones.
+            </Text>
+            <View style={fullCourseStyles.modalButtons}>
+              <TouchableOpacity
+                style={[fullCourseStyles.modalButton, fullCourseStyles.modalCancelButton]}
+                onPress={() => navigation.navigate('Home')}
+              >
+                <Text style={fullCourseStyles.modalButtonText}>Ver otros cursos</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[fullCourseStyles.modalButton, fullCourseStyles.modalContactButton]}
+                onPress={() => {
+                  setIsFullCourseModalVisible(false);
+                  setIsSupportModalVisible(true);
+                }}
+              >
+                <Text style={fullCourseStyles.modalButtonText}>Contactar a soporte</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
-      </View>
-    </View>
-  </Modal>
+      </Modal>
 
       {/* Modal de Pago del Curso */}
       <Modal visible={isPaymentModalVisible} transparent animationType="fade">
-    <View style={paymentStyles.modalOverlay}>
-      <View style={paymentStyles.modalContent}>
-        <Text style={paymentStyles.modalTitle}>Pago del curso</Text>
-        <Text style={paymentStyles.modalMessage}>
-          Ahora estas inscrito. Para asegurar tu lugar, deberás realizar el pago correspondiente y subir un comprobante. Pulsa en "Siguiente sección" para ver las cuentas disponibles para realizar el pago
-        </Text>
-        <View style={paymentStyles.modalButtons}>
-          <TouchableOpacity
-            style={[paymentStyles.modalButton, paymentStyles.modalSuccessButton]}
-            onPress={() => {
-              setIsPaymentModalVisible(false);
-              navigation.navigate('PaymentInfo', {
-                paymentId: `payment_${Date.now()}`,
-                courseTitle: course.title,
-                amount: course.price,
-                courseId: course.id || course.courseId,
-                isRegistration: true
-              });
-            }}
-          >
-            <Text style={paymentStyles.modalButtonText}>Siguiente sección</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[paymentStyles.modalButton, paymentStyles.modalCancelButton]}
-            onPress={() => {
-              setIsPaymentModalVisible(false);
-              navigation.navigate('Home');
-            }}
-          >
-            <Text style={paymentStyles.modalButtonText}>Ir al inicio</Text>
-          </TouchableOpacity>
+        <View style={paymentStyles.modalOverlay}>
+          <View style={paymentStyles.modalContent}>
+            <Text style={paymentStyles.modalTitle}>Pago del curso</Text>
+            <Text style={paymentStyles.modalMessage}>
+              Ahora estas inscrito. Para asegurar tu lugar, deberás realizar el pago correspondiente y subir un comprobante. Pulsa en "Siguiente sección" para ver las cuentas disponibles para realizar el pago
+            </Text>
+            <View style={paymentStyles.modalButtons}>
+              <TouchableOpacity
+                style={[paymentStyles.modalButton, paymentStyles.modalSuccessButton]}
+                onPress={() => {
+                  setIsPaymentModalVisible(false);
+                  navigation.navigate('PaymentInfo', {
+                    paymentId: `payment_${Date.now()}`,
+                    courseTitle: course.title,
+                    amount: course.price,
+                    courseId: course.id || course.courseId,
+                    isRegistration: true
+                  });
+                }}
+              >
+                <Text style={paymentStyles.modalButtonText}>Siguiente sección</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[paymentStyles.modalButton, paymentStyles.modalCancelButton]}
+                onPress={() => {
+                  setIsPaymentModalVisible(false);
+                  navigation.navigate('Home');
+                }}
+              >
+                <Text style={paymentStyles.modalButtonText}>Ir al inicio</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
-      </View>
-    </View>
-  </Modal>
+      </Modal>
 
       {/* Modal de Inscripción Exitosa */}
       <Modal visible={isSuccessModalVisible} transparent animationType="fade">
-    <View style={successStyles.modalOverlay}>
-      <View style={successStyles.modalContent}>
-        <Text style={successStyles.modalTitle}>¡Felicidades!</Text>
-        <Text style={successStyles.modalMessage}>
-          ¡Tu inscripción al curso se ha completado con éxito!
-        </Text>
-        <View style={successStyles.modalButtons}>
-          <TouchableOpacity
-            style={[successStyles.modalButton, successStyles.modalSuccessButton]}
-            onPress={() => {
-              setIsSuccessModalVisible(false);
-              navigation.navigate('Inscritos');
-            }}
-          >
-            <Text style={successStyles.modalButtonText}>Ir a "Mis Cursos"</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[successStyles.modalButton, successStyles.modalCancelButton]}
-            onPress={() => {
-              setIsSuccessModalVisible(false);
-              navigation.navigate('Home');
-            }}
-          >
-            <Text style={successStyles.modalButtonText}>Volver al Inicio</Text>
-          </TouchableOpacity>
+        <View style={successStyles.modalOverlay}>
+          <View style={successStyles.modalContent}>
+            <Text style={successStyles.modalTitle}>¡Felicidades!</Text>
+            <Text style={successStyles.modalMessage}>
+              ¡Tu inscripción al curso se ha completado con éxito!
+            </Text>
+            <View style={successStyles.modalButtons}>
+              <TouchableOpacity
+                style={[successStyles.modalButton, successStyles.modalSuccessButton]}
+                onPress={() => {
+                  setIsSuccessModalVisible(false);
+                  navigation.navigate('Inscritos');
+                }}
+              >
+                <Text style={successStyles.modalButtonText}>Ir a "Mis Cursos"</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[successStyles.modalButton, successStyles.modalCancelButton]}
+                onPress={() => {
+                  setIsSuccessModalVisible(false);
+                  navigation.navigate('Home');
+                }}
+              >
+                <Text style={successStyles.modalButtonText}>Volver al Inicio</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
-      </View>
-    </View>
-  </Modal>
+      </Modal>
 
       {/* Modal de Error Genérico */}
       <Modal visible={isErrorModalVisible} transparent animationType="fade">
-    <View style={errorStyles.modalOverlay}>
-      <View style={errorStyles.modalContent}>
-        <Text style={errorStyles.modalTitle}>❌ Error</Text>
-        <Text style={errorStyles.modalMessage}>
-          {enrollmentErrorMessage}
-        </Text>
-        <View style={errorStyles.modalButtons}>
-          <TouchableOpacity
-            style={[errorStyles.modalButton, errorStyles.modalCancelButton]}
-            onPress={() => {
-              setIsErrorModalVisible(false);
-              navigation.navigate('Home');
-            }}
-          >
-            <Text style={errorStyles.modalButtonText}>Cerrar</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[errorStyles.modalButton, errorStyles.modalContactButton]}
-            onPress={() => {
-              setIsErrorModalVisible(false);
-              setIsSupportModalVisible(true);
-            }}
-          >
-            <Text style={errorStyles.modalButtonText}>Contactar a soporte</Text>
-          </TouchableOpacity>
+        <View style={errorStyles.modalOverlay}>
+          <View style={errorStyles.modalContent}>
+            <Text style={errorStyles.modalTitle}>❌ Error</Text>
+            <Text style={errorStyles.modalMessage}>
+              {enrollmentErrorMessage}
+            </Text>
+            <View style={errorStyles.modalButtons}>
+              <TouchableOpacity
+                style={[errorStyles.modalButton, errorStyles.modalCancelButton]}
+                onPress={() => {
+                  setIsErrorModalVisible(false);
+                  navigation.navigate('Home');
+                }}
+              >
+                <Text style={errorStyles.modalButtonText}>Cerrar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[errorStyles.modalButton, errorStyles.modalContactButton]}
+                onPress={() => {
+                  setIsErrorModalVisible(false);
+                  setIsSupportModalVisible(true);
+                }}
+              >
+                <Text style={errorStyles.modalButtonText}>Contactar a soporte</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
-      </View>
-    </View>
-  </Modal>
+      </Modal>
 
       {/* Modal de Ya estás inscrito */}
       <Modal visible={isAlreadyEnrolledModalVisible} transparent animationType="fade">
-    <View style={alreadyEnrolledStyles.modalOverlay}>
-      <ScrollView contentContainerStyle={alreadyEnrolledStyles.modalContentScroll}>
-        <View style={alreadyEnrolledStyles.modalContent}>
-          {/* Icono de Éxito */}
-          <Image
-            source={require('../../../assets/Exito.png')} // Asegúrate de tener un ícono de éxito
-            style={alreadyEnrolledStyles.successIcon}
-          />
-          {/* Título del Modal */}
-          <Text style={alreadyEnrolledStyles.modalTitle}>¡Ya estás inscrito!</Text>
-          {/* Mensaje del Modal */}
-          <Text style={alreadyEnrolledStyles.modalMessage}>
-            Ya te encuentras registrado en este curso.
-          </Text>
-          {/* Botón de Acción */}
-          <TouchableOpacity
-            style={alreadyEnrolledStyles.actionButton}
-            onPress={() => {
-              setIsAlreadyEnrolledModalVisible(false);
-              navigation.navigate('Inscritos');
-            }}
-          >
-            <Text style={alreadyEnrolledStyles.actionButtonText}>Ir a "Mis Cursos"</Text>
-          </TouchableOpacity>
+        <View style={alreadyEnrolledStyles.modalOverlay}>
+          <ScrollView contentContainerStyle={alreadyEnrolledStyles.modalContentScroll}>
+            <View style={alreadyEnrolledStyles.modalContent}>
+              {/* Icono de Éxito */}
+              <Image
+                source={require('../../../assets/Exito.png')} // Asegúrate de tener un ícono de éxito
+                style={alreadyEnrolledStyles.successIcon}
+              />
+              {/* Título del Modal */}
+              <Text style={alreadyEnrolledStyles.modalTitle}>¡Ya estás inscrito!</Text>
+              {/* Mensaje del Modal */}
+              <Text style={alreadyEnrolledStyles.modalMessage}>
+                Ya te encuentras registrado en este curso.
+              </Text>
+              {/* Botón de Acción */}
+              <TouchableOpacity
+                style={alreadyEnrolledStyles.actionButton}
+                onPress={() => {
+                  setIsAlreadyEnrolledModalVisible(false);
+                  navigation.navigate('Inscritos');
+                }}
+              >
+                <Text style={alreadyEnrolledStyles.actionButtonText}>Ir a "Mis Cursos"</Text>
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
         </View>
-      </ScrollView>
-    </View>
-  </Modal>
+      </Modal>
 
-<Modal visible={isSupportModalVisible} transparent animationType="fade">
-    <View style={supportStyles.modalOverlay}>
-      <View style={supportStyles.modalContent}>
-        <Text style={supportStyles.modalTitle}>Envíanos un correo:</Text>
-        <TouchableOpacity onPress={copyToClipboard} style={supportStyles.emailContainer}>
-          <Text style={supportStyles.emailText}>SupportEduHubP@gmail.com</Text>
-          <Image source={require('../../../assets/Copy.png')} style={supportStyles.copyIcon} />
-        </TouchableOpacity>
-        <TouchableOpacity style={supportStyles.closeButton} onPress={() => {
-          setIsSupportModalVisible(false);
-          navigation.navigate('Home');
-        }}>
-          <Text style={supportStyles.closeButtonText}>Cerrar</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  </Modal>
+      <Modal visible={isSupportModalVisible} transparent animationType="fade">
+        <View style={supportStyles.modalOverlay}>
+          <View style={supportStyles.modalContent}>
+            <Text style={supportStyles.modalTitle}>Envíanos un correo:</Text>
+            <TouchableOpacity onPress={copyToClipboard} style={supportStyles.emailContainer}>
+              <Text style={supportStyles.emailText}>SupportEduHubP@gmail.com</Text>
+              <Image source={require('../../../assets/Copy.png')} style={supportStyles.copyIcon} />
+            </TouchableOpacity>
+            <TouchableOpacity style={supportStyles.closeButton} onPress={() => {
+              setIsSupportModalVisible(false);
+              navigation.navigate('Home');
+            }}>
+              <Text style={supportStyles.closeButtonText}>Cerrar</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
 
     </ScrollView>
   );
@@ -560,6 +560,41 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
+
+  /* Estilos para modules */
+  moduleHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+
+  moduleTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+
+  lessonContainer: {
+    paddingLeft: 24, // Indenta las lecciones respecto al icono
+  },
+
+  lessonText: {
+    fontSize: 14,
+    color: '#555',
+    marginBottom: 4,
+  },
+  moduleContainer: {
+    backgroundColor: '#F3F2F5', // Suave fondo lila/gris
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
+  }
+  
 });
 
 const supportStyles = {
