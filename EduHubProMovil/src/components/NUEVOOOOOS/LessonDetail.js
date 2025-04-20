@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     padding: 20,
-    paddingBottom: 80, // Agrega espacio adicional en la parte inferior para evitar solapamientos
+    paddingBottom: 20, // Agrega espacio adicional en la parte inferior para evitar solapamientos
   },
   header: {
     flexDirection: 'row',
