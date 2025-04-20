@@ -137,15 +137,14 @@ const LessonDetail = ({ route, navigation }) => {
       {/* Botones de navegación entre lecciones */}
       <View style={styles.navigationButtonsContainer}>
         <TouchableOpacity 
-          style={[styles.navigationButton, !lessonData.previousLesson && styles.disabledButton]}
+          style={styles.navigationButton}
           onPress={handlePreviousLesson}
         >
           <Text style={styles.navigationButtonText}>Lección anterior</Text>
         </TouchableOpacity>
         <TouchableOpacity 
-          style={[styles.navigationButton, !lessonData.nextLesson && styles.disabledButton]}
+          style={styles.navigationButton}
           onPress={handleNextLesson}
-          disabled={!lessonData.nextLesson}
         >
           <Text style={styles.navigationButtonText}>Lección siguiente</Text>
         </TouchableOpacity>
@@ -230,7 +229,7 @@ const styles = StyleSheet.create({
     color: '#666',
   },
   descriptionContainer: {
-    marginTop: 10,
+    marginTop: 10, // Reducido para acercar la descripción al contenido
     padding: 15,
     backgroundColor: '#F5F5F5',
     borderRadius: 10,
@@ -262,9 +261,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: '#673AB7',
     alignItems: 'center',
-  },
-  disabledButton: {
-    backgroundColor: '#D1C4E9',
   },
   navigationButtonText: {
     fontSize: 16,
