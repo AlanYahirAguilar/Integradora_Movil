@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     padding: 20,
-    paddingBottom: 20, // Agrega espacio adicional en la parte inferior para evitar solapamientos
+    paddingBottom: 20, // Espacio adicional para evitar solapamientos
   },
   header: {
     flexDirection: 'row',
@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
   contentWrapper: {
     width: '100%',
     height: Dimensions.get('window').height * 0.5, // Altura aumentada para contenido general
-    marginBottom: 20,
+    marginBottom: 10, // Reducido para acercar la descripción
     borderRadius: 10,
     overflow: 'hidden',
   },
@@ -229,7 +229,7 @@ const styles = StyleSheet.create({
     color: '#666',
   },
   descriptionContainer: {
-    marginTop: 10, // Reducido para acercar la descripción al contenido
+    marginTop: 0, // Eliminado para que la descripción esté justo después del contenido
     padding: 15,
     backgroundColor: '#F5F5F5',
     borderRadius: 10,
