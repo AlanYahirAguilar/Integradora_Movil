@@ -212,7 +212,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   pdfContentWrapper: {
-    height: Dimensions.get('window').height * 0.7, // Altura aumentada para PDFs
+    height: Dimensions.get('window').height * 0.53, // Altura aumentada para PDFs
   },
   noContentContainer: {
     height: 200,
