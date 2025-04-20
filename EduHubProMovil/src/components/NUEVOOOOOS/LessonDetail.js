@@ -1,49 +1,58 @@
+import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ScrollView,
-  SafeAreaView,
   ActivityIndicator,
-  Dimensions
+  Alert,
+  Dimensions,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import VideoPlayer from '../../components/VideoPlayer';
 import Sidebar from '../../components/SideBar';
+import VideoPlayer from '../../components/VideoPlayer';
+
+import {
+  ACTIONS,
+  getNextSectionIdInModule,
+  getPrevSectionIdInModule,
+  useCourseProgress,
+} from '../../context/CourseProgressProvider';
+import CourseService from '../../services/CourseService';
 
 const LessonDetail = ({ route, navigation }) => {
+
+
+  /* ---------- Context ---------- */
+  const { state, dispatch } = useCourseProgress();
+  const { sectionId, moduleId: paramModuleId } = route.params;
+
+  /* ---------- Datos de la lección ---------- */
+  const section = state.sectionEntities[sectionId];
+  const nextId = getNextSectionIdInModule(state, sectionId);
+  const prevId = getPrevSectionIdInModule(state, sectionId);
+
+  const moduleId = paramModuleId || section?.moduleId;   // respaldo desde el contexto
+
+  /* ---------- Sidebar ---------- */
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [lessonData, setLessonData] = useState(null);
-
-  // Obtener datos de la lección desde los parámetros de ruta
-  useEffect(() => {
-    if (route.params) {      
-      setLessonData({
-        id: route.params.sectionId,
-        name: route.params.sectionName,
-        description: route.params.sectionDescription,
-        contentUrl: route.params.contentUrl,
-        contentType: route.params.contentType,
-        previousLesson: route.params.previousLesson, // Agregamos la lección anterior
-        nextLesson: route.params.nextLesson, // Agregamos la siguiente lección
-      });
-      setIsLoading(false);
-    }
-  }, [route.params]);
-
-  // Escuchar eventos de toggle de la barra lateral desde los parámetros de navegación
   useEffect(() => {
     if (route.params?.toggleSidebar) {
-      setIsSidebarOpen(!isSidebarOpen);
-      navigation.setParams({ toggleSidebar: false }); // Reset para evitar múltiples activaciones
+      setIsSidebarOpen((prev) => !prev);
+      navigation.setParams({ toggleSidebar: false });
     }
   }, [route.params?.toggleSidebar]);
 
+  /* ---------- Guardar “sección actual” ---------- */
+  useEffect(() => {
+    dispatch({ type: ACTIONS.SET_CURRENT_SECTION, payload: sectionId });
+  }, [sectionId]);
+
+  /* ---------- Helpers ---------- */
   const renderContentIcon = () => {
-    switch (lessonData.contentType) {
+    switch (section?.contentType) {
       case 'video':
         return <Ionicons name="videocam" size={24} color="#673AB7" />;
       case 'image':
@@ -56,163 +65,205 @@ const LessonDetail = ({ route, navigation }) => {
   };
 
   const handlePreviousLesson = () => {
-    if (lessonData.previousLesson) {
-      navigation.navigate('LessonDetail', lessonData.previousLesson);
+    if (!prevId) return;
+    navigation.replace('LessonDetail', { sectionId: prevId });
+  };
+
+  /* ---------- avanzar ---------- */
+  const handleNextLesson = async () => {
+    // 1) Hay otra lección dentro del mismo módulo ➜ navegar
+    if (nextId) {
+      navigation.replace('LessonDetail', {
+        sectionId: nextId,
+        moduleId,            // ← aseguramos que viaje
+      });
+      return;
+    }
+
+    // 2) Esta es la última lección del módulo
+    if (section.isLast) {
+      const attendResp = await CourseService.fetchCompleteSection(sectionId);
+      if (!attendResp.success) {
+        Alert.alert('Error', attendResp.error);
+        return;
+      }
+      Alert.alert('Éxito', 'Asistencia registrada');
+
+      // refrescar malla
+      console.log('\Actualizando malla\n', section.courseId);
+      
+      const modsResp = await CourseService.fetchModulesWithSectionsByCourse(
+        section.courseId
+      );
+      if (modsResp.success) {
+        dispatch({
+          type: ACTIONS.LOAD_COURSE_STRUCTURE,
+          payload: { modules: modsResp.data },
+        });
+
+        // localizar siguiente módulo desbloqueado y su primera sección
+        const mods = modsResp.data;
+        const idx = mods.findIndex(m => m.moduleId === moduleId);
+        const nextModule = mods[idx + 1];
+        if (nextModule && nextModule.status === 'UNLOCKED' && nextModule.sections.length) {
+          navigation.replace('LessonDetail', {
+            sectionId: nextModule.sections[0].sectionId,
+            moduleId: nextModule.moduleId,
+          });
+          return;
+        }
+      }
+
+      // Si no hay más módulos desbloqueados
+      navigation.goBack();
     }
   };
 
-  const handleNextLesson = () => {
-    if (lessonData.nextLesson) {
-      navigation.navigate('LessonDetail', lessonData.nextLesson);
-    }
-  };
-
-  if (isLoading) {
+  /* ---------- Loading ---------- */
+  if (!section) {
     return (
       <SafeAreaView style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#673AB7" />
-        <Text style={styles.loadingText}>Cargando lección...</Text>
+        <Text style={styles.loadingText}>Cargando lección…</Text>
       </SafeAreaView>
     );
   }
 
+  /* ---------- UI ---------- */
   return (
     <SafeAreaView style={styles.container}>
-      {/* Barra lateral */}
-      <Sidebar 
-        isOpen={isSidebarOpen} 
-        toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} 
-        navigation={navigation} 
+      <Sidebar
+        isOpen={isSidebarOpen}
+        toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+        navigation={navigation}
       />
-      
-      <ScrollView style={styles.scrollView} contentContainerStyle={styles.contentContainer}>
+
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.contentContainer}
+      >
+        {/* Encabezado */}
         <View style={styles.header}>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.backButton}
             onPress={() => navigation.goBack()}
           >
             <Ionicons name="arrow-back" size={24} color="#673AB7" />
           </TouchableOpacity>
-          
+
           <View style={styles.titleContainer}>
-            <Text style={styles.title}>{lessonData.name}</Text>
+            <Text style={styles.title}>{section.name}</Text>
             <View style={styles.contentTypeIndicator}>
               {renderContentIcon()}
               <Text style={styles.contentTypeText}>
-                {lessonData.contentType === 'video' ? 'Video' : 
-                 lessonData.contentType === 'image' ? 'Imagen' : 
-                 lessonData.contentType === 'pdf' ? 'Documento PDF' : 'Contenido'}
+                {section.contentType === 'video'
+                  ? 'Video'
+                  : section.contentType === 'image'
+                    ? 'Imagen'
+                    : section.contentType === 'pdf'
+                      ? 'Documento PDF'
+                      : 'Contenido'}
               </Text>
             </View>
           </View>
         </View>
-        
+
         {/* Contenido multimedia */}
-        <View style={[
-          styles.contentWrapper, 
-          lessonData.contentType === 'pdf' && styles.pdfContentWrapper
-        ]}>
-          {lessonData.contentUrl ? (
-            <VideoPlayer 
-              source={lessonData.contentUrl} 
-              contentType={lessonData.contentType}
+        <View
+          style={[
+            styles.contentWrapper,
+            section.contentType === 'pdf' && styles.pdfContentWrapper,
+          ]}
+        >
+          {section.contentUrl ? (
+            <VideoPlayer
+              source={section.contentUrl}
+              contentType={section.contentType}
             />
           ) : (
             <View style={styles.noContentContainer}>
               <Ionicons name="alert-circle" size={64} color="#FFB300" />
-              <Text style={styles.noContentText}>No hay contenido disponible para esta lección</Text>
+              <Text style={styles.noContentText}>
+                No hay contenido disponible para esta lección
+              </Text>
             </View>
           )}
         </View>
-        
-        {/* Descripción de la lección */}
-        {lessonData.description && (
+
+        {/* Descripción */}
+        {section.description ? (
           <View style={styles.descriptionContainer}>
             <Text style={styles.descriptionTitle}>Descripción:</Text>
-            <Text style={styles.descriptionText}>{lessonData.description}</Text>
+            <Text style={styles.descriptionText}>{section.description}</Text>
           </View>
-        )}
+        ) : null}
       </ScrollView>
 
-      {/* Botones de navegación entre lecciones */}
+      {/* Navegación */}
       <View style={styles.navigationButtonsContainer}>
-        <TouchableOpacity 
-          style={styles.navigationButton}
+        {/* ← PREV */}
+        <TouchableOpacity
+          style={[
+            styles.navigationButton,
+            !prevId && { opacity: 0.4 },
+          ]}
+          disabled={!prevId}
           onPress={handlePreviousLesson}
         >
           <Text style={styles.navigationButtonText}>Lección anterior</Text>
         </TouchableOpacity>
-        <TouchableOpacity 
-          style={styles.navigationButton}
+
+        {/* → NEXT  (solo se desactiva si NO hay nextId y NO es la última) */}
+        <TouchableOpacity
+          style={[
+            styles.navigationButton,
+            !nextId && !section.isLast && { opacity: 0.4 },
+          ]}
+          disabled={!nextId && !section.isLast}
           onPress={handleNextLesson}
         >
           <Text style={styles.navigationButtonText}>Lección siguiente</Text>
         </TouchableOpacity>
       </View>
+
     </SafeAreaView>
   );
 };
 
+/* ---------- Estilos ---------- */
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
+  container: { flex: 1, backgroundColor: '#fff' },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  loadingText: {
-    marginTop: 10,
-    fontSize: 16,
-    color: '#673AB7',
-  },
-  scrollView: {
-    flexGrow: 1, // Asegura que el ScrollView crezca y ocupe el espacio disponible
-  },
-  contentContainer: {
-    padding: 20,
-    paddingBottom: 20, // Espacio adicional para evitar solapamientos
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
+  loadingText: { marginTop: 10, fontSize: 16, color: '#673AB7' },
+  scrollView: { flexGrow: 1 },
+  contentContainer: { padding: 20, paddingBottom: 20 },
+  header: { flexDirection: 'row', alignItems: 'center', marginBottom: 20 },
   backButton: {
     padding: 8,
     borderRadius: 20,
     backgroundColor: '#F0F0F0',
   },
-  titleContainer: {
-    flex: 1,
-    marginLeft: 15,
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#333',
-  },
+  titleContainer: { flex: 1, marginLeft: 15 },
+  title: { fontSize: 22, fontWeight: 'bold', color: '#333' },
   contentTypeIndicator: {
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 5,
   },
-  contentTypeText: {
-    marginLeft: 5,
-    fontSize: 14,
-    color: '#666',
-  },
+  contentTypeText: { marginLeft: 5, fontSize: 14, color: '#666' },
   contentWrapper: {
     width: '100%',
-    height: Dimensions.get('window').height * 0.5, // Altura aumentada para contenido general
-    marginBottom: 10, // Reducido para acercar la descripción
+    height: Dimensions.get('window').height * 0.5,
+    marginBottom: 10,
     borderRadius: 10,
     overflow: 'hidden',
   },
   pdfContentWrapper: {
-    height: Dimensions.get('window').height * 0.53, // Altura aumentada para PDFs
+    height: Dimensions.get('window').height * 0.53,
   },
   noContentContainer: {
     height: 200,
@@ -229,7 +280,6 @@ const styles = StyleSheet.create({
     color: '#666',
   },
   descriptionContainer: {
-    marginTop: 0, // Eliminado para que la descripción esté justo después del contenido
     padding: 15,
     backgroundColor: '#F5F5F5',
     borderRadius: 10,
@@ -240,11 +290,7 @@ const styles = StyleSheet.create({
     color: '#673AB7',
     marginBottom: 10,
   },
-  descriptionText: {
-    fontSize: 16,
-    lineHeight: 24,
-    color: '#555',
-  },
+  descriptionText: { fontSize: 16, lineHeight: 24, color: '#555' },
   navigationButtonsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',

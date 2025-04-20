@@ -238,13 +238,47 @@ export default class CourseService {
   static async fetchModulesWithSectionsByCourse(courseId) {
     const token = await AsyncStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
 
-    return await fetch(`${API_BASE_URL}/student/attendance/mod-by-course`, {
+    return await fetch(`${API_BASE_URL}/student/attendance/mod-by-course?courseId=${courseId}&studentId=${token}`, {
       method: "POST",
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`
       },
-      body: JSON.stringify({ courseId })
+    }).then((response) => response.json())
+      .then((response) => {
+        console.log("response\n", response);
+
+        if (response.type !== "SUCCESS") {
+          if (typeof response === "object" && !response.text) {
+            const errorMessages = Object.values(response).join("\n");
+            return { success: false, error: errorMessages };
+          }
+
+          if (response.text) {
+            return { success: false, error: response.text };
+          }
+
+          return { success: false, error: "Ha ocurrido un error. Por favor intenta de nuevo más tarde." };
+        }
+
+        return { success: true, data: response.result };
+      })
+      .catch((error) => {
+        return { success: false, error: error?.message || "Ha ocurrido un error. Por favor intenta de nuevo más tarde." };
+      });
+  }
+
+  // Servicio para completar una sección
+  static async fetchCompleteSection(sectionId) {
+    
+    const token = await AsyncStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
+    console.log("fetchCompleteSection",  sectionId);
+
+    return await fetch(`${API_BASE_URL}/student/attendance/complete?studentId=${token}&sectionId=${sectionId}`, {
+      method: "POST",
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
     }).then((response) => response.json())
       .then((response) => {
         if (response.type !== "SUCCESS") {

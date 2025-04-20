@@ -8,21 +8,34 @@ import {
   SafeAreaView,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { ACTIONS, useCourseProgress } from '../../context/CourseProgressProvider';
 
 const ModuleSections = ({ navigation, route }) => {
+
+  const { dispatch } = useCourseProgress();
+
   // Obtener los parámetros de la ruta
-  const { moduleId, moduleName, sections = [] } = route.params || {};
+  const { moduleId, moduleName, status, sections = [] } = route.params || {};
 
   // Función para manejar el clic en una sección
+  /*   const handleSectionPress = (section) => {
+      dispatch({ type: ACTIONS.SET_CURRENT_SECTION, payload: section.sectionId });
+  
+      navigation.navigate('LessonDetail', {
+        sectionId: section.sectionId,
+      });
+    }; */
+
   const handleSectionPress = (section) => {
+    if (status !== 'UNLOCKED' && status !== 'COMPLETED') return; // bloqueado
+    dispatch({ type: ACTIONS.SET_CURRENT_SECTION, payload: section.sectionId });
+
     navigation.navigate('LessonDetail', {
       sectionId: section.sectionId,
-      sectionName: section.name,
-      sectionDescription: section.description,
-      contentUrl: section.contentUrl,
-      contentType: section.contentType || 'image' // Por defecto, asumir imagen
+      moduleId,                        // ← importante
     });
   };
+
 
   // Renderizar cada sección
   const renderSectionItem = ({ item }) => {

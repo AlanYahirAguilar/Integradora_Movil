@@ -4,11 +4,12 @@ import { StatusBar, StyleSheet, View, ActivityIndicator } from 'react-native';
 import { RootStack } from './src/navigation/RootStack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { STORAGE_KEYS } from './src/constants';
+import { CourseProgressProvider } from './src/context/CourseProgressProvider';
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [userToken, setUserToken] = useState(null);
-  
+
   useEffect(() => {
     // Verificar si hay un token almacenado
     const checkToken = async () => {
@@ -21,10 +22,10 @@ export default function App() {
         setIsLoading(false);
       }
     };
-    
+
     checkToken();
   }, []);
-  
+
   if (isLoading) {
     return (
       <View style={[styles.container, styles.centerContent]}>
@@ -32,14 +33,16 @@ export default function App() {
       </View>
     );
   }
-  
+
   return (
-    <View style={styles.container}>
-      <NavigationContainer>
-        <RootStack initialToken={userToken} />
-      </NavigationContainer>
-      <StatusBar style="auto" />
-    </View>
+    <CourseProgressProvider>
+      <View style={styles.container}>
+        <NavigationContainer>
+          <RootStack initialToken={userToken} />
+        </NavigationContainer>
+        <StatusBar style="auto" />
+      </View>
+    </CourseProgressProvider>
   );
 }
 
