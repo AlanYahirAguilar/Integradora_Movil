@@ -139,6 +139,8 @@ const VideoPlayer = ({ source, contentType /* = 'video'  */ }) => {
               setIsLoading(false);
               setError(true);
             }}
+            scrollEnabled={true}
+            nestedScrollEnabled={true}
             style={{ flex: 1 }}
           />
         )}
