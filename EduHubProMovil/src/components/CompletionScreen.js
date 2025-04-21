@@ -1,7 +1,11 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, TextInput, Alert } from 'react-native';
+import ReviewService from '../services/ReviewService';
 
-const CompletionScreen = ({ navigation }) => {
+const CompletionScreen = ({ navigation, route }) => {
+  const { courseId, instructorId } = route.params;
+
   const [rating, setRating] = useState(0); // Estado para almacenar la calificación seleccionada
   const [comments, setComments] = useState(''); // Estado para almacenar los comentarios
 
@@ -10,20 +14,28 @@ const CompletionScreen = ({ navigation }) => {
     setRating(selectedStar);
   };
 
-  // Función para manejar el envío de la evaluación
-  const handleSubmitEvaluation = () => {
+
+  const handleSubmitEvaluation = async () => {
     if (rating === 0) {
-      Alert.alert('Error', 'Por favor califica el curso, de no ser asi no podremos enviarte tu constancia.');
+      Alert.alert('Error', 'Por favor califica el curso, de no ser así no podremos enviarte tu constancia.');
       return;
     }
 
-    // Aquí puedes enviar los datos al backend o realizar otras acciones
-    Alert.alert(
-      'Éxito',
-      'Tu evaluación ha sido enviada. ¡Gracias por tu retroalimentación!',
-      'Te enviaremos tu constancia al finalizar el curso.',
-      [{ text: 'OK', onPress: () => navigation.navigate('Home') }] // Regresar a Home
-    );
+    try {
+      const response = await ReviewService.createReview(rating, comments
+        , courseId, instructorId);
+      console.log('Review enviada:', response.data);
+
+      Alert.alert(
+        'Éxito',
+        'Tu evaluación ha sido enviada. ¡Gracias por tu retroalimentación!',
+        [{ text: 'OK', onPress: () => navigation.navigate('Home') }]
+      );
+    } catch (error) {
+      console.error('Error al enviar reseña:', error);
+      const msg = error?.response?.data?.message || 'Ocurrió un error al enviar tu evaluación.';
+      Alert.alert('Error', msg);
+    }
   };
 
   return (
@@ -53,7 +65,7 @@ const CompletionScreen = ({ navigation }) => {
             <Text
               style={[
                 styles.starText,
-                star <= rating && { color: '#FFD700' }, // Cambia el color si la estrella está seleccionada
+                { color: star <= rating ? '#FFD700' : '#ccc' }
               ]}
             >
               ⭐

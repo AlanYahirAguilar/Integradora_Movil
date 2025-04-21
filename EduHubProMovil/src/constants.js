@@ -6,7 +6,6 @@ const IP = '192.168.111.27';
 // URL base para las peticiones al backend
 export const API_BASE_URL = `http://${IP}:8080/eduhubpro`;
 
-
 // Endpoints específicos
 export const API_ENDPOINTS = {
   LOGIN: '/auth/login',
