@@ -146,7 +146,7 @@ export default function CourseDetailScreen({ route, navigation }) {
       <View style={styles.infoContainer}>
         <View style={styles.durationContainer}>
           <Image source={require('../../../assets/RelojArena.png')} style={styles.icon} />
-          <Text style={styles.infoText}>Duración: {course.duration || 0} Hrs</Text>
+          <Text style={styles.infoText}>Duración: {course.duration || 0} Min</Text>
         </View>
         <View style={styles.prerequisitesContainer}>
           <Image source={require('../../../assets/Book.png')} style={styles.icon} />
