@@ -195,7 +195,11 @@ export default function CourseDetailScreen({ route, navigation }) {
       </View>
 
       {/* Botón de Inscribirse */}
-      <TouchableOpacity style={styles.enrollButton} onPress={handleEnroll}>
+      <TouchableOpacity 
+        style={[styles.enrollButton, isLoading && styles.enrollButtonDisabled]} 
+        onPress={handleEnroll}
+        disabled={isLoading}
+      >
         {isLoading ? (
           <ActivityIndicator size="small" color="#fff" />
         ) : (
@@ -535,6 +539,10 @@ const styles = StyleSheet.create({
     marginBottom: 22,
     marginTop: 6,
   },
+  enrollButtonDisabled: {
+    backgroundColor: '#ccc',
+    opacity: 0.5,
+  },
   enrollButtonText: {
     color: '#fff',
     fontSize: 16,
@@ -861,4 +869,3 @@ const alreadyEnrolledStyles = {
     fontSize: 16
   }
 };
-
