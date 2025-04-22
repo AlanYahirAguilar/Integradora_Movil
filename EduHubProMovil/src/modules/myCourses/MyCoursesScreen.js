@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Sidebar from '../../components/SideBar';
 import { View, Text, TouchableOpacity, StyleSheet, Image, ActivityIndicator, ScrollView, RefreshControl } from 'react-native';
 import ProgressBar from 'react-native-progress/Bar'; // Importar Progress.Bar
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import CourseService from '../../services/CourseService';
 
 export default function MyCoursesScreen({route}) {
@@ -27,6 +27,13 @@ export default function MyCoursesScreen({route}) {
     loadStudentCourses();
   }, []);
   
+  // Recargar cursos cuando la pantalla recibe el foco
+  useFocusEffect(
+    React.useCallback(() => {
+      loadStudentCourses();
+    }, [])
+  );
+  
   // Función para cargar los cursos del estudiante
   const loadStudentCourses = async () => {
     try {
@@ -34,43 +41,28 @@ export default function MyCoursesScreen({route}) {
       setError(null);
       
       const studentCourses = await CourseService.getStudentCourses();
-      /* console.log('Cursos obtenidos:', studentCourses); */
-      
+      console.log('Cursos obtenidos:', studentCourses);
       // Transformar los datos para adaptarlos al formato esperado por el componente
       const formattedCourses = studentCourses.map(course => ({
         id: course.courseId,
         title: course.title,
         image: course.bannerPath || 'https://via.placeholder.com/150',
-        progress: calculateCourseProgress(course),
+        progress: course.progress / 100, // Convertir de porcentaje a decimal
         instructor: course.instructor?.name || 'Instructor',
         description: course.description,
         startDate: course.startDate,
         endDate: course.endDate,
         modules: course.modules || [],
-        // Guardar el objeto completo para tener todos los datos disponibles
         originalData: course
       }));
       
       setCourses(formattedCourses);
     } catch (err) {
-  //    console.error('Error al cargar cursos:', err);
       setError('No se pudieron cargar tus cursos. Intenta de nuevo más tarde.');
     } finally {
       setIsLoading(false);
       setRefreshing(false);
     }
-  };
-  
-  // Función para calcular el progreso del curso basado en módulos desbloqueados
-  const calculateCourseProgress = (course) => {
-    if (!course.modules || course.modules.length === 0) return 0;
-    
-    // Contar módulos desbloqueados
-    const unlockedModules = course.modules.filter(module => 
-      module.status === 'UNLOCKED' || module.status === 'COMPLETED'
-    ).length;
-    
-    return unlockedModules / course.modules.length;
   };
   
   // Función para manejar la acción de pull-to-refresh
