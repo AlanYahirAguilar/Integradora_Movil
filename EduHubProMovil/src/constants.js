@@ -1,5 +1,5 @@
 // Constantes para la aplicación EduHubPro
-const IP = '192.168.111.27';
+const IP = '192.168.1.66';
 //const IP = '192.168.1.73'; //Ip de Xim xd
 //const IP = 'localhost';
 

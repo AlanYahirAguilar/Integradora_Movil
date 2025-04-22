@@ -11,6 +11,7 @@ import {
   ActivityIndicator,
   Alert
 } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import Sidebar from '../SideBar';
 import CourseService from '../../services/CourseService';
@@ -34,43 +35,57 @@ const CourseModuleDetails = ({ navigation, route }) => {
     }
   }, [route.params?.toggleSidebar]);
 
-  // Cargar los datos del curso cuando el componente se monta
-  useEffect(() => {
-    if (route.params?.course) {
-      // Limpiar módulos antes de hacer la petición
-      const { modules, ...courseWithoutModules } = route.params.course;
-      setCourseData({
-        ...courseWithoutModules,
-        modules: [] // aseguramos que esté limpio
-      });
-      loadModulesWithSections(route.params.course.courseId); // Fetch
-      setIsLoading(false);
-    } else if (route.params?.courseId) {
-      // Aquí se podría implementar una llamada a la API para obtener los detalles del curso
-      // por ahora solo mostramos un error
-      Alert.alert('Error', 'No se pudieron cargar los detalles del curso');
-      setIsLoading(false);
-    } else {
-      setIsLoading(false);
-    }
-  }, [route.params]);
-
   const loadModulesWithSections = async (courseId) => {
-    console.log('\nCARGANDO MODULOS\n', courseId);
+    try {
+      setIsLoading(true);
+      console.log('\nCARGANDO MODULOS\n', courseId);
 
-    const response = await CourseService.fetchModulesWithSectionsByCourse(courseId); // ← tu servicio
-    const modules = response.data;
-    console.log(modules);
+      const response = await CourseService.fetchModulesWithSectionsByCourse(courseId);
+      if (response.success) {
+        const modules = response.data;
+        console.log('Módulos cargados:', modules);
 
-    if (modules) {
-      setCourseData(prev => ({ ...prev, modules }));
-      // despacha todo al contexto
-      dispatch({
-        type: ACTIONS.LOAD_COURSE_STRUCTURE,
-        payload: { courseId, modules }
-      });
+        // Actualizar el estado con todos los módulos a la vez
+        setCourseData(prev => ({
+          ...prev,
+          modules: modules.map(module => ({
+            ...module,
+            sections: module.sections || [],
+            isAttended: module.isAttended || false,
+            status: module.status || 'LOCKED'
+          }))
+        }));
+
+        // Despachar al contexto
+        dispatch({
+          type: ACTIONS.LOAD_COURSE_STRUCTURE,
+          payload: { modules }
+        });
+      } else {
+        console.error('Error al cargar módulos:', response.error);
+      }
+    } catch (error) {
+      console.error('Error en loadModulesWithSections:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
+
+  // Cargar los datos del curso cuando el componente se monta o se vuelve a ver
+  useFocusEffect(
+    React.useCallback(() => {
+      if (route.params?.course) {
+        const { modules, ...courseWithoutModules } = route.params.course;
+        setCourseData({
+          ...courseWithoutModules,
+          modules: []
+        });
+        loadModulesWithSections(route.params.course.courseId);
+      } else if (route.params?.courseId) {
+        loadModulesWithSections(route.params.courseId);
+      }
+    }, [route.params])
+  );
 
   // Función para renderizar cada módulo
   const renderModuleItem = ({ item }) => {
@@ -161,38 +176,35 @@ const CourseModuleDetails = ({ navigation, route }) => {
     });
   };
 
-  // Si está cargando, mostrar un indicador
-  if (isLoading) {
+  // Si está cargando o no hay datos, mostrar solo el spinner
+  if (isLoading || !courseData) {
     return (
-      <View style={styles.loadingContainer}>
+      <SafeAreaView style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#673AB7" />
-        <Text style={styles.loadingText}>Cargando detalles del curso...</Text>
-      </View>
+      </SafeAreaView>
     );
   }
-
-  // Si no hay datos del curso, mostrar un mensaje
-  if (!courseData) {
-    return (
-      <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>No se pudieron cargar los detalles del curso</Text>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}
-        >
-          <Text style={styles.backButtonText}>Volver a Mis Cursos</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
-
-  // Encontrar el módulo desbloqueado para mostrar sus secciones
-  const unlockedModule = courseData.modules.find(module => module.status === 'UNLOCKED');
 
   // Verificar si todos los módulos están completados
-  const allModulesCompleted = courseData.modules.every(mod => mod.isAttended);
+  const allModulesCompleted = courseData?.modules?.every(mod => mod.isAttended) ?? false;
 
-  console.log(allModulesCompleted);
+  // Verificar si hay algún módulo desbloqueado
+  const hasUnlockedModules = courseData?.modules?.some(mod => mod.status === 'UNLOCKED') ?? false;
+
+  // El curso está terminado solo si todos los módulos están completados y no hay módulos desbloqueados
+  const isCourseCompleted = !isLoading && allModulesCompleted && !hasUnlockedModules;
+
+  console.log('Estado del curso:', {
+    allModulesCompleted,
+    hasUnlockedModules,
+    isCourseCompleted,
+    modules: courseData?.modules?.map(mod => ({
+      moduleId: mod.moduleId,
+      isAttended: mod.isAttended,
+      status: mod.status
+    }))
+  });
+
   const instructorId = courseData.modules?.[0]?.instructorId;
 
   return (
@@ -230,13 +242,13 @@ const CourseModuleDetails = ({ navigation, route }) => {
             data={courseData.modules}
             renderItem={renderModuleItem}
             keyExtractor={item => item.moduleId}
-            scrollEnabled={false} // Desactivamos el scroll interno para que el ScrollView control todo
+            scrollEnabled={false}
             ItemSeparatorComponent={() => <View style={styles.separator} />}
           />
         </View>
 
-        {/* Botón para calificar curso si todos los módulos están completados */}
-        {allModulesCompleted && (
+        {/* Botón para calificar curso solo si está completamente terminado */}
+        {isCourseCompleted && (
           <TouchableOpacity
             style={[styles.reviewButton]}
             onPress={() => navigation.navigate('lecciones_Completado', {
@@ -288,18 +300,20 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+    backgroundColor: '#fff',
   },
   loadingText: {
-    marginTop: 10,
+    marginTop: 20,
     fontSize: 16,
     color: '#673AB7',
+    textAlign: 'center',
   },
   errorContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
+    backgroundColor: '#fff',
   },
   errorText: {
     fontSize: 16,

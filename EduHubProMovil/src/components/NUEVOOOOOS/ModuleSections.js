@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   FlatList,
   SafeAreaView,
+  ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { ACTIONS, useCourseProgress } from '../../context/CourseProgressProvider';
@@ -15,7 +16,7 @@ const ModuleSections = ({ navigation, route }) => {
   const { dispatch } = useCourseProgress();
 
   // Obtener los parámetros de la ruta
-  const { moduleId, moduleName, status, sections = [] } = route.params || {};
+  const { moduleId, moduleName, status, sections = [], isLoading } = route.params || {};
 
   // Función para manejar el clic en una sección
   /*   const handleSectionPress = (section) => {
@@ -56,6 +57,15 @@ const ModuleSections = ({ navigation, route }) => {
       </TouchableOpacity>
     );
   };
+
+  // Si no hay datos o está cargando, mostrar solo el spinner
+  if (!sections || sections.length === 0 || isLoading) {
+    return (
+      <SafeAreaView style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#673AB7" />
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -163,6 +173,12 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
   },
 });
 

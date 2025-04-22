@@ -45,7 +45,7 @@ const LessonDetail = ({ route, navigation }) => {
     }
   }, [route.params?.toggleSidebar]);
 
-  /* ---------- Guardar “sección actual” ---------- */
+  /* ---------- Guardar "sección actual" ---------- */
   useEffect(() => {
     dispatch({ type: ACTIONS.SET_CURRENT_SECTION, payload: sectionId });
   }, [sectionId]);
@@ -96,26 +96,23 @@ const LessonDetail = ({ route, navigation }) => {
         section.courseId
       );
       if (modsResp.success) {
-        dispatch({
-          type: ACTIONS.LOAD_COURSE_STRUCTURE,
-          payload: { modules: modsResp.data },
+        // Marcar el módulo actual como completado
+        const updatedModules = modsResp.data.map(mod => {
+          if (mod.moduleId === moduleId) {
+            return { ...mod, isAttended: true };
+          }
+          return mod;
         });
 
-        // localizar siguiente módulo desbloqueado y su primera sección
-        const mods = modsResp.data;
-        const idx = mods.findIndex(m => m.moduleId === moduleId);
-        const nextModule = mods[idx + 1];
-        if (nextModule && nextModule.status === 'UNLOCKED' && nextModule.sections.length) {
-          navigation.replace('LessonDetail', {
-            sectionId: nextModule.sections[0].sectionId,
-            moduleId: nextModule.moduleId,
-          });
-          return;
-        }
-      }
+        dispatch({
+          type: ACTIONS.LOAD_COURSE_STRUCTURE,
+          payload: { modules: updatedModules },
+        });
 
-      // Si no hay más módulos desbloqueados
-      navigation.goBack();
+        // Volver dos pantallas atrás para asegurar que llegamos a CourseModuleDetails
+        navigation.goBack();
+        navigation.goBack();
+      }
     }
   };
 
